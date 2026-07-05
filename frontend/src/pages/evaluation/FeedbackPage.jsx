@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { ThumbsUp, ThumbsDown, Star, Send, MessageSquare, CheckCircle } from 'lucide-react'
 import { ROUTES } from '@/utils/constants'
 import { cn } from '@/utils/cn'
+import { evaluationService } from '@/services/evaluationService'
+import { Alert } from '@/components/atoms/Alert'
 
 const categories = [
   { id: 'ease', label: 'Ease of use' },
@@ -22,6 +24,7 @@ export default function FeedbackPage() {
   const [recommend, setRecommend] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [apiError, setApiError] = useState('')
 
   function setCatRating(id, val) {
     setCategoryRatings(p => ({ ...p, [id]: val }))
@@ -31,9 +34,29 @@ export default function FeedbackPage() {
     e.preventDefault()
     if (!thumb || !rating) return
     setSubmitting(true)
-    await new Promise(r => setTimeout(r, 1000))
-    setSubmitting(false)
-    setSubmitted(true)
+    setApiError('')
+    try {
+      // Backend's FeedbackSubmitDto only accepts { rating, category, comment }
+      // — richer than that (per-aspect ratings, recommend, thumb) gets folded
+      // into the comment text so none of it is silently discarded.
+      const category = thumb === 'up' ? 'praise' : 'bug'
+      const aspectSummary = categories
+        .filter(cat => categoryRatings[cat.id])
+        .map(cat => `${cat.label}: ${categoryRatings[cat.id]}/5`)
+        .join(', ')
+      const parts = []
+      if (recommend) parts.push(`Recommend: ${recommend}.`)
+      if (aspectSummary) parts.push(aspectSummary)
+      if (comment.trim()) parts.push(comment.trim())
+      const fullComment = parts.join(' | ').slice(0, 1000)
+
+      await evaluationService.submitFeedback({ rating, category, comment: fullComment || undefined })
+      setSubmitted(true)
+    } catch (err) {
+      setApiError(err.response?.data?.message || 'Failed to submit feedback. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (submitted) {
@@ -195,6 +218,8 @@ export default function FeedbackPage() {
           />
           <p className="text-xs text-gray-400 mt-1 text-right">{comment.length}/500</p>
         </div>
+
+        {apiError && <Alert variant="error" onDismiss={() => setApiError('')}>{apiError}</Alert>}
 
         <button
           type="submit"

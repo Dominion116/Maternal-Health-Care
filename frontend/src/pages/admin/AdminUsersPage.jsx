@@ -7,7 +7,6 @@ import { Alert } from '@/components/atoms/Alert'
 import { Spinner } from '@/components/atoms/Spinner'
 import { useAuth } from '@/hooks/useAuth'
 import { adminService } from '@/services/adminService'
-import { cn } from '@/utils/cn'
 
 const roleConfig = {
   pregnant_woman: { label: 'Pregnant Woman', icon: Baby, variant: 'rose' },

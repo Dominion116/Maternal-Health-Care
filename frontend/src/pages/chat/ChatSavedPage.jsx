@@ -1,25 +1,23 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { BookMarked, Search, MessageCircle, Trash2, Clock } from 'lucide-react'
-import { useChat } from '@/hooks/useChat'
+import { useConversationHistory } from '@/hooks/useConversationHistory'
 import { ROUTES } from '@/utils/constants'
-import { formatRelativeTime, truncate } from '@/utils/formatters'
+import { formatRelativeTime } from '@/utils/formatters'
 import { Input } from '@/components/atoms/Input'
 import { Button } from '@/components/atoms/Button'
+import { Spinner } from '@/components/atoms/Spinner'
+import { Alert } from '@/components/atoms/Alert'
 
 export default function ChatSavedPage() {
-  const { conversations, setActiveConversation, deleteConversation, toggleSaveConversation } = useChat()
-  const navigate = useNavigate()
+  const { conversations: saved, loading, error, openConversation, removeConversation, toggleSaved } =
+    useConversationHistory({ savedOnly: true })
   const [search, setSearch] = useState('')
 
-  const saved = conversations.filter(c => c.isSaved)
-  const filtered = saved.filter(c =>
-    c.title.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = saved.filter(c => (c.title || '').toLowerCase().includes(search.toLowerCase()))
 
-  function openConversation(id) {
-    setActiveConversation(id)
-    navigate(ROUTES.CHAT)
+  if (loading) {
+    return <div className="py-16 flex justify-center"><Spinner size="lg" /></div>
   }
 
   if (saved.length === 0) {
@@ -39,6 +37,8 @@ export default function ChatSavedPage() {
             New Chat
           </Button>
         </div>
+
+        {error && <Alert variant="error" className="mb-4">{error}</Alert>}
 
         {/* Empty state */}
         <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -88,6 +88,8 @@ export default function ChatSavedPage() {
         </Button>
       </div>
 
+      {error && <Alert variant="error" className="mb-4">{error}</Alert>}
+
       <Input
         placeholder="Search saved chats..."
         icon={<Search className="w-4 h-4" />}
@@ -117,29 +119,24 @@ export default function ChatSavedPage() {
                     aria-label={`Open saved conversation: ${conv.title}`}
                   >
                     <p className="text-sm font-semibold text-text-primary truncate group-hover:text-rose-700 transition-colors">
-                      {conv.title}
+                      {conv.title || 'Untitled conversation'}
                     </p>
                     <p className="text-xs text-text-muted mt-0.5 flex items-center gap-1.5">
                       <Clock className="w-3 h-3" aria-hidden />
-                      {formatRelativeTime(conv.updatedAt)} · {conv.messages.length} message{conv.messages.length !== 1 ? 's' : ''}
+                      {formatRelativeTime(conv.updated_at)} · {conv.message_count} message{conv.message_count !== 1 ? 's' : ''}
                     </p>
-                    {conv.messages.length > 0 && (
-                      <p className="text-xs text-text-secondary mt-1.5 leading-relaxed">
-                        {truncate(conv.messages[conv.messages.length - 1]?.content, 80)}
-                      </p>
-                    )}
                   </button>
 
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
-                      onClick={() => toggleSaveConversation(conv.id)}
+                      onClick={() => toggleSaved(conv.id, conv.is_saved)}
                       className="p-1.5 rounded-lg text-rose-600 bg-rose-50 hover:bg-rose-100 transition-colors"
                       aria-label="Unsave conversation"
                     >
                       <BookMarked className="w-4 h-4 fill-rose-200" />
                     </button>
                     <button
-                      onClick={() => deleteConversation(conv.id)}
+                      onClick={() => removeConversation(conv.id)}
                       className="p-1.5 rounded-lg text-text-muted hover:text-error hover:bg-red-50 transition-colors"
                       aria-label="Delete conversation"
                     >

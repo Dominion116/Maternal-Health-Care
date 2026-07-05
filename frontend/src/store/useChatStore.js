@@ -42,6 +42,41 @@ export const useChatStore = create(
 
       setActiveConversation: (id) => set({ activeConversationId: id }),
 
+      // Loads a conversation the user opened from History/Saved (server is
+      // the source of truth there) into the local cache used by the live
+      // chat screen — inserting it if not already present, replacing its
+      // messages if it is, so opening a past conversation always shows the
+      // real backend thread rather than whatever (possibly empty/stale)
+      // local copy happened to exist.
+      hydrateConversation: (id, meta, backendMessages) => {
+        const messages = backendMessages.map((m) => ({
+          id: m.id,
+          type: m.role === 'user' ? MESSAGE_TYPES.USER : MESSAGE_TYPES.BOT,
+          content: m.content,
+          timestamp: m.created_at,
+          confidence: m.intent_confidence ?? undefined,
+          intent: m.intent ?? undefined,
+        }))
+
+        set(state => {
+          const exists = state.conversations.some(c => c.id === id)
+          const conversation = {
+            id,
+            title: meta.title || 'Conversation',
+            createdAt: meta.created_at,
+            updatedAt: meta.updated_at,
+            isSaved: !!meta.is_saved,
+            messages,
+          }
+          return {
+            conversations: exists
+              ? state.conversations.map(c => (c.id === id ? conversation : c))
+              : [conversation, ...state.conversations],
+            activeConversationId: id,
+          }
+        })
+      },
+
       // Called after the first message in a new conversation gets a real
       // response — replaces the client-generated temp id (`conv_...`) with
       // the server's UUID so subsequent messages in this thread send the
