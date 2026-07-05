@@ -1,0 +1,310 @@
+@import "tailwindcss";
+
+/* ============================================================
+   MATERNAL HEALTH CHATBOT — DESIGN SYSTEM
+   Tailwind v4 CSS-first configuration
+   ============================================================ */
+
+@theme {
+  /* ── Brand Palette ───────────────────────────────────────── */
+  --color-rose-50:  #fff1f4;
+  --color-rose-100: #ffe0e8;
+  --color-rose-200: #ffc6d5;
+  --color-rose-300: #ff9db5;
+  --color-rose-400: #ff6490;
+  --color-rose-500: #f83b6e;
+  --color-rose-600: #e51a54;
+  --color-rose-700: #c2185b;
+  --color-rose-800: #a31050;
+  --color-rose-900: #8b0e46;
+
+  --color-sage-50:  #f0f9f7;
+  --color-sage-100: #d9f0ec;
+  --color-sage-200: #b6e1da;
+  --color-sage-300: #83cbc0;
+  --color-sage-400: #4aaaa0;
+  --color-sage-500: #2d8f85;
+  --color-sage-600: #237470;
+  --color-sage-700: #1e5d5b;
+  --color-sage-800: #1b4b49;
+  --color-sage-900: #193f3e;
+
+  --color-amber-50:  #fff8ed;
+  --color-amber-100: #ffefd4;
+  --color-amber-200: #ffdba8;
+  --color-amber-300: #ffc070;
+  --color-amber-400: #ff9d37;
+  --color-amber-500: #f5821f;
+  --color-amber-600: #e06811;
+  --color-amber-700: #ba4e10;
+  --color-amber-800: #943e14;
+  --color-amber-900: #783413;
+
+  /* ── Semantic / Surface ─────────────────────────────────── */
+  --color-warm-white:  #fff9f7;
+  --color-surface:     #ffffff;
+  --color-surface-alt: #fef3f0;
+
+  --color-text-primary:   #1a1a2e;
+  --color-text-secondary: #4b5563;
+  --color-text-muted:     #9ca3af;
+  --color-text-inverse:   #ffffff;
+
+  --color-border:       #f3d9d7;
+  --color-border-focus: #c2185b;
+
+  --color-success-light: #ecfdf5;
+  --color-success:       #059669;
+  --color-success-dark:  #047857;
+
+  --color-warning-light: #fffbeb;
+  --color-warning:       #d97706;
+  --color-warning-dark:  #b45309;
+
+  --color-error-light: #fef2f2;
+  --color-error:       #dc2626;
+  --color-error-dark:  #b91c1c;
+
+  --color-info-light: #eff6ff;
+  --color-info:       #2563eb;
+  --color-info-dark:  #1d4ed8;
+
+  --color-emergency-light: #fff1f2;
+  --color-emergency:       #e11d48;
+  --color-emergency-dark:  #be123c;
+
+  /* ── Typography Scale ───────────────────────────────────── */
+  --font-family-sans:    'Inter', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-family-display: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, sans-serif;
+  --font-family-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+  /* ── Border Radius ──────────────────────────────────────── */
+  --radius-none:  0px;
+  --radius-sm:    0.25rem;
+  --radius-md:    0.5rem;
+  --radius-lg:    0.75rem;
+  --radius-xl:    1rem;
+  --radius-2xl:   1.5rem;
+  --radius-3xl:   2rem;
+  --radius-full:  9999px;
+
+  /* ── Shadows ─────────────────────────────────────────────── */
+  --shadow-xs:    0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm:    0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+  --shadow-md:    0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg:    0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  --shadow-xl:    0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+  --shadow-2xl:   0 25px 50px -12px rgb(0 0 0 / 0.15);
+  --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+  --shadow-rose:  0 4px 14px 0 rgb(194 24 91 / 0.2);
+  --shadow-sage:  0 4px 14px 0 rgb(45 143 133 / 0.2);
+
+  /* ── Breakpoints ─────────────────────────────────────────── */
+  --breakpoint-xs:  360px;
+  --breakpoint-sm:  480px;
+  --breakpoint-md:  768px;
+  --breakpoint-lg:  1024px;
+  --breakpoint-xl:  1280px;
+  --breakpoint-2xl: 1536px;
+}
+
+/* ── Base Styles ──────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: #fff9f7;
+  color: #1a1a2e;
+  font-family: 'Inter', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100dvh;
+}
+
+#root {
+  width: 100%;
+  min-height: 100dvh;
+}
+
+/* ── Focus Visible ──────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #c2185b;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ── Scrollbar Styling ──────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #f3d9d7; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #e8b4b8; }
+
+/* ── Custom Animations ────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulseSoft {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+@keyframes typingDot {
+  0%, 60%, 100% { transform: translateY(0); }
+  30%           { transform: translateY(-6px); }
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14%      { transform: scale(1.1); }
+  28%      { transform: scale(1); }
+  42%      { transform: scale(1.1); }
+  70%      { transform: scale(1); }
+}
+
+@keyframes bounceIn {
+  0%   { transform: scale(0.3); opacity: 0; }
+  50%  { transform: scale(1.05); }
+  70%  { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes progressBar {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+.animate-fade-in        { animation: fadeIn 0.3s ease-out forwards; }
+.animate-fade-in-up     { animation: fadeInUp 0.4s ease-out forwards; }
+.animate-fade-in-down   { animation: fadeInDown 0.4s ease-out forwards; }
+.animate-slide-in-left  { animation: slideInLeft 0.3s ease-out forwards; }
+.animate-slide-in-right { animation: slideInRight 0.3s ease-out forwards; }
+.animate-pulse-soft     { animation: pulseSoft 2s ease-in-out infinite; }
+.animate-typing-dot     { animation: typingDot 1.4s ease-in-out infinite; }
+.animate-spin-slow      { animation: spinSlow 3s linear infinite; }
+.animate-heartbeat      { animation: heartbeat 1.5s ease-in-out infinite; }
+.animate-bounce-in      { animation: bounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+/* Stagger children */
+.stagger-children > * { animation: fadeInUp 0.4s ease-out forwards; opacity: 0; }
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 80ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 160ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 240ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 320ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 400ms; }
+
+/* Skeleton shimmer */
+.skeleton {
+  background: linear-gradient(90deg, #fce4e4 25%, #ffeaea 50%, #fce4e4 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 0.5rem;
+}
+
+/* Typing dots stagger */
+.typing-dot:nth-child(1) { animation-delay: 0ms; }
+.typing-dot:nth-child(2) { animation-delay: 200ms; }
+.typing-dot:nth-child(3) { animation-delay: 400ms; }
+
+/* ── Chat Bubbles ─────────────────────────────────────────── */
+.chat-bubble-user {
+  background: #c2185b;
+  color: #ffffff;
+  border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
+}
+
+.chat-bubble-bot {
+  background: #ffffff;
+  color: #1a1a2e;
+  border: 1px solid #f3d9d7;
+  border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.08);
+}
+
+/* ── Gradients ────────────────────────────────────────────── */
+.bg-brand-gradient {
+  background: linear-gradient(135deg, #c2185b 0%, #f83b6e 50%, #f06292 100%);
+}
+
+.bg-hero-gradient {
+  background: linear-gradient(160deg, #fff1f4 0%, #fff9f7 40%, #f0f9f7 100%);
+}
+
+.bg-sage-gradient {
+  background: linear-gradient(135deg, #1e5d5b 0%, #2d8f85 100%);
+}
+
+/* ── Glass ────────────────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ── Healthcare prose ─────────────────────────────────────── */
+.health-content h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; color: #a31050; }
+.health-content h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.375rem; }
+.health-content p  { margin-bottom: 0.75rem; line-height: 1.65; }
+.health-content ul { list-style: disc; padding-left: 1.25rem; margin-bottom: 0.75rem; }
+.health-content li { margin-bottom: 0.25rem; }
+.health-content strong { color: #c2185b; }
+
+/* ── Font utility ─────────────────────────────────────────── */
+.font-display { font-family: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, sans-serif; }
+
+/* ── Reduced Motion ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

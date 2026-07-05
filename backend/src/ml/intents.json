@@ -1,0 +1,415 @@
+{
+  "intents": [
+    {
+      "tag": "greeting_farewell",
+      "patterns": [
+        "hello", "hi there", "good morning", "good afternoon", "good evening",
+        "hey mamaguide", "is anyone there", "how are you", "goodbye", "bye for now",
+        "thank you", "thanks a lot", "see you later"
+      ],
+      "responses": [
+        "Hello, I'm MamaGuide. I'm here to help with your maternal health questions — feel free to ask me anything about pregnancy, delivery, or postpartum care."
+      ],
+      "source": "N/A — conversational intent"
+    },
+    {
+      "tag": "antenatal_visit_schedule",
+      "patterns": [
+        "how many times should I see a doctor during pregnancy",
+        "when should I start antenatal care",
+        "how often do I need ANC visits",
+        "what is the ANC visit schedule",
+        "when is my first antenatal appointment",
+        "do I need to go to the clinic every month",
+        "how many ANC contacts does WHO recommend",
+        "I missed my antenatal appointment what do I do",
+        "what happens at an antenatal visit",
+        "when should I register for antenatal care"
+      ],
+      "responses": [
+        "WHO recommends a minimum of eight antenatal care contacts during pregnancy. Book your first visit before 12 weeks. At each visit your provider checks your blood pressure, weight, urine, and the baby's growth, and gives you your ANC card — keep it safe and bring it to every visit."
+      ],
+      "source": "WHO ANC Guidelines 2016, FMOH Nigeria"
+    },
+    {
+      "tag": "danger_signs_pregnancy",
+      "patterns": [
+        "what warning signs should I watch for during pregnancy",
+        "what are danger signs in pregnancy",
+        "I am bleeding is that normal",
+        "I have severe abdominal pain",
+        "I have a severe headache and blurred vision",
+        "my face and hands are swollen",
+        "when should I go to hospital immediately while pregnant",
+        "is heavy bleeding dangerous in pregnancy",
+        "I had a seizure what should I do",
+        "my water broke before 37 weeks"
+      ],
+      "responses": [
+        "Go to hospital immediately if you experience: heavy vaginal bleeding, severe abdominal pain, a severe headache with blurred vision, sudden swelling of the face or hands, convulsions, high fever, difficulty breathing, or your baby stopping its usual movements. Do not wait for these to worsen — bring your ANC card and go straight to the nearest hospital, or call 112."
+      ],
+      "source": "WHO, FMOH Nigeria Safe Motherhood"
+    },
+    {
+      "tag": "danger_signs_postpartum",
+      "patterns": [
+        "what danger signs should I watch for after delivery",
+        "I am bleeding heavily after birth",
+        "my wound looks infected after delivery",
+        "I have a fever after giving birth",
+        "is heavy bleeding after delivery normal",
+        "when should I worry after childbirth",
+        "my episiotomy is not healing well",
+        "I feel very unwell after delivery",
+        "what postpartum symptoms need a hospital visit"
+      ],
+      "responses": [
+        "After delivery, go to hospital immediately if you notice: heavy bleeding that soaks more than one pad an hour, foul-smelling discharge, fever, severe abdominal pain, a wound that is red, swollen, or leaking pus, severe headache, or breast pain with fever. These can signal postpartum haemorrhage or infection and need urgent attention."
+      ],
+      "source": "WHO, FMOH Nigeria Safe Motherhood"
+    },
+    {
+      "tag": "nutrition_diet",
+      "patterns": [
+        "what should I eat while pregnant",
+        "what foods should I avoid during pregnancy",
+        "is it safe to eat fish when pregnant",
+        "what is a healthy pregnancy diet",
+        "how many meals should I eat while pregnant",
+        "what nutrients do I need in pregnancy",
+        "can I drink alcohol while pregnant",
+        "is it safe to eat unripe pawpaw",
+        "what should I eat to help my baby grow"
+      ],
+      "responses": [
+        "Eat a varied diet with proteins (beans, fish, eggs, meat), fruits, vegetables, and whole grains. Avoid alcohol, raw or undercooked meat, unpasteurised dairy, and excess caffeine. Eating small frequent meals can also help with nausea. Your ANC provider can recommend supplements suited to your needs."
+      ],
+      "source": "WHO ANC Guidelines 2016, FMOH Nigeria"
+    },
+    {
+      "tag": "fetal_movement",
+      "patterns": [
+        "how often should my baby move",
+        "when will I start feeling my baby kick",
+        "my baby has not moved much today",
+        "how many kicks should I count",
+        "what is kick counting",
+        "baby not moving is that dangerous",
+        "when does quickening start",
+        "how do I track fetal movement"
+      ],
+      "responses": [
+        "Most women start feeling movement between 18 and 22 weeks. From 28 weeks, count your baby's movements — you should feel at least 10 movements within 2 hours after a meal. If movement noticeably slows down or stops, go to hospital immediately; do not wait until the next day."
+      ],
+      "source": "WHO, FMOH Nigeria Safe Motherhood"
+    },
+    {
+      "tag": "malaria_pregnancy",
+      "patterns": [
+        "is it safe to take malaria drugs while pregnant",
+        "how do I prevent malaria in pregnancy",
+        "I have a fever could it be malaria",
+        "what malaria treatment is safe in pregnancy",
+        "should I sleep under a mosquito net while pregnant",
+        "is malaria dangerous for my baby",
+        "what is IPTp in pregnancy"
+      ],
+      "responses": [
+        "Malaria in pregnancy can be dangerous for both you and your baby, increasing the risk of anaemia, low birth weight, and miscarriage. Sleep under an insecticide-treated net every night and take the Intermittent Preventive Treatment (IPTp) doses given at your ANC visits. If you have fever, chills, or body aches, go to a clinic promptly for testing and safe, prescribed treatment."
+      ],
+      "source": "WHO, FMOH Nigeria Malaria in Pregnancy Guidelines"
+    },
+    {
+      "tag": "hypertension_preeclampsia",
+      "patterns": [
+        "my blood pressure is high is that dangerous",
+        "what is pre-eclampsia",
+        "signs of high blood pressure in pregnancy",
+        "what causes pre-eclampsia",
+        "is swelling a sign of high blood pressure in pregnancy",
+        "how is pre-eclampsia treated",
+        "what is eclampsia"
+      ],
+      "responses": [
+        "High blood pressure in pregnancy can develop into pre-eclampsia, marked by high blood pressure plus protein in urine, severe headache, blurred vision, or swelling of the face and hands. This is a serious condition that needs urgent medical review — report any of these symptoms to your ANC provider immediately or go to hospital."
+      ],
+      "source": "WHO, FMOH Nigeria Safe Motherhood"
+    },
+    {
+      "tag": "labour_delivery",
+      "patterns": [
+        "how will I know when labour has started",
+        "what are the signs of labour",
+        "how long does labour usually last",
+        "when should I go to the hospital for delivery",
+        "what is the difference between real and false labour",
+        "what happens during delivery",
+        "how do I know my contractions are real"
+      ],
+      "responses": [
+        "Signs of true labour include regular, increasingly strong contractions, lower back pain, a bloody show, or your water breaking. Time your contractions — when they come every 5 minutes and last about a minute for over an hour, head to the hospital. If your water breaks or you notice heavy bleeding, go immediately regardless of contractions."
+      ],
+      "source": "WHO ANC Guidelines 2016, FMOH Nigeria"
+    },
+    {
+      "tag": "postpartum_recovery",
+      "patterns": [
+        "how do I take care of myself after delivery",
+        "how long does postpartum recovery take",
+        "what postnatal visits do I need",
+        "how do I care for my perineal wound",
+        "when can I resume normal activities after birth",
+        "what should I expect physically after delivery"
+      ],
+      "responses": [
+        "Rest as much as possible, keep any wounds clean and dry, eat well, and stay hydrated. Attend your postnatal visits — typically within the first 3 days, again around day 7-10, and a final check at 6 weeks — so your provider can check your recovery and your baby's growth."
+      ],
+      "source": "WHO, FMOH Nigeria Safe Motherhood"
+    },
+    {
+      "tag": "breastfeeding",
+      "patterns": [
+        "how long should I breastfeed my baby",
+        "how do I get my baby to latch properly",
+        "is my baby getting enough breast milk",
+        "my breasts are painful while breastfeeding",
+        "when should I start breastfeeding after birth",
+        "can I breastfeed if I am sick",
+        "how often should I breastfeed a newborn"
+      ],
+      "responses": [
+        "Start breastfeeding within the first hour after birth. Exclusive breastfeeding is recommended for the first 6 months, continuing alongside complementary foods up to 2 years or beyond. Feed on demand — usually 8-12 times a day for newborns. If latching or pain is a problem, ask a nurse or midwife to help you check your baby's positioning."
+      ],
+      "source": "WHO, FMOH Nigeria Infant and Young Child Feeding Guidelines"
+    },
+    {
+      "tag": "family_planning",
+      "patterns": [
+        "what contraceptives can I use after birth",
+        "when can I start family planning after delivery",
+        "is family planning safe while breastfeeding",
+        "what birth control options are available after pregnancy",
+        "how soon can I get pregnant again after delivery",
+        "what family planning method should I choose"
+      ],
+      "responses": [
+        "You can start discussing family planning as early as your postnatal visits. Options like progestin-only pills, injectables, implants, and IUDs are generally safe while breastfeeding. A nurse or family planning counsellor can help you choose a method that fits your health needs and breastfeeding plans."
+      ],
+      "source": "WHO, FMOH Nigeria Family Planning Guidelines"
+    },
+    {
+      "tag": "iron_folic_acid",
+      "patterns": [
+        "why do I need to take iron tablets",
+        "what is folic acid for in pregnancy",
+        "when should I start taking folic acid",
+        "do iron supplements have side effects",
+        "how much folic acid do I need daily",
+        "why are my ANC supplements important"
+      ],
+      "responses": [
+        "Folic acid (400 mcg daily, ideally started before conception) helps prevent neural tube defects in your baby. Iron supplements, prescribed at your ANC visits, help prevent anaemia which is common in pregnancy. Take them as directed — mild nausea or dark stools from iron are normal, but tell your provider if side effects are severe."
+      ],
+      "source": "WHO ANC Guidelines 2016, FMOH Nigeria"
+    },
+    {
+      "tag": "infections_pregnancy",
+      "patterns": [
+        "is it safe to get treated for infection while pregnant",
+        "I have a urinary tract infection is that dangerous",
+        "can infections harm my baby",
+        "what infections are screened during pregnancy",
+        "is it safe to take antibiotics while pregnant",
+        "I have vaginal discharge is that normal"
+      ],
+      "responses": [
+        "Untreated infections such as UTIs, malaria, or sexually transmitted infections can cause complications for you and your baby. Your ANC visits screen for common infections. Report any unusual discharge, burning when urinating, or fever promptly — many infections are safely and effectively treatable in pregnancy with the right prescribed medication."
+      ],
+      "source": "WHO ANC Guidelines 2016, FMOH Nigeria"
+    },
+    {
+      "tag": "weight_gain",
+      "patterns": [
+        "how much weight should I gain during pregnancy",
+        "is my weight gain normal in pregnancy",
+        "what happens if I gain too much weight while pregnant",
+        "what happens if I don't gain enough weight in pregnancy",
+        "how is healthy weight gain tracked in pregnancy"
+      ],
+      "responses": [
+        "Healthy weight gain varies by your starting weight, but many women gain roughly 11-16 kg over a full-term pregnancy. Your ANC provider tracks your weight at every visit — gaining too little or too much can both affect your baby's health, so discuss any concerns with your provider rather than restricting food on your own."
+      ],
+      "source": "WHO ANC Guidelines 2016"
+    },
+    {
+      "tag": "exercise_rest",
+      "patterns": [
+        "can I exercise during pregnancy",
+        "is it safe to walk a lot while pregnant",
+        "how much rest do I need during pregnancy",
+        "what exercises are safe in pregnancy",
+        "can I still do house chores while pregnant",
+        "is lifting heavy things safe during pregnancy"
+      ],
+      "responses": [
+        "Light to moderate exercise, like walking or prenatal stretching, is generally safe and beneficial in an uncomplicated pregnancy. Avoid heavy lifting and activities with a high fall risk. Rest when tired, especially in the third trimester, and ask your provider before starting any new exercise routine, especially if you have any pregnancy complications."
+      ],
+      "source": "WHO ANC Guidelines 2016"
+    },
+    {
+      "tag": "emotional_wellbeing",
+      "patterns": [
+        "I feel very anxious about my pregnancy",
+        "is it normal to feel scared about giving birth",
+        "I feel overwhelmed being pregnant",
+        "how do I cope with pregnancy stress",
+        "I feel sad most days during pregnancy",
+        "is it normal to have mood swings while pregnant"
+      ],
+      "responses": [
+        "Feeling anxious, overwhelmed, or emotional during pregnancy is common — hormonal changes and the weight of upcoming responsibilities affect many women. Talk to someone you trust, rest when you can, and mention persistent sadness, anxiety, or hopelessness to your ANC provider — support and, if needed, care are available and effective."
+      ],
+      "source": "WHO Maternal Mental Health Guidelines"
+    },
+    {
+      "tag": "postpartum_depression",
+      "patterns": [
+        "I feel very sad after having my baby",
+        "what is postpartum depression",
+        "I don't feel connected to my baby",
+        "I have been crying a lot since delivery",
+        "is it normal to feel low after childbirth",
+        "how do I know if I have postnatal depression"
+      ],
+      "responses": [
+        "The 'baby blues' — mild sadness in the first two weeks after birth — is common and usually passes. But persistent sadness, difficulty bonding with your baby, intrusive worrying thoughts, or hopelessness lasting beyond two weeks can be postpartum depression, which is treatable. Please tell a healthcare worker — you are not alone and support is available."
+      ],
+      "source": "WHO Maternal Mental Health Guidelines"
+    },
+    {
+      "tag": "immunisation_pregnancy",
+      "patterns": [
+        "which vaccines should I take when pregnant",
+        "is the tetanus vaccine safe during pregnancy",
+        "when should I get vaccinated while pregnant",
+        "how many tetanus toxoid doses do I need",
+        "are vaccines safe for my unborn baby"
+      ],
+      "responses": [
+        "Tetanus toxoid vaccination is recommended during pregnancy to protect both you and your newborn from tetanus. Your ANC provider will guide you on the dosing schedule based on your prior immunisation history. These vaccines are safe and an important part of routine antenatal care."
+      ],
+      "source": "WHO, FMOH Nigeria Immunisation Guidelines"
+    },
+    {
+      "tag": "vaccines_newborn",
+      "patterns": [
+        "what vaccines does my newborn need",
+        "when should my baby get their first vaccination",
+        "is the BCG vaccine safe for newborns",
+        "what is the newborn immunisation schedule",
+        "when do I take my baby for vaccines"
+      ],
+      "responses": [
+        "Newborns should receive BCG, oral polio vaccine, and hepatitis B at birth or shortly after, followed by a full immunisation schedule through infancy. Keep your baby's immunisation card safe and bring it to every visit — vaccines protect against serious, preventable diseases."
+      ],
+      "source": "WHO, FMOH Nigeria Immunisation Guidelines"
+    },
+    {
+      "tag": "stillbirth_miscarriage",
+      "patterns": [
+        "what causes miscarriage",
+        "I am bleeding and worried about losing my baby",
+        "what is a stillbirth",
+        "how common is miscarriage",
+        "what are signs of miscarriage",
+        "I had a miscarriage what should I do now"
+      ],
+      "responses": [
+        "Miscarriage can happen for many reasons, often unrelated to anything a mother did. Warning signs include heavy bleeding, cramping, and passing tissue — if you experience these, go to hospital immediately for evaluation. If you've experienced a loss, please be gentle with yourself and seek support from your healthcare provider and loved ones; counselling support is also available."
+      ],
+      "source": "WHO, FMOH Nigeria Safe Motherhood"
+    },
+    {
+      "tag": "newborn_care",
+      "patterns": [
+        "how do I take care of my newborn baby",
+        "how do I bathe my newborn",
+        "how do I care for the umbilical cord stump",
+        "how do I know if my newborn is healthy",
+        "how should my newborn sleep safely",
+        "how often should a newborn feed"
+      ],
+      "responses": [
+        "Keep your newborn warm, feed on demand (8-12 times a day), and keep the umbilical cord stump clean and dry until it falls off naturally. Lay your baby on their back to sleep. Watch for danger signs like difficulty feeding, fever, fast or difficult breathing, or yellowing of the skin, and seek care promptly if they appear."
+      ],
+      "source": "WHO, FMOH Nigeria Newborn Care Guidelines"
+    },
+    {
+      "tag": "twins_multiple_pregnancy",
+      "patterns": [
+        "I am carrying twins what do I need to know",
+        "is a twin pregnancy more risky",
+        "how is a multiple pregnancy different",
+        "what extra care do I need for twins",
+        "can I deliver twins normally"
+      ],
+      "responses": [
+        "Twin and multiple pregnancies carry a higher risk of preterm birth, anaemia, and pre-eclampsia, so they need closer ANC monitoring with more frequent visits and scans. Discuss your delivery plan with your provider well in advance, as multiple pregnancies are often best delivered at a well-equipped facility."
+      ],
+      "source": "WHO ANC Guidelines 2016"
+    },
+    {
+      "tag": "hiv_pregnancy",
+      "patterns": [
+        "what happens if I am HIV positive and pregnant",
+        "can I have a healthy baby if I have HIV",
+        "will my baby get HIV from me",
+        "is HIV treatment safe during pregnancy",
+        "how do I prevent mother to child transmission of HIV"
+      ],
+      "responses": [
+        "With proper antiretroviral treatment throughout pregnancy, delivery, and breastfeeding, the risk of transmitting HIV to your baby can be reduced to under 5%. Your ANC provider will support you with testing, counselling, and a prevention-of-mother-to-child-transmission plan — many HIV-positive mothers deliver healthy, HIV-negative babies."
+      ],
+      "source": "WHO, FMOH Nigeria PMTCT Guidelines"
+    },
+    {
+      "tag": "anaemia_pregnancy",
+      "patterns": [
+        "I was told I have anaemia what does that mean",
+        "what causes anaemia in pregnancy",
+        "how do I treat anaemia while pregnant",
+        "is anaemia dangerous for my baby",
+        "what are signs of anaemia in pregnancy"
+      ],
+      "responses": [
+        "Anaemia means you have low iron/haemoglobin levels, common in pregnancy due to increased blood volume. Signs include fatigue, dizziness, and pale skin. It's usually managed with iron and folic acid supplements and iron-rich foods like beans, leafy greens, and meat — your ANC provider monitors this with blood tests at your visits."
+      ],
+      "source": "WHO ANC Guidelines 2016, FMOH Nigeria"
+    },
+    {
+      "tag": "birth_plan_hospital_bag",
+      "patterns": [
+        "what should I pack for delivery",
+        "how do I make a birth plan",
+        "what do I need in my hospital bag",
+        "when should I pack my delivery bag",
+        "what should I prepare before labour"
+      ],
+      "responses": [
+        "Pack your ANC card, ID, baby clothes, wrappers, sanitary pads, toiletries, and any prescribed medications by 36 weeks. A simple birth plan should note your chosen facility, how you'll get there, who will accompany you, and emergency contacts — discuss it with your provider and family in advance."
+      ],
+      "source": "WHO, FMOH Nigeria Safe Motherhood"
+    },
+    {
+      "tag": "fallback",
+      "patterns": [
+        "asdkfjasdf", "random gibberish text", "what is the capital of france",
+        "tell me a joke", "what's the weather like", "can you help me with my homework"
+      ],
+      "responses": [
+        "I'm not fully sure I understood that — I'm here to help with maternal health topics like antenatal care, nutrition, danger signs, labour, breastfeeding, and postpartum recovery. Could you rephrase your question, or ask about one of those topics?"
+      ],
+      "source": "N/A — fallback intent"
+    }
+  ]
+}
