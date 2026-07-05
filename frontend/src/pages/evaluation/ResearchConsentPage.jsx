@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { Shield, CheckCircle, ChevronDown, ChevronUp, AlertCircle, FileText } from 'lucide-react'
 import { ROUTES } from '@/utils/constants'
 import { cn } from '@/utils/cn'
+import { evaluationService } from '@/services/evaluationService'
+import { Alert } from '@/components/atoms/Alert'
 
 const sections = [
   {
@@ -44,6 +46,7 @@ export default function ResearchConsentPage() {
   const [expanded, setExpanded] = useState(null)
   const [checkedItems, setCheckedItems] = useState({})
   const [submitting, setSubmitting] = useState(false)
+  const [apiError, setApiError] = useState('')
 
   const consentItems = [
     { id: 'understand', text: 'I have read and understand the information above.' },
@@ -61,11 +64,20 @@ export default function ResearchConsentPage() {
   async function handleConsent() {
     if (!allChecked) return
     setSubmitting(true)
-    await new Promise(r => setTimeout(r, 1000))
-    navigate(ROUTES.DASHBOARD)
+    setApiError('')
+    try {
+      await evaluationService.submitConsent(true)
+      navigate(ROUTES.DASHBOARD)
+    } catch (err) {
+      setApiError(err.response?.data?.message || 'Failed to save consent. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   function handleDecline() {
+    // Backend's ConsentDto only accepts consented: true (literal) — declining
+    // has no representable backend state, so this stays a local-only action.
     navigate(ROUTES.DASHBOARD)
   }
 
@@ -150,6 +162,8 @@ export default function ResearchConsentPage() {
           <p className="text-xs">Please check all boxes above before you can consent.</p>
         </div>
       )}
+
+      {apiError && <Alert variant="error" onDismiss={() => setApiError('')} className="mb-4">{apiError}</Alert>}
 
       {/* Action buttons */}
       <div className="flex flex-col gap-3">
