@@ -44,3 +44,12 @@ export async function deleteConversation(
     return next(err);
   }
 }
+
+export async function setSaved(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  try {
+    const data = await historyService.setSaved(req.user.id, req.params.id, req.body.is_saved);
+    return sendSuccess(res, data, 'Conversation updated');
+  } catch (err) {
+    return next(err);
+  }
+}

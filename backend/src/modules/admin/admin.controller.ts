@@ -97,3 +97,12 @@ export async function listFeedback(req: Request, res: Response, next: NextFuncti
     return next(err);
   }
 }
+
+export async function getModelMetrics(_req: Request, res: Response, next: NextFunction) {
+  try {
+    const data = await adminService.getModelMetrics();
+    return sendSuccess(res, data);
+  } catch (err) {
+    return next(err);
+  }
+}

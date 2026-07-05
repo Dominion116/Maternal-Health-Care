@@ -148,6 +148,9 @@ export async function getAnalytics() {
     { count: emergencyMessages },
     { data: usersByRole },
     { data: recentEmergencies },
+    { data: intentRows },
+    { data: weeklyConversations },
+    { data: allMessageTimestamps },
   ] = await Promise.all([
     supabaseAdmin.from('user_profiles').select('*', { count: 'exact', head: true }),
     supabaseAdmin.from('conversations').select('*', { count: 'exact', head: true }),
@@ -161,7 +164,7 @@ export async function getAnalytics() {
       .select('role')
       .then(async ({ data }) => ({
         data: data
-          ? ['pregnant_woman', 'nurse', 'admin', 'researcher'].map((role) => ({
+          ? ['pregnant_woman', 'nurse', 'admin', 'researcher', 'super_admin'].map((role) => ({
               role,
               count: data.filter((u: any) => u.role === role).length,
             }))
@@ -173,7 +176,55 @@ export async function getAnalytics() {
       .eq('flagged', true)
       .order('created_at', { ascending: false })
       .limit(10),
+    // Powers the "Top Intents" panel — real usage of the FFNN classifier,
+    // not a fabricated stat.
+    supabaseAdmin.from('messages').select('intent, intent_confidence').not('intent', 'is', null),
+    // Lightweight timestamp-only fetches — bucketed in JS below — power the
+    // "conversations this week" and "peak usage hours" charts.
+    supabaseAdmin
+      .from('conversations')
+      .select('created_at')
+      .gte('created_at', new Date(Date.now() - 7 * 86400000).toISOString()),
+    supabaseAdmin.from('messages').select('created_at'),
   ]);
+
+  const intentCounts = new Map<string, { count: number; confidenceSum: number }>();
+  for (const row of intentRows ?? []) {
+    const entry = intentCounts.get(row.intent) ?? { count: 0, confidenceSum: 0 };
+    entry.count += 1;
+    entry.confidenceSum += row.intent_confidence ?? 0;
+    intentCounts.set(row.intent, entry);
+  }
+  const topIntents = Array.from(intentCounts.entries())
+    .map(([intent, { count, confidenceSum }]) => ({
+      intent,
+      count,
+      avg_confidence: Math.round((confidenceSum / count) * 100) / 100,
+    }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10);
+
+  const confidenceBuckets = { high: 0, medium: 0, low: 0 };
+  for (const row of intentRows ?? []) {
+    const c = row.intent_confidence ?? 0;
+    if (c > 0.85) confidenceBuckets.high++;
+    else if (c >= 0.65) confidenceBuckets.medium++;
+    else confidenceBuckets.low++;
+  }
+
+  const dailyMap = new Map<string, number>();
+  for (const row of weeklyConversations ?? []) {
+    const day = new Date(row.created_at).toISOString().slice(0, 10);
+    dailyMap.set(day, (dailyMap.get(day) ?? 0) + 1);
+  }
+  const dailyConversations = Array.from(dailyMap.entries())
+    .map(([date, count]) => ({ date, count }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  const hourlyLoad = new Array(24).fill(0);
+  for (const row of allMessageTimestamps ?? []) {
+    hourlyLoad[new Date(row.created_at).getHours()]++;
+  }
 
   return {
     totals: {
@@ -184,6 +235,10 @@ export async function getAnalytics() {
     },
     users_by_role: usersByRole ?? [],
     recent_emergencies: recentEmergencies ?? [],
+    top_intents: topIntents,
+    confidence_distribution: confidenceBuckets,
+    daily_conversations: dailyConversations,
+    hourly_load: hourlyLoad,
   };
 }
 
@@ -244,4 +299,27 @@ export async function listFeedback(page: number, limit: number) {
   }));
 
   return { feedback: data ?? [], avg_rating: avgRating, by_category: byCategory };
+}
+
+// ---------------------------------------------------------------------------
+// Model metrics — real training/evaluation results from the FFNN intent
+// classifier (backend/src/ml/train.ts), not fabricated "knowledge source" data.
+// ---------------------------------------------------------------------------
+
+export async function getModelMetrics() {
+  const fs = await import('fs');
+  const { METRICS_PATH } = await import('../../ml/io');
+  const { getIntents } = await import('../../ml/knowledgeBase');
+
+  const metrics = fs.existsSync(METRICS_PATH)
+    ? JSON.parse(fs.readFileSync(METRICS_PATH, 'utf-8'))
+    : null;
+
+  const intents = getIntents().map((intent) => ({
+    tag: intent.tag,
+    pattern_count: intent.patterns.length,
+    source: intent.source,
+  }));
+
+  return { metrics, intents };
 }

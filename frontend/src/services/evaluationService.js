@@ -10,15 +10,7 @@ export const evaluationService = {
   getResearchConsent: () =>
     api.get('/evaluation/consent'),
 
-  submitConsent: (agreed) =>
-    api.post('/evaluation/consent', { agreed }),
-
-  getAdminSUSResults: (params) =>
-    api.get('/admin/sus-results', { params }),
-
-  exportReport: (format = 'pdf') =>
-    api.get('/admin/reports/export', {
-      params: { format },
-      responseType: 'blob',
-    }),
+  // Backend's ConsentDto requires `consented: true` literally (affirmative-only).
+  submitConsent: (consented = true) =>
+    api.post('/evaluation/consent', { consented }),
 }

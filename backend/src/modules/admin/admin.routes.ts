@@ -227,4 +227,24 @@ router.get('/sus', adminController.listSusResponses);
  */
 router.get('/feedback', adminController.listFeedback);
 
+// ── Model metrics ────────────────────────────────────────────────────────
+
+/**
+ * @openapi
+ * /admin/model-metrics:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Intent classifier training metrics + knowledge base coverage
+ *     description: |
+ *       Reads the FFNN's saved training/evaluation metrics (accuracy, precision,
+ *       recall, F1, confusion matrix from the held-out test split) plus the
+ *       intents.json knowledge base's tag/pattern-count/source list.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200: { description: Model metrics + intent coverage }
+ *       403: { description: Admin access required }
+ */
+router.get('/model-metrics', adminController.getModelMetrics);
+
 export default router;

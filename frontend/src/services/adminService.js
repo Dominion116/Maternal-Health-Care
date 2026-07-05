@@ -19,4 +19,6 @@ export const adminService = {
   getSUS: (params = {}) => api.get('/admin/sus', { params }),
 
   getFeedback: (params = {}) => api.get('/admin/feedback', { params }),
+
+  getModelMetrics: () => api.get('/admin/model-metrics'),
 }

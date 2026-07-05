@@ -61,3 +61,16 @@ export async function deleteConversation(userId: string, conversationId: string)
 
   if (error) throw new Error(error.message);
 }
+
+export async function setSaved(userId: string, conversationId: string, isSaved: boolean) {
+  const { data, error } = await supabaseAdmin
+    .from('conversations')
+    .update({ is_saved: isSaved })
+    .eq('id', conversationId)
+    .eq('user_id', userId)
+    .select()
+    .single();
+
+  if (error || !data) throw new Error('Conversation not found');
+  return data;
+}
