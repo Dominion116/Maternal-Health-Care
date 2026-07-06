@@ -100,6 +100,8 @@ export async function sendMessage(
       conversation_id: conversation.id,
       role: 'assistant',
       content: assistantContent,
+      flagged: false,
+      flagged_keyword: null,
       intent,
       intent_confidence: intentConfidence,
     },
