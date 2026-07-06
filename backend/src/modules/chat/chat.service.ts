@@ -34,7 +34,7 @@ export async function createSession(userId: string, title?: string): Promise<Con
     .select()
     .single();
 
-  if (error || !data) throw new Error('Failed to create session');
+  if (error || !data) throw new Error(`Failed to create session: ${error?.message ?? 'no data returned'}`);
   return data;
 }
 
@@ -105,7 +105,7 @@ export async function sendMessage(
     },
   ]);
 
-  if (insertError) throw new Error('Failed to save messages');
+  if (insertError) throw new Error(`Failed to save messages: ${insertError.message}`);
 
   const { data: savedAssistant } = await supabaseAdmin
     .from('messages')
@@ -147,6 +147,6 @@ async function resolveConversation(
     .select()
     .single();
 
-  if (error || !data) throw new Error('Failed to create conversation');
+  if (error || !data) throw new Error(`Failed to create conversation: ${error?.message ?? 'no data returned'}`);
   return data;
 }
