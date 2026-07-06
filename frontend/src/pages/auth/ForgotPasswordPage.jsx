@@ -21,7 +21,7 @@ const ERROR_MAP = {
 
 function parseError(err) {
   const code = err.response?.data?.code || ''
-  const msg  = (err.response?.data?.message || '').toLowerCase()
+  const msg  = (err.response?.data?.error || '').toLowerCase()
   if (ERROR_MAP[code]) return ERROR_MAP[code]
   if (msg.includes('not found') || msg.includes('no account') || msg.includes('user'))
     return ERROR_MAP.user_not_found

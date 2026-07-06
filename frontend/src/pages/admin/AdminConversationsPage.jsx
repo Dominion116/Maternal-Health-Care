@@ -36,7 +36,7 @@ export default function AdminConversationsPage() {
       const res = await adminService.getConversations(params)
       setConversations(res.data.data || [])
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load conversations')
+      setError(err.response?.data?.error || 'Failed to load conversations')
     } finally {
       setLoading(false)
     }

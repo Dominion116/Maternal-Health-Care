@@ -16,6 +16,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     const data = await authService.login(req.body);
     return sendSuccess(res, data, 'Login successful');
   } catch (err) {
+    if (err instanceof Error) return sendError(res, err.message, 401);
     return next(err);
   }
 }

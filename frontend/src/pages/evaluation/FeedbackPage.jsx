@@ -53,7 +53,7 @@ export default function FeedbackPage() {
       await evaluationService.submitFeedback({ rating, category, comment: fullComment || undefined })
       setSubmitted(true)
     } catch (err) {
-      setApiError(err.response?.data?.message || 'Failed to submit feedback. Please try again.')
+      setApiError(err.response?.data?.error || 'Failed to submit feedback. Please try again.')
     } finally {
       setSubmitting(false)
     }
