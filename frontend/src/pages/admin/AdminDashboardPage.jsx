@@ -49,7 +49,7 @@ export default function AdminDashboardPage() {
         setAnalytics(analyticsRes.data.data);
         setSusData(susRes.data.data);
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to load dashboard data");
+        setError(err.response?.data?.error || "Failed to load dashboard data");
       } finally {
         setLoading(false);
       }

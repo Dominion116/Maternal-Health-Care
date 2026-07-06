@@ -43,7 +43,7 @@ function InviteAdminModal({ onClose, onInvited }) {
       await adminService.inviteAdmin(email.trim(), role, fullName.trim() || undefined)
       onInvited(email.trim())
     } catch (err) {
-      setError(err.response?.data?.message || err.response?.data?.error || 'Failed to send invite')
+      setError(err.response?.data?.error || 'Failed to send invite')
     } finally {
       setSubmitting(false)
     }
@@ -121,7 +121,7 @@ export default function AdminUsersPage() {
       const res = await adminService.getUsers(params)
       setUsers(res.data.data || [])
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load users')
+      setError(err.response?.data?.error || 'Failed to load users')
     } finally {
       setLoading(false)
     }
@@ -135,7 +135,7 @@ export default function AdminUsersPage() {
       await adminService.updateUserRole(userId, newRole)
       setUsers((prev) => prev.map((u) => (u.user_id === userId ? { ...u, role: newRole } : u)))
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update role')
+      setError(err.response?.data?.error || 'Failed to update role')
     } finally {
       setUpdatingId(null)
     }

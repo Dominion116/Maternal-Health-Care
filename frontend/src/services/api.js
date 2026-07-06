@@ -17,7 +17,11 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // /auth/* 401s (bad login credentials, expired OTP, etc.) are not a
+    // session expiring — only redirect when an already-authenticated
+    // request gets rejected.
+    const isAuthEndpoint = error.config?.url?.startsWith("/auth/");
+    if (error.response?.status === 401 && !isAuthEndpoint) {
       useAuthStore.getState().logout();
       window.location.href = "/auth/session-expired";
     }

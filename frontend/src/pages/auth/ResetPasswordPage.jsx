@@ -43,7 +43,7 @@ export default function ResetPasswordPage() {
       await authService.resetPassword(token, form.password)
       navigate(ROUTES.PASSWORD_SUCCESS)
     } catch (err) {
-      setApiError(err.response?.data?.message || 'Failed to reset password. The link may have expired.')
+      setApiError(err.response?.data?.error || 'Failed to reset password. The link may have expired.')
     } finally {
       setLoading(false)
     }
