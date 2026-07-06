@@ -69,7 +69,7 @@ export default function ResearchConsentPage() {
       await evaluationService.submitConsent(true)
       navigate(ROUTES.DASHBOARD)
     } catch (err) {
-      setApiError(err.response?.data?.message || 'Failed to save consent. Please try again.')
+      setApiError(err.response?.data?.error || 'Failed to save consent. Please try again.')
     } finally {
       setSubmitting(false)
     }

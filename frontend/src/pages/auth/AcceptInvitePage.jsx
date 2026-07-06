@@ -52,7 +52,7 @@ export default function AcceptInvitePage() {
       await authService.acceptInvite(token, form.password)
       navigate(ROUTES.LOGIN, { replace: true })
     } catch (err) {
-      setApiError(err.response?.data?.message || 'Failed to activate account. The invite link may have expired.')
+      setApiError(err.response?.data?.error || 'Failed to activate account. The invite link may have expired.')
     } finally {
       setLoading(false)
     }
