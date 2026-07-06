@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import swaggerUi from 'swagger-ui-express';
 
 import { swaggerSpec } from './config/swagger';
 import { errorMiddleware } from './middlewares/error.middleware';
@@ -24,7 +23,48 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// swagger-ui-express serves its assets from node_modules/swagger-ui-dist via
+// express.static, which Vercel's serverless bundler doesn't package — every
+// asset request 404s and falls through to the same HTML shell. Load the
+// Swagger UI page from a CDN instead and only serve the raw spec ourselves.
+app.use(
+  '/api-docs',
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", 'https://unpkg.com'],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://unpkg.com'],
+        imgSrc: ["'self'", 'data:', 'https://unpkg.com'],
+      },
+    },
+  })
+);
+
+app.get('/api-docs/swagger.json', (_req, res) => res.json(swaggerSpec));
+
+app.get('/api-docs', (_req, res) => {
+  res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MamaGuide API Docs</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script>
+    window.onload = () => {
+      window.ui = SwaggerUIBundle({
+        url: '/api-docs/swagger.json',
+        dom_id: '#swagger-ui',
+      });
+    };
+  </script>
+</body>
+</html>`);
+});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
