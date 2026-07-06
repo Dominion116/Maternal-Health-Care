@@ -35,7 +35,7 @@ export default function AdminFeedbackPage() {
         setAvgRating(res.data.data.avg_rating)
         setByCategory(res.data.data.by_category || [])
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to load feedback')
+        setError(err.response?.data?.error || 'Failed to load feedback')
       } finally {
         setLoading(false)
       }

@@ -32,7 +32,7 @@ export default function AdminKnowledgePage() {
         const res = await adminService.getModelMetrics()
         setData(res.data.data)
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to load model metrics')
+        setError(err.response?.data?.error || 'Failed to load model metrics')
       } finally {
         setLoading(false)
       }

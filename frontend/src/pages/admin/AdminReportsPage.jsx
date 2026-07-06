@@ -38,7 +38,7 @@ export default function AdminReportsPage() {
         setFeedback(f.data.data);
         setModelMetrics(m.data.data);
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to load report data");
+        setError(err.response?.data?.error || "Failed to load report data");
       } finally {
         setLoading(false);
       }

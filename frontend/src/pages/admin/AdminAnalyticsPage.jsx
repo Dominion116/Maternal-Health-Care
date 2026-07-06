@@ -29,7 +29,7 @@ export default function AdminAnalyticsPage() {
         const res = await adminService.getAnalytics()
         setAnalytics(res.data.data)
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to load analytics')
+        setError(err.response?.data?.error || 'Failed to load analytics')
       } finally {
         setLoading(false)
       }

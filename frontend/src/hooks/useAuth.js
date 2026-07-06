@@ -32,7 +32,7 @@ export function useAuth() {
     } catch (err) {
       return {
         success: false,
-        error: err.response?.data?.message || "Login failed",
+        error: err.response?.data?.error || "Login failed",
       };
     } finally {
       setLoading(false);
@@ -62,7 +62,7 @@ export function useAuth() {
     } catch (err) {
       return {
         success: false,
-        error: err.response?.data?.message || "Registration failed",
+        error: err.response?.data?.error || "Registration failed",
       };
     } finally {
       setLoading(false);

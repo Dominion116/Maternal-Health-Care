@@ -48,7 +48,7 @@ export default function AdminSUSPage() {
         setResponses(res.data.data.responses || []);
         setAvgScore(res.data.data.avg_sus_score);
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to load SUS results");
+        setError(err.response?.data?.error || "Failed to load SUS results");
       } finally {
         setLoading(false);
       }
