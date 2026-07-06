@@ -1,3 +1,4 @@
+import path from 'path';
 import swaggerJsdoc from 'swagger-jsdoc';
 
 const options: swaggerJsdoc.Options = {
@@ -20,7 +21,7 @@ const options: swaggerJsdoc.Options = {
     },
     security: [{ bearerAuth: [] }],
   },
-  apis: ['./src/modules/**/*.routes.ts'],
+  apis: [path.join(__dirname, '../modules/**/*.routes.{ts,js}')],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);
