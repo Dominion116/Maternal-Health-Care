@@ -23,8 +23,9 @@ export function useAuth() {
       // (profile is attached server-side — onboarding_completed lives in
       // user_profiles, not the Supabase auth user object).
       const normalizedUser = {
-        ...normalizeUser(normalizedData.user),
-        onboarding_completed: normalizedData.profile?.onboarding_completed ?? false,
+        ...normalizeUser(normalizedData.user, normalizedData.profile),
+        onboarding_completed:
+          normalizedData.profile?.onboarding_completed ?? false,
       };
       const accessToken = normalizedData.session?.access_token;
       login(normalizedUser, accessToken);
@@ -56,7 +57,10 @@ export function useAuth() {
       // If Supabase skips email confirmation and returns a session, log in now.
       // When email confirmation is required, session is null — navigate to verify.
       if (normalizedData.session?.access_token && normalizedData.user) {
-        login(normalizeUser(normalizedData.user), normalizedData.session.access_token);
+        login(
+          normalizeUser(normalizedData.user),
+          normalizedData.session.access_token,
+        );
       }
       return { success: true, data: normalizedData };
     } catch (err) {
@@ -71,7 +75,8 @@ export function useAuth() {
 
   const isNurse = user?.role === "nurse";
   const isSuperAdmin = user?.role === "super_admin";
-  const isAdmin = user?.role === "admin" || user?.role === "researcher" || isSuperAdmin;
+  const isAdmin =
+    user?.role === "admin" || user?.role === "researcher" || isSuperAdmin;
   const isPregnantWoman = user?.role === "pregnant_woman";
 
   // Maps the app's camelCase user fields to the backend's snake_case
@@ -88,7 +93,8 @@ export function useAuth() {
   async function updateUser(updates) {
     const payload = {};
     for (const [localKey, backendKey] of Object.entries(PROFILE_FIELD_MAP)) {
-      if (updates[localKey] !== undefined) payload[backendKey] = updates[localKey];
+      if (updates[localKey] !== undefined)
+        payload[backendKey] = updates[localKey];
     }
     try {
       if (Object.keys(payload).length > 0) {
