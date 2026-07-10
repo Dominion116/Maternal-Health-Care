@@ -16,11 +16,13 @@ router.use(authMiddleware as any, adminMiddleware as any);
  * /admin/invite:
  *   post:
  *     tags: [Admin]
- *     summary: Invite a new admin or super_admin by email (super_admin only)
+ *     summary: Invite a new admin, super_admin or researcher by email (super_admin only)
  *     description: |
  *       Uses Supabase's built-in invite flow — no password is set here. The
  *       recipient receives an email with a link to /auth/accept-invite where
- *       they set their password and the account is activated with the given role.
+ *       they set their password and the account is activated with the given
+ *       role and onboarding already completed (staff skip the patient
+ *       onboarding wizard).
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -33,7 +35,7 @@ router.use(authMiddleware as any, adminMiddleware as any);
  *             properties:
  *               email: { type: string, format: email }
  *               full_name: { type: string, maxLength: 120 }
- *               role: { type: string, enum: [admin, super_admin] }
+ *               role: { type: string, enum: [admin, super_admin, researcher] }
  *     responses:
  *       201: { description: Invite sent }
  *       403: { description: Super admin access required }
@@ -91,7 +93,8 @@ router.get('/users/:id', adminController.getUserById);
  * /admin/users/{id}/role:
  *   patch:
  *     tags: [Admin]
- *     summary: Change a user's role
+ *     summary: Change a user's role (patient-facing roles only)
+ *     description: Dashboard-tier roles (admin, super_admin, researcher) are granted via POST /admin/invite instead.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -107,7 +110,7 @@ router.get('/users/:id', adminController.getUserById);
  *             type: object
  *             required: [role]
  *             properties:
- *               role: { type: string, enum: [pregnant_woman, nurse, admin, researcher] }
+ *               role: { type: string, enum: [pregnant_woman, nurse] }
  *     responses:
  *       200: { description: Updated profile }
  *       403: { description: Admin access required }

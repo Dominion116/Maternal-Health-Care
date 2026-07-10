@@ -1,20 +1,34 @@
 /**
- * Inference-time intent classifier. Loads the trained model once (lazy
- * singleton) and exposes classifyIntent() for the chat pipeline.
+ * Inference-time intent classifier. Transfer-learning pipeline:
+ * message -> Universal Sentence Encoder base model (frozen, embedder.ts)
+ * -> trained classification head (model.ts + saved weights) -> intent.
+ * The head is loaded once (lazy singleton); the base model is loaded and
+ * cached by embedder.ts.
  */
 import * as tf from '@tensorflow/tfjs';
-import { vectorizeText } from './nlp';
+import { embedTexts, loadBaseModel } from './embedder';
 import { buildModel } from './model';
-import { loadVocabAndClasses, loadWeightsInto, artifactsExist } from './io';
+import { loadConfigAndClasses, loadWeightsInto, loadCentroids, artifactsExist } from './io';
 
 export interface Classification {
   intent: string;
   confidence: number;
 }
 
-let cached: { model: tf.LayersModel; vocabulary: string[]; classes: string[] } | null = null;
+// Semantic out-of-domain gate: if the message embedding's cosine similarity
+// to the predicted intent's training centroid is below this, the message is
+// not actually about that intent (gibberish, off-topic) — return 'unknown'
+// instead of a confidently wrong answer. Related USE sentence pairs land
+// around 0.5–0.8; unrelated text around 0.1–0.3.
+const MIN_CENTROID_SIMILARITY = 0.4;
 
-function getClassifier() {
+let cached: {
+  model: tf.LayersModel;
+  classes: string[];
+  centroids: number[][] | null;
+} | null = null;
+
+function getHead() {
   if (cached) return cached;
 
   if (!artifactsExist()) {
@@ -23,19 +37,36 @@ function getClassifier() {
     );
   }
 
-  const { vocabulary, classes } = loadVocabAndClasses();
-  const model = buildModel(vocabulary.length, classes.length);
+  const { config, classes } = loadConfigAndClasses();
+  const model = buildModel(config.embeddingDim, classes.length);
   loadWeightsInto(model);
 
-  cached = { model, vocabulary, classes };
+  cached = { model, classes, centroids: loadCentroids() };
   return cached;
 }
 
-export function classifyIntent(message: string): Classification {
-  const { model, vocabulary, classes } = getClassifier();
+function cosineSimilarity(a: number[], b: number[]): number {
+  let dot = 0;
+  let normA = 0;
+  let normB = 0;
+  for (let i = 0; i < a.length; i++) {
+    dot += a[i] * b[i];
+    normA += a[i] * a[i];
+    normB += b[i] * b[i];
+  }
+  const denom = Math.sqrt(normA) * Math.sqrt(normB);
+  return denom === 0 ? 0 : dot / denom;
+}
 
-  const vector = vectorizeText(message, vocabulary);
-  const input = tf.tensor2d([vector]);
+export async function classifyIntent(message: string): Promise<Classification> {
+  const { model, classes, centroids } = getHead();
+
+  if (!message.trim()) {
+    return { intent: 'unknown', confidence: 0 };
+  }
+
+  const [embedding] = await embedTexts([message]);
+  const input = tf.tensor2d([embedding]);
   const output = model.predict(input) as tf.Tensor;
   const probabilities = output.dataSync();
 
@@ -47,5 +78,20 @@ export function classifyIntent(message: string): Classification {
   input.dispose();
   output.dispose();
 
+  if (centroids?.[bestIdx]) {
+    const similarity = cosineSimilarity(embedding, centroids[bestIdx]);
+    if (similarity < MIN_CENTROID_SIMILARITY) {
+      return { intent: 'unknown', confidence: 0 };
+    }
+  }
+
   return { intent: classes[bestIdx], confidence: probabilities[bestIdx] };
+}
+
+// Loads the head and the USE base model ahead of the first chat request so
+// users don't pay the base model's download/initialisation cost mid-chat.
+export async function warmupClassifier(): Promise<void> {
+  getHead();
+  await loadBaseModel();
+  await embedTexts(['warmup']);
 }

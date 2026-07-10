@@ -23,9 +23,9 @@ const stageLabels = {
   postpartum: 'Postpartum',
 }
 
-// Only these roles can be granted via the generic role-change endpoint —
-// admin/super_admin can only be granted through the invite flow.
-const ASSIGNABLE_ROLES = ['pregnant_woman', 'nurse', 'researcher']
+// Only patient-facing roles can be granted via the generic role-change
+// endpoint — admin/super_admin/researcher are granted through the invite flow.
+const ASSIGNABLE_ROLES = ['pregnant_woman', 'nurse']
 
 function InviteAdminModal({ onClose, onInvited }) {
   const [email, setEmail] = useState('')
@@ -56,7 +56,7 @@ function InviteAdminModal({ onClose, onInvited }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display font-bold text-lg text-gray-900">Invite Admin</h2>
+          <h2 className="font-display font-bold text-lg text-gray-900">Invite Team Member</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X className="w-5 h-5" />
           </button>
@@ -88,7 +88,12 @@ function InviteAdminModal({ onClose, onInvited }) {
             >
               <option value="admin">Admin</option>
               <option value="super_admin">Super Admin</option>
+              <option value="researcher">Researcher</option>
             </select>
+            <p className="text-xs text-gray-400 mt-1.5">
+              They'll receive an email link to set their password and go
+              straight to the admin dashboard — no patient onboarding.
+            </p>
           </div>
           <Button type="submit" fullWidth loading={submitting} className="mt-2">
             Send Invite
@@ -162,7 +167,7 @@ export default function AdminUsersPage() {
         {isSuperAdmin && (
           <Button size="sm" onClick={() => setShowInvite(true)}>
             <UserPlus className="w-4 h-4" />
-            Invite Admin
+            Invite Team Member
           </Button>
         )}
       </div>

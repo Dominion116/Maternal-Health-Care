@@ -73,7 +73,7 @@ export default function AdminKnowledgePage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { label: 'Total Intents', value: intents.length, sub: `${metrics.trainExamples + metrics.testExamples} total patterns`, icon: Layers, color: 'text-rose-600 bg-rose-100' },
-              { label: 'Vocabulary Size', value: metrics.vocabularySize, sub: 'Bag-of-Words features', icon: Database, color: 'text-sage-600 bg-sage-100' },
+              { label: 'Embedding Dims', value: metrics.embeddingDim ?? metrics.vocabularySize, sub: metrics.baseModel ? 'Universal Sentence Encoder' : 'Bag-of-Words features', icon: Database, color: 'text-sage-600 bg-sage-100' },
               { label: 'Test Accuracy', value: `${Math.round(metrics.testEvaluation.accuracy * 100)}%`, sub: `On ${metrics.testExamples} held-out examples`, icon: Target, color: 'text-blue-600 bg-blue-100' },
               { label: 'Macro F1', value: `${Math.round(metrics.testEvaluation.macroAvg.f1 * 100)}%`, sub: 'Held-out test split', icon: CheckCircle, color: 'text-green-600 bg-green-100' },
             ].map(kpi => (
@@ -154,10 +154,39 @@ export default function AdminKnowledgePage() {
                       <p className="text-xs text-amber-700 mt-0.5">
                         Training accuracy ({Math.round(metrics.finalTrainAccuracy * 100)}%) is much higher than test accuracy
                         ({Math.round(metrics.testEvaluation.accuracy * 100)}%) — expected on this small dataset, and the
-                        reason dropout (0.5) is used. More patterns per intent would narrow this gap further.
+                        reason dropout is used. More patterns per intent would narrow this gap further.
                       </p>
                     </div>
                   </div>
+                </div>
+              )}
+
+              {(metrics.baselines || []).length > 0 && (
+                <div className="mt-4">
+                  <p className="text-xs font-semibold text-gray-700 mb-2">Model vs baselines (same test split)</p>
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="text-gray-400 text-left">
+                        <th className="font-medium pb-1.5">Model</th>
+                        <th className="font-medium pb-1.5 text-right">Accuracy</th>
+                        <th className="font-medium pb-1.5 text-right">Weighted F1</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-t border-gray-100">
+                        <td className="py-1.5 font-semibold text-gray-800">Neural network (USE base model)</td>
+                        <td className="py-1.5 text-right font-semibold text-gray-800">{Math.round(metrics.testEvaluation.accuracy * 100)}%</td>
+                        <td className="py-1.5 text-right font-semibold text-gray-800">{Math.round(metrics.testEvaluation.weightedAvg.f1 * 100)}%</td>
+                      </tr>
+                      {metrics.baselines.map((b) => (
+                        <tr key={b.name} className="border-t border-gray-100">
+                          <td className="py-1.5 text-gray-600">{b.name.replace(/_/g, ' ')}</td>
+                          <td className="py-1.5 text-right text-gray-600">{Math.round(b.accuracy * 100)}%</td>
+                          <td className="py-1.5 text-right text-gray-600">{Math.round(b.weightedF1 * 100)}%</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
 

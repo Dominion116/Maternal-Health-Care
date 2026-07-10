@@ -66,7 +66,7 @@ export default function AcceptInvitePage() {
         </div>
         <h1 className="font-display font-bold text-2xl text-text-primary mb-2">Invalid Invite Link</h1>
         <p className="text-text-secondary text-sm mb-6 leading-relaxed">
-          This admin invite link is invalid or has expired. Ask a super admin to resend your invite.
+          This invite link is invalid or has expired. Ask a super admin to resend your invite.
         </p>
         <Link
           to={ROUTES.LOGIN}
@@ -90,10 +90,12 @@ export default function AcceptInvitePage() {
           <ShieldCheck className="w-6 h-6 text-rose-700" aria-hidden />
         </div>
         <h1 className="font-display font-bold text-2xl text-text-primary mb-1.5">
-          Activate your admin account
+          Activate your staff account
         </h1>
         <p className="text-sm text-text-secondary leading-relaxed">
-          You've been invited to MamaGuide as an admin. Set a password to finish setting up your account.
+          You've been invited to the MamaGuide team. Set a password to finish
+          setting up your account — you'll then sign in straight to the admin
+          dashboard.
         </p>
       </div>
 

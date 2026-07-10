@@ -1,6 +1,7 @@
 import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '../../types';
 import * as chatService from './chat.service';
+import { getDashboardRecommendations } from '../../services/recommendation.service';
 import { sendSuccess } from '../../utils/response';
 
 export async function createSession(
@@ -24,6 +25,19 @@ export async function sendMessage(
   try {
     const { message, conversation_id } = req.body;
     const result = await chatService.sendMessage(req.user.id, message, conversation_id);
+    return sendSuccess(res, result);
+  } catch (err) {
+    return next(err);
+  }
+}
+
+export async function getRecommendations(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const result = await getDashboardRecommendations(req.user.id);
     return sendSuccess(res, result);
   } catch (err) {
     return next(err);

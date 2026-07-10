@@ -29,7 +29,11 @@ export function AdminRoute({ children }) {
 }
 
 export function GuestRoute({ children }) {
-  const { isAuthenticated } = useAuth();
-  if (isAuthenticated) return <Navigate to={ROUTES.CHAT} replace />;
+  const { isAuthenticated, isAdmin } = useAuth();
+  if (isAuthenticated) {
+    return (
+      <Navigate to={isAdmin ? ROUTES.ADMIN_DASHBOARD : ROUTES.CHAT} replace />
+    );
+  }
   return children;
 }

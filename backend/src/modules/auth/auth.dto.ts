@@ -1,14 +1,14 @@
 import { z } from 'zod';
 
-// Only the three roles a user can self-select at registration.
-// 'admin'/'super_admin' are never self-registered — they're granted via the
-// invite flow (POST /admin/invite, super_admin only) or the one-off
-// create-admin bootstrap script.
+// Self-registration is for pregnant women only. Every other role is granted
+// by staff: admin/super_admin/researcher via the invite flow (POST
+// /admin/invite, super_admin only) or the one-off create-admin bootstrap
+// script; nurse via an admin changing a registered user's role.
 export const RegisterDto = z.object({
   email: z.string().email(),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   full_name: z.string().min(1).max(120).optional(),
-  role: z.enum(['pregnant_woman', 'nurse', 'researcher']).default('pregnant_woman'),
+  role: z.literal('pregnant_woman').default('pregnant_woman'),
   phone_number: z.string().max(20).optional(),
   // language and pregnancy_stage are set during the onboarding flow via PATCH /profile
 });

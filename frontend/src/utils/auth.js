@@ -12,8 +12,6 @@ export function normalizeUser(supabaseUser) {
 
   const meta = supabaseUser.user_metadata || {};
 
-  console.log(supabaseUser);
-
   // Strip Supabase-internal fields; keep id, email, and any app-level extras
   // eslint-disable-next-line no-unused-vars
   const {
@@ -44,5 +42,7 @@ export function normalizeUser(supabaseUser) {
     phone: meta.phone_number || supabaseUser.phone || appFields.phone || "",
     emailVerified: !!supabaseUser.email_confirmed_at,
     avatarUrl: meta.avatar_url || null,
+    // Supabase account creation date (survives re-normalization via appFields)
+    createdAt: created_at || appFields.createdAt || null,
   };
 }

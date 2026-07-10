@@ -82,7 +82,7 @@ export async function sendMessage(
     }>;
 
     contextMessages.push({ role: 'user', content: message });
-    const result = await predict(contextMessages, userContext);
+    const result = await predict(contextMessages);
     assistantContent = result.response;
     intent = result.intent;
     intentConfidence = result.confidence;

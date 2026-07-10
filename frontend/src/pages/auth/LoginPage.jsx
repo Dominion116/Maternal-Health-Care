@@ -36,7 +36,16 @@ export default function LoginPage() {
     const result = await signIn(form.email, form.password);
     setLoading(false);
     if (result.success) {
-      if (!result.user?.onboarding_completed) {
+      const isAdminRole = ["admin", "researcher", "super_admin"].includes(
+        result.user?.role,
+      );
+      if (isAdminRole) {
+        // Admins land on the admin dashboard (or the admin page they were
+        // trying to reach) — onboarding is a patient-facing flow.
+        navigate(from.startsWith("/admin") ? from : ROUTES.ADMIN_DASHBOARD, {
+          replace: true,
+        });
+      } else if (!result.user?.onboarding_completed) {
         navigate(ROUTES.ONBOARDING, { replace: true });
       } else {
         navigate(from, { replace: true });

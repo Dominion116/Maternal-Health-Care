@@ -11,11 +11,13 @@ const router = Router();
  * /auth/register:
  *   post:
  *     tags: [Auth]
- *     summary: Register a new user
+ *     summary: Register a new user (pregnant women only)
  *     description: |
  *       Creates the Supabase auth user and the matching `user_profiles` row in one call.
- *       `language` and `pregnancy_stage` are not set here — they are collected during the
- *       onboarding flow and saved via `PATCH /api/profile`.
+ *       Self-registration always produces a `pregnant_woman` account — staff roles
+ *       (admin, super_admin, researcher) are created via the invite flow and nurses
+ *       via an admin role change. `language` and `pregnancy_stage` are not set here —
+ *       they are collected during the onboarding flow and saved via `PATCH /api/profile`.
  *     security: []
  *     requestBody:
  *       required: true
@@ -23,7 +25,7 @@ const router = Router();
  *         application/json:
  *           schema:
  *             type: object
- *             required: [email, password, role]
+ *             required: [email, password]
  *             properties:
  *               email:
  *                 type: string
@@ -39,12 +41,12 @@ const router = Router();
  *                 example: Adaeze Okonkwo
  *               role:
  *                 type: string
- *                 enum: [pregnant_woman, nurse, researcher]
+ *                 enum: [pregnant_woman]
  *                 default: pregnant_woman
  *                 description: |
- *                   Selected from the role picker on the registration screen.
- *                   `admin` is not self-assignable — it is granted by an existing admin
- *                   via `PATCH /api/admin/users/:id/role`.
+ *                   Optional and always `pregnant_woman`. Staff roles are granted via
+ *                   `POST /api/admin/invite` (admin, super_admin, researcher) or
+ *                   `PATCH /api/admin/users/:id/role` (nurse).
  *               phone_number:
  *                 type: string
  *                 maxLength: 20

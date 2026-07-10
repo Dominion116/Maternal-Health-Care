@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { PageLoader } from "@/components/atoms/Spinner";
 import { PublicLayout } from "@/layouts/PublicLayout";
 import { AuthLayout } from "@/layouts/AuthLayout";
@@ -48,7 +48,6 @@ const OnboardingPage = lazy(() => import("@/pages/onboarding/OnboardingPage"));
 const DashboardPage = lazy(() => import("@/pages/app/DashboardPage"));
 const ChatPage = lazy(() => import("@/pages/chat/ChatPage"));
 const ChatHistoryPage = lazy(() => import("@/pages/chat/ChatHistoryPage"));
-const ChatSavedPage = lazy(() => import("@/pages/chat/ChatSavedPage"));
 
 // Education
 const EducationHomePage = lazy(
@@ -348,12 +347,10 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        // Saved chats now live inside Chat History (star filter) — keep old
+        // URLs/bookmarks working with a redirect.
         path: "chat/saved",
-        element: (
-          <S>
-            <ChatSavedPage />
-          </S>
-        ),
+        element: <Navigate to="/app/chat/history" replace />,
       },
 
       // Education

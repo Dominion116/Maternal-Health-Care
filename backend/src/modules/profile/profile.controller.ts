@@ -28,3 +28,29 @@ export async function updateProfile(
     return next(err);
   }
 }
+
+export async function exportData(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const data = await profileService.exportData(req.user.id);
+    return sendSuccess(res, data);
+  } catch (err) {
+    return next(err);
+  }
+}
+
+export async function deleteAccount(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    await profileService.deleteAccount(req.user.id);
+    return sendSuccess(res, null, 'Account deleted');
+  } catch (err) {
+    return next(err);
+  }
+}

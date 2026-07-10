@@ -1,10 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
-  Bell, Shield, Globe, Accessibility, ChevronRight, ChevronLeft,
-  Moon, Sun, Type, Contrast, Volume2, Check, Trash2, LogOut,
+  Bell, Shield, Globe, Accessibility, Loader2,
+  Moon, Type, Contrast, Volume2, Check, Trash2, LogOut,
 } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { useAuth } from '@/hooks/useAuth'
+import { useAuthStore } from '@/store/useAuthStore'
+import { authService } from '@/services/authService'
+import { evaluationService } from '@/services/evaluationService'
+import { loadAccessibility, saveAccessibility } from '@/utils/accessibility'
 import { Badge } from '@/components/atoms/Badge'
 import { ROUTES, LANGUAGES, LANGUAGE_LABELS } from '@/utils/constants'
 import { cn } from '@/utils/cn'
@@ -16,15 +21,51 @@ const tabs = [
   { id: 'accessibility', label: 'Accessibility', icon: Accessibility, href: ROUTES.SETTINGS_ACCESSIBILITY },
 ]
 
-function NotificationsTab() {
-  const [settings, setSettings] = useState({
-    healthReminders: true,
-    ancReminders: true,
-    emergencyAlerts: true,
-    weeklyTips: false,
-    researchUpdates: false,
-  })
-  function toggle(key) { setSettings(p => ({ ...p, [key]: !p[key] })) }
+const DEFAULT_NOTIFICATIONS = {
+  healthReminders: true,
+  ancReminders: true,
+  weeklyTips: false,
+  researchUpdates: false,
+}
+
+function Toggle({ on, disabled, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(
+        'w-11 h-6 rounded-full transition-all duration-200 relative shrink-0',
+        on ? 'bg-rose-600' : 'bg-gray-200',
+        disabled && 'opacity-70 cursor-not-allowed'
+      )}
+      role="switch"
+      aria-checked={on}
+    >
+      <span className={cn(
+        'absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-all duration-200',
+        on ? 'left-5.5' : 'left-0.5'
+      )} />
+    </button>
+  )
+}
+
+function NotificationsTab({ profile }) {
+  const [settings, setSettings] = useState(() => ({
+    ...DEFAULT_NOTIFICATIONS,
+    ...(profile?.settings?.notifications || {}),
+  }))
+
+  async function toggle(key) {
+    const previous = settings
+    const next = { ...settings, [key]: !settings[key] }
+    setSettings(next)
+    try {
+      await authService.updateProfile({ settings: { notifications: next } })
+    } catch {
+      setSettings(previous)
+      toast.error('Could not save your notification preference. Please try again.')
+    }
+  }
 
   const items = [
     { key: 'healthReminders', label: 'Health reminders', desc: 'Reminders about nutrition, hydration, and rest' },
@@ -44,22 +85,11 @@ function NotificationsTab() {
             <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">{item.desc}</p>
             {item.locked && <Badge variant="rose" size="sm" className="mt-1">Always on</Badge>}
           </div>
-          <button
-            onClick={() => !item.locked && toggle(item.key)}
+          <Toggle
+            on={item.locked ? true : settings[item.key]}
             disabled={item.locked}
-            className={cn(
-              'w-11 h-6 rounded-full transition-all duration-200 relative shrink-0',
-              settings[item.key] ? 'bg-rose-600' : 'bg-gray-200',
-              item.locked && 'opacity-70 cursor-not-allowed'
-            )}
-            role="switch"
-            aria-checked={settings[item.key]}
-          >
-            <span className={cn(
-              'absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-all duration-200',
-              settings[item.key] ? 'left-5.5' : 'left-0.5'
-            )} />
-          </button>
+            onClick={() => !item.locked && toggle(item.key)}
+          />
         </div>
       ))}
     </div>
@@ -68,14 +98,98 @@ function NotificationsTab() {
 
 function PrivacyTab() {
   const { signOut } = useAuth()
+  const logout = useAuthStore(s => s.logout)
   const navigate = useNavigate()
   const [showDelete, setShowDelete] = useState(false)
   const [confirmText, setConfirmText] = useState('')
+  const [deleting, setDeleting] = useState(false)
+  const [exporting, setExporting] = useState(false)
+  const [consent, setConsent] = useState(null)
+  const [withdrawing, setWithdrawing] = useState(false)
+
+  useEffect(() => {
+    let alive = true
+    evaluationService.getResearchConsent()
+      .then(({ data }) => { if (alive) setConsent(data.data) })
+      .catch(() => { /* consent status is optional context — fail quietly */ })
+    return () => { alive = false }
+  }, [])
+
+  async function handleExport() {
+    setExporting(true)
+    try {
+      const { data } = await authService.exportData()
+      const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `mamaguide-data-export-${new Date().toISOString().slice(0, 10)}.json`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+      toast.success('Your data export has been downloaded.')
+    } catch {
+      toast.error('Could not export your data. Please try again.')
+    } finally {
+      setExporting(false)
+    }
+  }
+
+  async function handleWithdraw() {
+    setWithdrawing(true)
+    try {
+      const { data } = await evaluationService.withdrawConsent()
+      setConsent(data.data ?? { consented: false })
+      toast.success('You have withdrawn from the evaluation study.')
+    } catch {
+      toast.error('Could not withdraw from the study. Please try again.')
+    } finally {
+      setWithdrawing(false)
+    }
+  }
+
+  async function handleDeleteAccount() {
+    setDeleting(true)
+    try {
+      await authService.deleteAccount()
+      // Local logout only — the server session is already gone with the account
+      logout()
+      toast.success('Your account and all your data have been deleted.')
+      navigate(ROUTES.HOME)
+    } catch {
+      toast.error('Could not delete your account. Please try again.')
+      setDeleting(false)
+    }
+  }
+
+  const isEnrolled = consent?.consented === true
 
   const privacyItems = [
-    { label: 'Conversation data', desc: 'Your chat messages are stored securely on our server', action: 'Manage' },
-    { label: 'Research participation', desc: 'You are currently enrolled in the evaluation study', action: 'Withdraw' },
-    { label: 'Export my data', desc: 'Download a copy of your conversation history', action: 'Export' },
+    {
+      label: 'Conversation data',
+      desc: 'Your chat messages are stored securely on our server',
+      action: 'Manage',
+      onClick: () => navigate(ROUTES.CHAT_HISTORY),
+    },
+    {
+      label: 'Research participation',
+      desc: isEnrolled
+        ? 'You are currently enrolled in the evaluation study'
+        : consent
+          ? 'You have withdrawn from the evaluation study'
+          : 'You are not enrolled in the evaluation study',
+      action: withdrawing ? 'Withdrawing…' : 'Withdraw',
+      onClick: handleWithdraw,
+      disabled: !isEnrolled || withdrawing,
+    },
+    {
+      label: 'Export my data',
+      desc: 'Download a copy of your conversation history',
+      action: exporting ? 'Exporting…' : 'Export',
+      onClick: handleExport,
+      disabled: exporting,
+    },
   ]
 
   return (
@@ -88,7 +202,11 @@ function PrivacyTab() {
               <p className="text-sm font-semibold text-text-primary">{item.label}</p>
               <p className="text-xs text-text-secondary mt-0.5">{item.desc}</p>
             </div>
-            <button className="text-xs text-rose-700 font-semibold hover:underline shrink-0">
+            <button
+              onClick={item.onClick}
+              disabled={item.disabled}
+              className="text-xs text-rose-700 font-semibold hover:underline shrink-0 disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed"
+            >
               {item.action}
             </button>
           </div>
@@ -101,7 +219,7 @@ function PrivacyTab() {
 
       <div className="border-t border-border pt-4 space-y-2">
         <button
-          onClick={() => { signOut?.(); navigate(ROUTES.LOGIN) }}
+          onClick={async () => { await signOut(); navigate(ROUTES.LOGIN) }}
           className="w-full flex items-center gap-3 px-4 py-3.5 bg-white rounded-xl border border-border hover:bg-gray-50 text-left transition-colors"
         >
           <LogOut className="w-4 h-4 text-text-muted" aria-hidden />
@@ -132,10 +250,12 @@ function PrivacyTab() {
           />
           <div className="flex gap-2">
             <button
-              disabled={confirmText !== 'DELETE'}
-              className="px-4 py-2 bg-error text-white text-xs font-bold rounded-lg disabled:opacity-40"
+              disabled={confirmText !== 'DELETE' || deleting}
+              onClick={handleDeleteAccount}
+              className="px-4 py-2 bg-error text-white text-xs font-bold rounded-lg disabled:opacity-40 flex items-center gap-1.5"
             >
-              Delete Account
+              {deleting && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden />}
+              {deleting ? 'Deleting…' : 'Delete Account'}
             </button>
             <button onClick={() => { setShowDelete(false); setConfirmText('') }} className="px-4 py-2 text-xs text-text-muted hover:text-text-primary">
               Cancel
@@ -147,13 +267,23 @@ function PrivacyTab() {
   )
 }
 
-function LanguageTab() {
-  const [selected, setSelected] = useState(LANGUAGES.EN)
+function LanguageTab({ profile }) {
+  const [selected, setSelected] = useState(profile?.language || LANGUAGES.EN)
+  const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
 
-  function handleSave() {
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+  async function handleSave() {
+    setSaving(true)
+    try {
+      await authService.updateProfile({ language: selected })
+      setSaved(true)
+      toast.success('Language preference saved.')
+      setTimeout(() => setSaved(false), 2000)
+    } catch {
+      toast.error('Could not save your language preference. Please try again.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -186,21 +316,30 @@ function LanguageTab() {
       </div>
       <button
         onClick={handleSave}
-        className="w-full h-11 bg-rose-700 text-white font-semibold rounded-xl hover:bg-rose-800 transition-colors text-sm flex items-center justify-center gap-2"
+        disabled={saving}
+        className="w-full h-11 bg-rose-700 text-white font-semibold rounded-xl hover:bg-rose-800 transition-colors text-sm flex items-center justify-center gap-2 disabled:opacity-60"
       >
-        {saved ? <><Check className="w-4 h-4" /> Saved!</> : 'Save Language Preference'}
+        {saving ? <><Loader2 className="w-4 h-4 animate-spin" aria-hidden /> Saving…</>
+          : saved ? <><Check className="w-4 h-4" /> Saved!</>
+          : 'Save Language Preference'}
       </button>
     </div>
   )
 }
 
 function AccessibilityTab() {
-  const [settings, setSettings] = useState({ fontSize: 'medium', highContrast: false, reduceMotion: false, screenReader: false })
-  function update(key, val) { setSettings(p => ({ ...p, [key]: val })) }
+  const [settings, setSettings] = useState(() => loadAccessibility())
+
+  function update(key, val) {
+    const next = { ...settings, [key]: val }
+    setSettings(next)
+    // Applies to the document immediately and persists across sessions
+    saveAccessibility(next)
+  }
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-text-muted">Customise MamaGuide for your accessibility needs.</p>
+      <p className="text-xs text-text-muted">Customise MamaGuide for your accessibility needs. Changes apply immediately and are remembered on this device.</p>
 
       {/* Font size */}
       <div className="bg-white rounded-xl border border-border p-4">
@@ -240,14 +379,7 @@ function AccessibilityTab() {
               <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">{item.desc}</p>
             </div>
           </div>
-          <button
-            onClick={() => update(item.key, !settings[item.key])}
-            className={cn('w-11 h-6 rounded-full transition-all duration-200 relative shrink-0', settings[item.key] ? 'bg-rose-600' : 'bg-gray-200')}
-            role="switch"
-            aria-checked={settings[item.key]}
-          >
-            <span className={cn('absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-all duration-200', settings[item.key] ? 'left-5.5' : 'left-0.5')} />
-          </button>
+          <Toggle on={settings[item.key]} onClick={() => update(item.key, !settings[item.key])} />
         </div>
       ))}
 
@@ -258,17 +390,34 @@ function AccessibilityTab() {
   )
 }
 
-const tabContent = {
-  notifications: <NotificationsTab />,
-  privacy: <PrivacyTab />,
-  language: <LanguageTab />,
-  accessibility: <AccessibilityTab />,
+const tabComponents = {
+  notifications: NotificationsTab,
+  privacy: PrivacyTab,
+  language: LanguageTab,
+  accessibility: AccessibilityTab,
 }
+
+// notifications + language initialise from the server profile; the others don't
+const tabNeedsProfile = { notifications: true, language: true }
 
 export default function SettingsPage() {
   const { tab = 'notifications' } = useParams()
   const navigate = useNavigate()
   const currentTab = tabs.find(t => t.id === tab) || tabs[0]
+  const [profile, setProfile] = useState(null)
+  const [loadingProfile, setLoadingProfile] = useState(true)
+
+  useEffect(() => {
+    let alive = true
+    authService.getProfile()
+      .then(({ data }) => { if (alive) setProfile(data.data) })
+      .catch(() => { if (alive) toast.error('Could not load your saved settings.') })
+      .finally(() => { if (alive) setLoadingProfile(false) })
+    return () => { alive = false }
+  }, [])
+
+  const TabContent = tabComponents[currentTab.id]
+  const waitingOnProfile = tabNeedsProfile[currentTab.id] && loadingProfile
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
@@ -320,7 +469,14 @@ export default function SettingsPage() {
               {currentTab.label}
             </h2>
           </div>
-          {tabContent[currentTab.id] || tabContent['notifications']}
+          {waitingOnProfile ? (
+            <div className="flex items-center justify-center py-12 text-text-muted">
+              <Loader2 className="w-5 h-5 animate-spin" aria-label="Loading settings" />
+            </div>
+          ) : (
+            // key remounts the tab so its state re-initialises from the loaded profile
+            <TabContent key={currentTab.id} profile={profile} />
+          )}
         </div>
       </div>
     </div>

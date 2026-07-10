@@ -1,11 +1,11 @@
-import { Shield, BookOpen, Users, Award } from 'lucide-react'
+import { Award } from 'lucide-react'
 import { Badge } from '@/components/atoms/Badge'
 import { FadeUp, FadeStagger, FadeItem, SlideIn } from '@/components/atoms/FadeUp'
 
 const techSections = [
   {
     title: 'AI Model',
-    items: ['Feedforward Neural Network', 'NLTK NLP Pipeline', 'Bag of Words encoding', 'Intent classification'],
+    items: ['Universal Sentence Encoder (base model)', 'Transfer learning', 'Neural network classification head', 'Intent classification'],
   },
   {
     title: 'Knowledge Base',
@@ -55,9 +55,10 @@ export default function AboutPage() {
         <SlideIn from="right" delay={0.1}>
           <h2 className="font-display font-bold text-2xl text-text-primary mb-4">Our Solution</h2>
           <p className="text-text-secondary leading-relaxed mb-4">
-            MamaGuide uses a Feedforward Neural Network with NLP processing (NLTK tokenization,
-            lemmatization, Bag of Words) to understand and respond to maternal health questions in
-            natural language.
+            MamaGuide uses transfer learning: Google's Universal Sentence Encoder (a pretrained
+            base model) converts each question into a semantic embedding, and a custom-trained
+            neural network classifies it into a maternal health intent to answer in natural
+            language.
           </p>
           <p className="text-text-secondary leading-relaxed">
             The knowledge base is drawn from the MOTHER dataset, WHO ANC guidelines, and Federal

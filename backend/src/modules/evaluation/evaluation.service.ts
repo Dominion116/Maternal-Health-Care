@@ -49,6 +49,22 @@ export async function submitConsent(userId: string, dto: ConsentDtoType) {
   return data;
 }
 
+/**
+ * Withdraw research participation: flip the consent record to consented=false.
+ * The row is kept (with the withdrawal timestamp) as an audit trail.
+ */
+export async function withdrawConsent(userId: string) {
+  const { data, error } = await supabaseAdmin
+    .from('research_consent')
+    .update({ consented: false, consented_at: new Date().toISOString() })
+    .eq('user_id', userId)
+    .select()
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  return data ?? null;
+}
+
 // ---------------------------------------------------------------------------
 // SUS
 // ---------------------------------------------------------------------------

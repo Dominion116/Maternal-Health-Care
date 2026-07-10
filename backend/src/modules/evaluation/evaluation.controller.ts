@@ -23,6 +23,15 @@ export async function submitConsent(req: AuthenticatedRequest, res: Response, ne
   }
 }
 
+export async function withdrawConsent(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  try {
+    const data = await evaluationService.withdrawConsent(req.user.id);
+    return sendSuccess(res, data, 'Consent withdrawn');
+  } catch (err) {
+    return next(err);
+  }
+}
+
 // ── SUS ────────────────────────────────────────────────────────────────────
 
 export async function getSusResponse(req: AuthenticatedRequest, res: Response, next: NextFunction) {

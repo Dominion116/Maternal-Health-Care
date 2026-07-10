@@ -34,7 +34,16 @@ export const authService = {
 
   logout: () => api.post("/auth/logout"),
 
+  // Persists onboarding choices and flips onboarding_completed server-side
+  completeOnboarding: (data) => api.post("/onboarding", data),
+
   getProfile: () => api.get("/profile"),
 
   updateProfile: (data) => api.patch("/profile", data),
+
+  // Full JSON export of everything stored about the user (GDPR-style)
+  exportData: () => api.get("/profile/export"),
+
+  // Permanently delete the account — cascades all user data server-side
+  deleteAccount: () => api.delete("/profile"),
 };

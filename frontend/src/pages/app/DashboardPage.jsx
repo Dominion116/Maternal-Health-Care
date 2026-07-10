@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   MessageCircle,
@@ -13,15 +14,34 @@ import {
   ChevronRight,
   Leaf,
   Star,
+  Shield,
+  Moon,
+  Droplets,
+  Package,
 } from "lucide-react";
 import { Badge } from "@/components/atoms/Badge";
 import { Card } from "@/components/atoms/Card";
 import { Button } from "@/components/atoms/Button";
 import { useAuth } from "@/hooks/useAuth";
-import { useChat } from "@/hooks/useChat";
+import { useConversationHistory } from "@/hooks/useConversationHistory";
+import { chatService } from "@/services/chatService";
 import { ROUTES, SUGGESTED_PROMPTS } from "@/utils/constants";
-import { formatWeeksPregnant } from "@/utils/formatters";
+import { formatWeeksPregnant, formatRelativeTime } from "@/utils/formatters";
 import { cn } from "@/utils/cn";
+
+// Maps the backend's education categories to routes/icons for the
+// personalized "Recommended for You" section.
+const CATEGORY_META = {
+  trimester: { icon: Baby, route: ROUTES.EDUCATION_TRIMESTER, color: "bg-rose-100 text-rose-700" },
+  nutrition: { icon: Leaf, route: ROUTES.EDUCATION_NUTRITION, color: "bg-green-100 text-green-700" },
+  "danger-signs": { icon: AlertTriangle, route: ROUTES.EDUCATION_DANGER_SIGNS, color: "bg-red-100 text-red-700" },
+  anc: { icon: Calendar, route: ROUTES.EDUCATION_ANC, color: "bg-sage-100 text-sage-700" },
+  vaccines: { icon: Shield, route: ROUTES.EDUCATION_VACCINES, color: "bg-blue-100 text-blue-700" },
+  "mental-health": { icon: Heart, route: ROUTES.EDUCATION_MENTAL_HEALTH, color: "bg-purple-100 text-purple-700" },
+  "birth-prep": { icon: Package, route: ROUTES.EDUCATION_BIRTH_PREP, color: "bg-amber-100 text-amber-700" },
+  postpartum: { icon: Moon, route: ROUTES.EDUCATION_POSTPARTUM, color: "bg-indigo-100 text-indigo-700" },
+  breastfeeding: { icon: Droplets, route: ROUTES.EDUCATION_BREASTFEEDING, color: "bg-cyan-100 text-cyan-700" },
+};
 
 const educationCards = [
   {
@@ -151,7 +171,7 @@ function PregnancyProgress({ weeks }) {
   );
 }
 
-function RecentConversations({ conversations }) {
+function RecentConversations({ conversations, onOpen }) {
   const recent = conversations.slice(0, 3);
   if (recent.length === 0) return null;
 
@@ -163,46 +183,41 @@ function RecentConversations({ conversations }) {
           Recent Conversations
         </h2>
         <Link
-          to={ROUTES.CHAT}
+          to={ROUTES.CHAT_HISTORY}
           className="text-xs text-rose-700 hover:underline font-medium flex items-center gap-1"
         >
           View all <ArrowRight className="w-3 h-3" />
         </Link>
       </div>
       <div className="space-y-2">
-        {recent.map((conv, i) => {
-          const lastMsg = conv.messages?.[conv.messages.length - 1];
-          const firstUserMsg = conv.messages?.find((m) => m.role === "user");
-          const preview = firstUserMsg?.content || conv.title || "Conversation";
-          const msgCount = conv.messages?.length || 0;
-          return (
-            <Link
-              key={conv.id || i}
-              to={ROUTES.CHAT}
-              state={{ conversationId: conv.id, lastMsg }}
-              className="flex items-center gap-3 bg-white rounded-2xl border border-border p-3.5 hover:shadow-sm hover:-translate-y-0.5 transition-all duration-200 group"
-            >
-              <span className="w-9 h-9 rounded-xl bg-rose-50 flex items-center justify-center shrink-0">
-                <MessageCircle
-                  className="w-4.5 h-4.5 text-rose-500"
-                  aria-hidden
-                />
-              </span>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-text-primary truncate group-hover:text-rose-700 transition-colors">
-                  {preview}
-                </p>
-                <p className="text-xs text-text-muted mt-0.5">
-                  {msgCount} message{msgCount !== 1 ? "s" : ""}
-                </p>
-              </div>
-              <ChevronRight
-                className="w-4 h-4 text-text-muted shrink-0"
+        {recent.map((conv) => (
+          <button
+            key={conv.id}
+            onClick={() => onOpen(conv.id)}
+            className="w-full flex items-center gap-3 bg-white rounded-2xl border border-border p-3.5 hover:shadow-sm hover:-translate-y-0.5 transition-all duration-200 group text-left"
+            aria-label={`Open conversation: ${conv.title || "Conversation"}`}
+          >
+            <span className="w-9 h-9 rounded-xl bg-rose-50 flex items-center justify-center shrink-0">
+              <MessageCircle
+                className="w-4.5 h-4.5 text-rose-500"
                 aria-hidden
               />
-            </Link>
-          );
-        })}
+            </span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-text-primary truncate group-hover:text-rose-700 transition-colors">
+                {conv.title || "Conversation"}
+              </p>
+              <p className="text-xs text-text-muted mt-0.5">
+                {formatRelativeTime(conv.updated_at)} · {conv.message_count}{" "}
+                message{conv.message_count !== 1 ? "s" : ""}
+              </p>
+            </div>
+            <ChevronRight
+              className="w-4 h-4 text-text-muted shrink-0"
+              aria-hidden
+            />
+          </button>
+        ))}
       </div>
     </div>
   );
@@ -210,7 +225,10 @@ function RecentConversations({ conversations }) {
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { conversations } = useChat();
+  // Server-side conversation list — the same source Chat History uses, so
+  // counts and previews reflect reality rather than this device's cache.
+  const { conversations, openConversation } = useConversationHistory();
+  const [recommendations, setRecommendations] = useState(null);
   const name = user?.name?.split(" ")[0] || "there";
   const stage = user?.pregnancyStage;
   const weeks = user?.pregnancyWeeks;
@@ -218,8 +236,31 @@ export default function DashboardPage() {
   const trimesterInfo = trimester ? trimesterTips[trimester] : null;
   const weekPrompts = SUGGESTED_PROMPTS[stage] || SUGGESTED_PROMPTS.default;
 
+  useEffect(() => {
+    let cancelled = false;
+    chatService
+      .getRecommendations()
+      .then((res) => {
+        if (!cancelled) setRecommendations(res.data.data);
+      })
+      .catch(() => {
+        // Personalization is a progressive enhancement — fall back to the
+        // static stage-based content silently if the request fails.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const recommendedCategories = recommendations?.recommended_categories ?? [];
+  // Personalized follow-up questions when the user has chat history;
+  // otherwise the static stage-based prompts.
+  const promptChips = recommendations?.suggested_questions?.length
+    ? recommendations.suggested_questions
+    : weekPrompts;
+
   const totalMessages = conversations.reduce(
-    (a, c) => a + (c.messages?.length || 0),
+    (a, c) => a + (c.message_count || 0),
     0,
   );
 
@@ -269,7 +310,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex flex-wrap gap-2 mb-4">
-            {weekPrompts.slice(0, 3).map((q, i) => (
+            {promptChips.slice(0, 3).map((q, i) => (
               <Link
                 key={i}
                 to={ROUTES.CHAT}
@@ -292,6 +333,57 @@ export default function DashboardPage() {
           </Button>
         </div>
       </Card>
+
+      {/* Personalized recommendations from conversation history */}
+      {recommendedCategories.length > 0 && (
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-semibold text-base text-text-primary flex items-center gap-2">
+              <Sparkles className="w-4.5 h-4.5 text-rose-600" aria-hidden />
+              Recommended for You
+            </h2>
+            <span className="text-xs text-text-muted">
+              Based on your conversations
+            </span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {recommendedCategories.map((rec) => {
+              const meta = CATEGORY_META[rec.category];
+              if (!meta) return null;
+              const Icon = meta.icon;
+              return (
+                <Link
+                  key={rec.category}
+                  to={meta.route}
+                  className="bg-white rounded-2xl border border-border p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
+                  aria-label={rec.label}
+                >
+                  <div className="flex items-start gap-3">
+                    <span
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${meta.color}`}
+                      aria-hidden
+                    >
+                      <Icon className="w-5 h-5" />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-text-primary group-hover:text-rose-700 transition-colors">
+                        {rec.label}
+                      </p>
+                      <p className="text-xs text-text-muted mt-0.5">
+                        {rec.reason}
+                      </p>
+                    </div>
+                    <ChevronRight
+                      className="w-4 h-4 text-text-muted shrink-0 mt-1"
+                      aria-hidden
+                    />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Trimester tips */}
       {trimesterInfo && (
@@ -368,7 +460,10 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent conversations */}
-      <RecentConversations conversations={conversations} />
+      <RecentConversations
+        conversations={conversations}
+        onOpen={openConversation}
+      />
 
       {/* Activity stats */}
       <Card className="bg-sage-50 border-sage-200">
@@ -387,7 +482,7 @@ export default function DashboardPage() {
             <p className="font-display font-bold text-2xl text-sage-700">
               {totalMessages}
             </p>
-            <p className="text-xs text-sage-600">Questions asked</p>
+            <p className="text-xs text-sage-600">Messages exchanged</p>
           </div>
           <div>
             <p className="font-display font-bold text-2xl text-sage-700">

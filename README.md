@@ -1,14 +1,14 @@
 # MamaGuide: Maternal Health Education Chatbot
 
-A comprehensive AI-powered chatbot application designed to provide maternal health education, support, and emergency awareness to pregnant women in resource-limited settings. Built with a React frontend and Express.js backend, featuring intelligent intent classification, Claude-powered conversational responses, and an administrative dashboard for monitoring and analytics.
+A comprehensive AI-powered chatbot application designed to provide maternal health education, support, and emergency awareness to pregnant women in resource-limited settings. Built with a React frontend and Express.js backend, featuring an in-house neural-network intent classifier that drives conversational responses grounded in a validated knowledge base, and an administrative dashboard for monitoring and analytics.
 
 ## Overview
 
-MamaGuide combines natural language processing, machine learning, and large language models to deliver personalized maternal health guidance. The system classifies user messages by intent, grounds responses in evidence-based WHO and FMOH guidelines, and tracks emergency indicators to support clinical decision-making.
+MamaGuide combines natural language processing and machine learning to deliver personalized maternal health guidance. The system classifies user messages by intent, grounds responses in evidence-based WHO and FMOH guidelines, and tracks emergency indicators to support clinical decision-making.
 
 ### Key Features
 
-- **AI-Powered Chat Interface**: Intent-based message classification with Claude-generated contextual responses
+- **AI-Powered Chat Interface**: Neural-network intent classification with responses drawn from an evidence-based knowledge base
 - **Pregnancy Profile Management**: Users can track pregnancy stage, due date, and health information
 - **Emergency Detection**: Automated flagging of urgent maternal health conditions
 - **Chat History and Saving**: Users can save and revisit conversations
@@ -71,8 +71,7 @@ Maternal Health Care/
 - **Framework**: Express.js
 - **Database**: Supabase (PostgreSQL)
 - **Authentication**: JWT tokens with Supabase Auth
-- **ML**: TensorFlow.js (CPU backend), wink-lemmatizer for NLP
-- **LLM**: Claude API via Anthropic SDK
+- **ML**: TensorFlow.js (CPU backend), Universal Sentence Encoder base model (transfer learning)
 - **Documentation**: Swagger/OpenAPI with swagger-ui-express
 - **Validation**: Zod for runtime type checking
 - **Testing**: Jest
@@ -92,7 +91,6 @@ Maternal Health Care/
 ### Prerequisites
 - Node.js 18+ and npm
 - A Supabase project (PostgreSQL database)
-- Anthropic API key (optional, for Claude-powered responses)
 
 ### Backend Setup
 
@@ -112,9 +110,6 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 # Authentication
 JWT_SECRET=your-jwt-secret
 JWT_EXPIRATION=7d
-
-# Anthropic API (optional, for Claude responses)
-ANTHROPIC_API_KEY=your-api-key
 
 # Server
 PORT=3000
@@ -202,24 +197,26 @@ http://localhost:3000/api-docs
 
 ## Machine Learning Pipeline
 
-The intent classification system uses a feedforward neural network trained with TensorFlow.js:
+The intent classification system uses **transfer learning** with TensorFlow.js:
 
 ### Architecture
-- Input layer: Bag-of-words vectorization (vocabulary size: 297 tokens)
-- Hidden layers: Dense(128, relu) + Dropout(0.5), Dense(64, relu) + Dropout(0.5)
-- Output layer: Softmax classification over 27 intents
+- **Base model (frozen, pretrained)**: Google's Universal Sentence Encoder — converts each
+  message into a 512-dimensional semantic sentence embedding. Its weights are never updated;
+  they are downloaded from TF-Hub on first load.
+- **Classification head (trained)**: Dense(128, relu) + Dropout(0.5), Dense(64, relu) +
+  Dropout(0.5), Softmax output over the intent classes.
 
-### Training
-- Dataset: 182 patterns across 27 intents (5-7 examples per class average)
-- Split: 80% training, 20% held-out test
-- Epochs: 200
-- Validation: Stratified k-fold cross-validation per intent
+### Training (`npm run train-model` in `backend/`)
+- Dataset: `backend/src/ml/intents.json` (patterns + validated responses per intent)
+- Every pattern is embedded once by the base model; only the head is trained on the embeddings
+- Split: 80% training, 20% held-out test (stratified per intent)
+- Epochs: 200, Adam optimizer, categorical cross-entropy
 
-### Artifacts
-- Trained model weights: `backend/src/ml/artifacts/model.weights.json`
-- Vocabulary: `backend/src/ml/artifacts/vocab.json`
-- Class definitions: `backend/src/ml/artifacts/classes.json`
-- Metrics: `backend/src/ml/artifacts/metrics.json` (precision, recall, F1-score per intent)
+### Artifacts (`backend/src/ml/artifacts/`)
+- Head weights: `weights.json`
+- Model config (base model name + embedding dims): `model-config.json`
+- Class definitions: `classes.json`
+- Metrics: `metrics.json` (accuracy, precision, recall, F1, confusion matrix on the test split)
 
 ### Intent Grounding
 Each classified intent is grounded in the knowledge base (`intents.json`), mapping to evidence-based guidance from:
@@ -303,7 +300,7 @@ Before running the application, ensure:
 - [ ] Supabase project is created and credentials are in `.env`
 - [ ] Database migrations have been applied to your Supabase project
 - [ ] At least one super-admin user has been created via `npm run create-admin`
-- [ ] (Optional) Anthropic API key is set for Claude-powered responses
+- [ ] The intent-classification model has been trained via `npm run train-model`
 - [ ] Frontend can reach the backend API (CORS configured if needed)
 
 ## Troubleshooting
@@ -325,9 +322,9 @@ Before running the application, ensure:
 - Verify API URL in frontend environment configuration
 
 ### Chat responses are generic
-- Confirm `ANTHROPIC_API_KEY` is set in backend `.env`
-- If key is missing, the system falls back to knowledge-base responses
-- Check backend logs for any API errors
+- Confirm the model has been trained: run `npm run train-model` in `backend/`
+- Low-confidence classifications return a clarification prompt — check the `intent_confidence` values logged with each message
+- Check backend logs for any errors
 
 ## Contributing
 
@@ -340,7 +337,6 @@ When making changes:
 
 ## References
 
-- [Anthropic Claude API Documentation](https://docs.anthropic.com/)
 - [Supabase Documentation](https://supabase.com/docs)
 - [TensorFlow.js Documentation](https://js.tensorflow.org/)
 - [Express.js Guide](https://expressjs.com/)

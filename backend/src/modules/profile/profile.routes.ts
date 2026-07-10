@@ -70,4 +70,38 @@ router.get('/', profileController.getProfile as any);
  */
 router.patch('/', validate(UpdateProfileDto), profileController.updateProfile as any);
 
+/**
+ * @openapi
+ * /profile/export:
+ *   get:
+ *     tags: [Profile]
+ *     summary: Export all data stored about the authenticated user
+ *     description: Returns profile, conversations, messages, research consent and feedback as one JSON document.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Full data export
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/export', profileController.exportData as any);
+
+/**
+ * @openapi
+ * /profile:
+ *   delete:
+ *     tags: [Profile]
+ *     summary: Permanently delete the authenticated user's account
+ *     description: Deletes the auth user; all related data cascades (conversations, messages, consent, feedback).
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Account deleted
+ *       401:
+ *         description: Unauthorized
+ */
+router.delete('/', profileController.deleteAccount as any);
+
 export default router;

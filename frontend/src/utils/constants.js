@@ -121,6 +121,7 @@ export const LOCAL_STORAGE_KEYS = {
   CHAT_HISTORY: 'mamaguide_chat_history',
   OTP_COOLDOWN_VERIFY: 'mamaguide_otp_cd_verify',
   OTP_COOLDOWN_RESET: 'mamaguide_otp_cd_reset',
+  ACCESSIBILITY: 'mamaguide_accessibility',
 }
 
 export const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
@@ -162,7 +163,6 @@ export const ROUTES = {
   DASHBOARD: '/app/dashboard',
   CHAT: '/app/chat',
   CHAT_HISTORY: '/app/chat/history',
-  CHAT_SAVED: '/app/chat/saved',
 
   // Education
   EDUCATION: '/app/education',

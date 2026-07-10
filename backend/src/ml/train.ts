@@ -1,21 +1,23 @@
 /**
- * Trains the intent-classification FFNN on intents.json.
- * Run via: npm run train-model
+ * Trains the intent-classification head on intents.json using transfer
+ * learning. Run via: npm run train-model
  *
- * Pipeline: load intents -> preprocess patterns (tokenise+lemmatise) ->
- * build BoW vocabulary -> stratified 80/20 train/test split -> train for
- * >=200 epochs (with an internal validation split for the loss/accuracy
- * curves) -> evaluate on the held-out test split (accuracy/precision/
- * recall/F1/confusion matrix) -> persist model + vocabulary + classes +
- * metrics to src/ml/artifacts/.
+ * Pipeline: load intents -> embed every pattern with the pretrained
+ * Universal Sentence Encoder base model (frozen — its weights are never
+ * updated) -> stratified 80/20 train/test split -> train the Dense
+ * classification head for 200 epochs (with an internal validation split
+ * for the loss/accuracy curves) -> evaluate on the held-out test split
+ * (accuracy/precision/recall/F1/confusion matrix) -> persist head weights
+ * + classes + model config + metrics to src/ml/artifacts/.
  */
 import * as fs from 'fs';
 import * as path from 'path';
 import * as tf from '@tensorflow/tfjs';
-import { preprocess, buildVocabulary, bagOfWords } from './nlp';
+import { embedTexts, BASE_MODEL_NAME, EMBEDDING_DIM } from './embedder';
 import { buildModel } from './model';
 import { computeMetrics } from './metrics';
-import { saveModel, METRICS_PATH, ARTIFACTS_DIR } from './io';
+import { evaluateBaselines, BaselineResult } from './baselines';
+import { saveModel, saveCentroids, METRICS_PATH, ARTIFACTS_DIR } from './io';
 
 interface IntentDef {
   tag: string;
@@ -25,7 +27,7 @@ interface IntentDef {
 }
 
 interface Example {
-  tokens: string[];
+  embedding: number[];
   classIdx: number;
 }
 
@@ -42,26 +44,37 @@ async function main() {
   const intentsPath = path.join(__dirname, 'intents.json');
   const { intents }: { intents: IntentDef[] } = JSON.parse(fs.readFileSync(intentsPath, 'utf-8'));
 
-  const classes = intents.map((i) => i.tag).sort();
-  console.log(`Loaded ${intents.length} intents, ${intents.reduce((s, i) => s + i.patterns.length, 0)} total patterns.`);
+  // Dedupe — the dataset contains a handful of repeated tags; the classifier
+  // needs one softmax output per unique intent (mirrors sorted(set(classes))
+  // in the original training notebook).
+  const classes = Array.from(new Set(intents.map((i) => i.tag))).sort();
+  const totalPatterns = intents.reduce((s, i) => s + i.patterns.length, 0);
+  console.log(`Loaded ${intents.length} intents, ${totalPatterns} total patterns.`);
 
-  // Preprocess every pattern once, build vocabulary from the full corpus.
-  const allTokenized = intents.flatMap((intent) =>
-    intent.patterns.map((p) => preprocess(p)),
-  );
-  const vocabulary = buildVocabulary(allTokenized);
-  console.log(`Vocabulary size: ${vocabulary.length}`);
-
-  // Build (tokens, classIdx) pairs, grouped by class for stratified split.
-  const examplesByClass: Example[][] = intents.map((intent) => {
+  // Embed every pattern once with the frozen base model. Patterns are fed
+  // to USE as raw text — it has its own tokenizer, so no manual
+  // lemmatisation/Bag-of-Words step is needed (or wanted).
+  const flat: Array<{ text: string; classIdx: number }> = intents.flatMap((intent) => {
     const classIdx = classes.indexOf(intent.tag);
-    return intent.patterns.map((p) => ({ tokens: preprocess(p), classIdx }));
+    return intent.patterns.map((text) => ({ text, classIdx }));
+  });
+
+  console.log(`Embedding ${flat.length} patterns with ${BASE_MODEL_NAME} (base model)...`);
+  const embeddings = await embedTexts(flat.map((f) => f.text));
+  console.log(`Embeddings ready: ${embeddings.length} x ${EMBEDDING_DIM}`);
+
+  // Group per class for the stratified split.
+  const examplesByClass = new Map<number, Example[]>();
+  flat.forEach((f, i) => {
+    const group = examplesByClass.get(f.classIdx) ?? [];
+    group.push({ embedding: embeddings[i], classIdx: f.classIdx });
+    examplesByClass.set(f.classIdx, group);
   });
 
   const trainExamples: Example[] = [];
   const testExamples: Example[] = [];
 
-  for (const group of examplesByClass) {
+  for (const group of examplesByClass.values()) {
     const shuffled = shuffle(group);
     const splitAt = Math.max(1, Math.floor(shuffled.length * 0.8));
     trainExamples.push(...shuffled.slice(0, splitAt));
@@ -73,15 +86,13 @@ async function main() {
 
   console.log(`Train: ${trainShuffled.length} examples, Test: ${testShuffled.length} examples.`);
 
-  const xTrain = trainShuffled.map((e) => bagOfWords(e.tokens, vocabulary));
-  const yTrainIdx = trainShuffled.map((e) => e.classIdx);
-  const xTest = testShuffled.map((e) => bagOfWords(e.tokens, vocabulary));
-  const yTestIdx = testShuffled.map((e) => e.classIdx);
+  const xsTrain = tf.tensor2d(trainShuffled.map((e) => e.embedding));
+  const ysTrain = tf.oneHot(
+    tf.tensor1d(trainShuffled.map((e) => e.classIdx), 'int32'),
+    classes.length,
+  );
 
-  const xsTrain = tf.tensor2d(xTrain);
-  const ysTrain = tf.oneHot(tf.tensor1d(yTrainIdx, 'int32'), classes.length);
-
-  const model = buildModel(vocabulary.length, classes.length);
+  const model = buildModel(EMBEDDING_DIM, classes.length);
 
   const EPOCHS = 200;
   const history = await model.fit(xsTrain, ysTrain, {
@@ -103,8 +114,9 @@ async function main() {
 
   // Evaluate on the held-out test split (never seen during training).
   let testMetrics;
-  if (xTest.length > 0) {
-    const xsTest = tf.tensor2d(xTest);
+  if (testShuffled.length > 0) {
+    const xsTest = tf.tensor2d(testShuffled.map((e) => e.embedding));
+    const yTestIdx = testShuffled.map((e) => e.classIdx);
     const predictions = model.predict(xsTest) as tf.Tensor;
     const predictedIdx = Array.from(await predictions.argMax(-1).data());
     testMetrics = computeMetrics(yTestIdx, predictedIdx, classes);
@@ -122,7 +134,43 @@ async function main() {
     console.warn('No test examples available (every intent had too few patterns) — skipping held-out evaluation.');
   }
 
-  saveModel(model, vocabulary, classes);
+  // Classical-ML baselines on the exact same split, for the evaluation
+  // chapter's comparison table.
+  let baselines: BaselineResult[] = [];
+  if (testShuffled.length > 0) {
+    console.log('\nEvaluating baseline models on the same split...');
+    baselines = await evaluateBaselines(
+      trainShuffled.map((e) => e.embedding),
+      trainShuffled.map((e) => e.classIdx),
+      testShuffled.map((e) => e.embedding),
+      testShuffled.map((e) => e.classIdx),
+      classes,
+    );
+    console.log('--- Baseline comparison (held-out test split) ---');
+    for (const b of baselines) {
+      console.log(
+        `${b.name}: accuracy ${(b.accuracy * 100).toFixed(2)}% | macro F1 ${(b.macroF1 * 100).toFixed(2)}% | weighted F1 ${(b.weightedF1 * 100).toFixed(2)}%`,
+      );
+    }
+  }
+
+  saveModel(model, { baseModel: BASE_MODEL_NAME, embeddingDim: EMBEDDING_DIM }, classes);
+
+  // Per-class mean embedding — powers the classifier's semantic
+  // out-of-domain gate (reject predictions when the message isn't actually
+  // similar to any training pattern of the predicted intent).
+  const centroids: number[][] = classes.map((_, classIdx) => {
+    const group = examplesByClass.get(classIdx) ?? [];
+    const centroid = new Array(EMBEDDING_DIM).fill(0);
+    for (const example of group) {
+      for (let d = 0; d < EMBEDDING_DIM; d++) centroid[d] += example.embedding[d];
+    }
+    if (group.length > 0) {
+      for (let d = 0; d < EMBEDDING_DIM; d++) centroid[d] /= group.length;
+    }
+    return centroid;
+  });
+  saveCentroids(centroids);
 
   const trainAcc = history.history.acc as number[];
   const trainLoss = history.history.loss as number[];
@@ -135,8 +183,9 @@ async function main() {
     JSON.stringify(
       {
         trainedAt: new Date().toISOString(),
+        baseModel: BASE_MODEL_NAME,
+        embeddingDim: EMBEDDING_DIM,
         epochs: EPOCHS,
-        vocabularySize: vocabulary.length,
         numIntents: classes.length,
         trainExamples: trainShuffled.length,
         testExamples: testShuffled.length,
@@ -146,13 +195,14 @@ async function main() {
         finalValLoss: valLoss[valLoss.length - 1],
         trainingCurve: { accuracy: trainAcc, loss: trainLoss, valAccuracy: valAcc, valLoss: valLoss },
         testEvaluation: testMetrics ?? null,
+        baselines,
       },
       null,
       2,
     ),
   );
 
-  console.log(`\nModel, vocabulary, classes, and metrics saved to ${ARTIFACTS_DIR}`);
+  console.log(`\nHead weights, classes, config, and metrics saved to ${ARTIFACTS_DIR}`);
 }
 
 main().catch((err) => {

@@ -133,11 +133,18 @@ export async function acceptInvite(dto: AcceptInviteDtoType) {
 
   const meta = userData.user.user_metadata as { role?: string; full_name?: string };
 
+  // Only roles the invite endpoint can issue; anything unexpected falls back
+  // to plain admin rather than escalating.
+  const INVITABLE_ROLES = ['admin', 'super_admin', 'researcher'];
+  const role = INVITABLE_ROLES.includes(meta.role ?? '') ? meta.role : 'admin';
+
   const { error: profileError } = await supabaseAdmin.from('user_profiles').upsert(
     {
       user_id: userData.user.id,
       full_name: meta.full_name ?? null,
-      role: meta.role === 'super_admin' ? 'super_admin' : 'admin',
+      // Invited staff skip the pregnancy-onboarding wizard entirely — their
+      // "onboarding" is just setting a password on this invite link.
+      role,
       onboarding_completed: true,
     },
     { onConflict: 'user_id' },

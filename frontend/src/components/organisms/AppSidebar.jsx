@@ -9,7 +9,6 @@ import {
   LayoutDashboard,
   Heart,
   History,
-  BookMarked,
   LogOut,
   ChevronLeft,
   ChevronRight,
@@ -73,7 +72,6 @@ const mainNav = [
 
 const bottomNav = [
   { icon: History, label: "Chat History", href: ROUTES.CHAT_HISTORY },
-  { icon: BookMarked, label: "Saved Chats", href: ROUTES.CHAT_SAVED },
   { icon: User, label: "Profile", href: ROUTES.PROFILE },
   { icon: Settings, label: "Settings", href: ROUTES.SETTINGS },
 ];

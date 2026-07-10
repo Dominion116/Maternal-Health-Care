@@ -13,6 +13,7 @@ import {
   Accessibility,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import { Button } from "@/components/atoms/Button";
 import { Input } from "@/components/atoms/Input";
 import { Card } from "@/components/atoms/Card";
@@ -51,14 +52,36 @@ const settingsLinks = [
 export default function ProfilePage() {
   const { user, updateUser } = useAuth();
   const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
     name: user?.name || "",
     phone: user?.phone || "",
   });
 
-  function handleSave() {
-    updateUser(form);
-    setEditing(false);
+  const memberSince = user?.createdAt
+    ? new Date(user.createdAt).toLocaleDateString("en-NG", {
+        month: "long",
+        year: "numeric",
+      })
+    : null;
+
+  async function handleSave() {
+    if (!form.name.trim()) {
+      toast.error("Name cannot be empty.");
+      return;
+    }
+    setSaving(true);
+    const result = await updateUser({
+      name: form.name.trim(),
+      phone: form.phone.trim(),
+    });
+    setSaving(false);
+    if (result.success) {
+      toast.success("Profile updated.");
+      setEditing(false);
+    } else {
+      toast.error(result.error);
+    }
   }
 
   return (
@@ -91,9 +114,10 @@ export default function ProfilePage() {
                   <Button
                     size="sm"
                     onClick={handleSave}
+                    disabled={saving}
                     icon={<Save className="w-4 h-4" />}
                   >
-                    Save
+                    {saving ? "Saving…" : "Save"}
                   </Button>
                   <Button
                     size="sm"
@@ -133,10 +157,12 @@ export default function ProfilePage() {
                       {user.phone}
                     </p>
                   )}
-                  <p className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-text-muted" aria-hidden />
-                    Member since 2025
-                  </p>
+                  {memberSince && (
+                    <p className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-text-muted" aria-hidden />
+                      Member since {memberSince}
+                    </p>
+                  )}
                 </div>
               </>
             )}

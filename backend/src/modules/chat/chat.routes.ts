@@ -60,4 +60,25 @@ router.post('/sessions', validate(CreateSessionDto), chatController.createSessio
  */
 router.post('/message', validate(SendMessageDto), chatController.sendMessage as any);
 
+/**
+ * @openapi
+ * /chat/recommendations:
+ *   get:
+ *     tags: [Chat]
+ *     summary: Personalized dashboard recommendations from the user's conversation history
+ *     description: |
+ *       Aggregates the intents the classifier assigned to the user's recent
+ *       messages, maps them to education categories, and returns recommended
+ *       reading plus suggested follow-up questions. Empty arrays when the
+ *       user has no classified conversation history yet.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: top_intents, recommended_categories, suggested_questions
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/recommendations', chatController.getRecommendations as any);
+
 export default router;

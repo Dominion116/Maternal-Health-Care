@@ -14,18 +14,18 @@ export const AdminConversationsQueryDto = AdminPaginationDto.extend({
   user_id: z.string().uuid().optional(),
 });
 
-// Deliberately excludes 'admin' and 'super_admin' — the only way to grant
-// admin-tier access is the invite flow (POST /admin/invite, super_admin only)
-// or the one-off create-admin bootstrap script. This endpoint only manages
-// the three self-registerable roles.
+// Deliberately excludes 'admin', 'super_admin' and 'researcher' — the only
+// way to grant dashboard-tier access is the invite flow (POST /admin/invite,
+// super_admin only) or the one-off create-admin bootstrap script. This
+// endpoint only toggles between the patient-facing roles.
 export const UpdateRoleDto = z.object({
-  role: z.enum(['pregnant_woman', 'nurse', 'researcher']),
+  role: z.enum(['pregnant_woman', 'nurse']),
 });
 
 export const InviteAdminDto = z.object({
   email: z.string().email(),
   full_name: z.string().min(1).max(120).optional(),
-  role: z.enum(['admin', 'super_admin']),
+  role: z.enum(['admin', 'super_admin', 'researcher']),
 });
 
 export type AdminUsersQueryDtoType = z.infer<typeof AdminUsersQueryDto>;

@@ -1,32 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, User, Phone } from "lucide-react";
+import { Mail, Lock, User, Phone, Info } from "lucide-react";
 import { Button } from "@/components/atoms/Button";
 import { Input } from "@/components/atoms/Input";
 import { Alert } from "@/components/atoms/Alert";
-import { Badge } from "@/components/atoms/Badge";
 import { useAuth } from "@/hooks/useAuth";
-import { ROUTES, ROLES, ROLE_LABELS } from "@/utils/constants";
+import { ROUTES, ROLES } from "@/utils/constants";
 import { isValidEmail, getPasswordStrength } from "@/utils/validators";
 import { cn } from "@/utils/cn";
-
-const roleOptions = [
-  {
-    value: ROLES.PREGNANT_WOMAN,
-    emoji: "🤰",
-    desc: "I am pregnant or planning a pregnancy",
-  },
-  {
-    value: ROLES.NURSE,
-    emoji: "👩‍⚕️",
-    desc: "I am a nurse or healthcare worker",
-  },
-  {
-    value: ROLES.RESEARCHER,
-    emoji: "🔬",
-    desc: "I am a researcher or administrator",
-  },
-];
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -81,7 +62,8 @@ export default function RegisterPage() {
           Create your account
         </h1>
         <p className="text-sm text-text-secondary">
-          Free to use. Your data stays private and secure.
+          For pregnant and postpartum women. Free to use — your data stays
+          private and secure.
         </p>
       </div>
 
@@ -96,47 +78,6 @@ export default function RegisterPage() {
       )}
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
-        {/* Role selection */}
-        <div>
-          <p className="text-sm font-medium text-text-primary mb-2.5">
-            I am a…{" "}
-            <span className="text-error" aria-hidden>
-              *
-            </span>
-          </p>
-          <div className="grid grid-cols-1 gap-2">
-            {roleOptions.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => setForm((p) => ({ ...p, role: opt.value }))}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all",
-                  form.role === opt.value
-                    ? "border-rose-400 bg-rose-50 text-rose-800 shadow-sm"
-                    : "border-border bg-white text-text-secondary hover:border-rose-200 hover:bg-rose-50/50",
-                )}
-                aria-pressed={form.role === opt.value}
-              >
-                <span className="text-xl" aria-hidden>
-                  {opt.emoji}
-                </span>
-                <div>
-                  <p className="text-sm font-semibold">
-                    {ROLE_LABELS[opt.value]}
-                  </p>
-                  <p className="text-xs opacity-70">{opt.desc}</p>
-                </div>
-                {form.role === opt.value && (
-                  <Badge variant="rose" size="sm" className="ml-auto shrink-0">
-                    Selected
-                  </Badge>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-
         <Input
           label="Full name"
           icon={<User className="w-4 h-4" />}
@@ -262,6 +203,17 @@ export default function RegisterPage() {
           Sign in
         </Link>
       </p>
+
+      <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-border bg-white p-3.5">
+        <Info className="w-4 h-4 text-text-muted shrink-0 mt-0.5" aria-hidden />
+        <p className="text-xs text-text-secondary leading-relaxed">
+          <span className="font-semibold text-text-primary">
+            Health worker, researcher or administrator?
+          </span>{" "}
+          Staff accounts are created by invitation only — ask a MamaGuide super
+          admin to send you an email invite.
+        </p>
+      </div>
     </div>
   );
 }

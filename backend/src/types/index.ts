@@ -17,6 +17,7 @@ export interface UserProfile {
   language: Language;
   due_date: string | null;
   phone_number: string | null;
+  settings: Record<string, unknown>;
   created_at: string;
   updated_at: string;
 }

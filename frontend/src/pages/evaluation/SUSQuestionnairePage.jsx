@@ -100,8 +100,8 @@ export default function SUSQuestionnairePage() {
       const s = computeSUSScore(responses);
       setScore(s);
       setSubmitted(true);
-    } catch {
-      setError("Failed to submit. Please try again.");
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to submit. Please try again.");
     } finally {
       setLoading(false);
     }

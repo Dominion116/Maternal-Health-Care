@@ -4,12 +4,12 @@ import { historyService } from '@/services/historyService'
 import { useChatStore } from '@/store/useChatStore'
 import { ROUTES } from '@/utils/constants'
 
-// Backend-authoritative conversation list for the History/Saved pages —
+// Backend-authoritative conversation list for the History page and dashboard —
 // distinct from useChat()/useChatStore's local cache, which stays focused on
 // the currently-active live chat session. Opening a conversation here
 // fetches its real messages and hydrates them into the local store so the
 // live chat screen shows the actual backend thread.
-export function useConversationHistory({ savedOnly = false } = {}) {
+export function useConversationHistory() {
   const navigate = useNavigate()
   const hydrateConversation = useChatStore(s => s.hydrateConversation)
 
@@ -22,15 +22,13 @@ export function useConversationHistory({ savedOnly = false } = {}) {
     setError('')
     try {
       const res = await historyService.getConversations(1, 50)
-      let list = res.data.data || []
-      if (savedOnly) list = list.filter(c => c.is_saved)
-      setConversations(list)
+      setConversations(res.data.data || [])
     } catch {
       setError('Failed to load conversations. Please try again.')
     } finally {
       setLoading(false)
     }
-  }, [savedOnly])
+  }, [])
 
   useEffect(() => { fetchConversations() }, [fetchConversations])
 

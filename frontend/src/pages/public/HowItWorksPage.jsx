@@ -5,7 +5,7 @@ import {
   ArrowRight, Heart, Star,
 } from 'lucide-react'
 import { Badge } from '@/components/atoms/Badge'
-import { FadeUp, FadeStagger, FadeItem, SlideIn } from '@/components/atoms/FadeUp'
+import { FadeUp, FadeStagger, FadeItem } from '@/components/atoms/FadeUp'
 import { ROUTES } from '@/utils/constants'
 
 const steps = [
@@ -61,9 +61,9 @@ const steps = [
 
 const techFlow = [
   'Your message',
-  'NLTK tokenisation + lemmatisation',
-  'Bag of Words encoding',
-  'Feedforward Neural Network',
+  'Universal Sentence Encoder (pretrained base model)',
+  '512-dim semantic embedding',
+  'Neural network classification head',
   'Intent classification',
   'WHO/FMOH knowledge base',
   'Your answer + confidence score',
@@ -152,8 +152,9 @@ export default function HowItWorksPage() {
               How the AI processes your question
             </h2>
             <p className="text-text-secondary text-sm max-w-xl mx-auto">
-              MamaGuide uses a Feedforward Neural Network with NLP processing to understand your
-              questions and match them to verified health information.
+              MamaGuide uses a pretrained language base model (Universal Sentence Encoder) with a
+              custom-trained neural network to understand your questions and match them to
+              verified health information.
             </p>
           </FadeUp>
 

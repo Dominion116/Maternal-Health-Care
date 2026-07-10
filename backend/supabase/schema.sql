@@ -50,9 +50,15 @@ CREATE TABLE IF NOT EXISTS user_profiles (
                    )),
   due_date             DATE,
   onboarding_completed BOOLEAN     NOT NULL DEFAULT false,
+  -- UI preferences edited on /app/settings (e.g. notification toggles).
+  settings             JSONB       NOT NULL DEFAULT '{}'::jsonb,
   created_at           TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at           TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Existing databases created before migration 004:
+ALTER TABLE user_profiles
+  ADD COLUMN IF NOT EXISTS settings JSONB NOT NULL DEFAULT '{}'::jsonb;
 
 CREATE INDEX IF NOT EXISTS idx_user_profiles_role ON user_profiles(role);
 

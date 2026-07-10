@@ -136,6 +136,36 @@ body {
   min-height: 100dvh;
 }
 
+/* ── Accessibility preferences (set via /app/settings/accessibility) ──
+   Classes are applied to <html> by src/utils/accessibility.js.
+   Text-size classes scale the root font-size, so every rem-based
+   Tailwind utility scales with it. */
+html.a11y-font-small  { font-size: 87.5%; }
+html.a11y-font-large  { font-size: 112.5%; }
+html.a11y-font-xl     { font-size: 125%; }
+
+html.a11y-high-contrast {
+  --color-text-primary:   #000000;
+  --color-text-secondary: #1f2937;
+  --color-text-muted:     #374151;
+  --color-border:         #6b7280;
+}
+
+html.a11y-reduce-motion *,
+html.a11y-reduce-motion *::before,
+html.a11y-reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Screen-reader optimised: always show focus outlines, even for mouse users */
+html.a11y-screen-reader :focus {
+  outline: 2px solid #c2185b !important;
+  outline-offset: 2px;
+}
+
 /* ── Focus Visible ──────────────────────────────────────────── */
 :focus-visible {
   outline: 2px solid #c2185b;

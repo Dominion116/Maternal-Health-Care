@@ -1,43 +1,47 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, Baby, Calendar, Edit2, Save, X, AlertTriangle, CheckCircle, Heart } from 'lucide-react'
+import toast from 'react-hot-toast'
+import { ArrowLeft, Baby, Calendar, Edit2, Save, X, AlertTriangle, CheckCircle } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
-import { Badge } from '@/components/atoms/Badge'
-import { ROUTES, PREGNANCY_STAGES, PREGNANCY_STAGE_LABELS } from '@/utils/constants'
+import { ROUTES, PREGNANCY_STAGE_LABELS } from '@/utils/constants'
 import { cn } from '@/utils/cn'
 
+// `done` is computed from the user's current pregnancy week when they have
+// entered one; `fallbackDone` is the typical state for someone mid-stage,
+// used when the week is unknown. (Postpartum weeks count from birth, which
+// we don't track, so postpartum always uses the fallback.)
 const milestones = {
   first_trimester: [
-    { week: 6, label: 'Heartbeat begins', done: true },
-    { week: 8, label: 'Major organs forming', done: true },
-    { week: 10, label: 'Fingers and toes visible', done: true },
-    { week: 12, label: 'First trimester complete', done: true },
-    { week: 16, label: '2nd ANC visit', done: false },
-    { week: 20, label: '20-week anomaly scan', done: false },
+    { week: 6, label: 'Heartbeat begins', fallbackDone: true },
+    { week: 8, label: 'Major organs forming', fallbackDone: true },
+    { week: 10, label: 'Fingers and toes visible', fallbackDone: true },
+    { week: 12, label: 'First trimester complete', fallbackDone: false },
+    { week: 16, label: '2nd ANC visit', fallbackDone: false },
+    { week: 20, label: '20-week anomaly scan', fallbackDone: false },
   ],
   second_trimester: [
-    { week: 16, label: '2nd ANC visit', done: true },
-    { week: 18, label: 'Baby movements (quickening)', done: true },
-    { week: 20, label: '20-week anomaly scan', done: true },
-    { week: 24, label: 'Viability milestone', done: false },
-    { week: 26, label: '4th ANC visit', done: false },
-    { week: 28, label: 'Third trimester begins', done: false },
+    { week: 16, label: '2nd ANC visit', fallbackDone: true },
+    { week: 18, label: 'Baby movements (quickening)', fallbackDone: true },
+    { week: 20, label: '20-week anomaly scan', fallbackDone: true },
+    { week: 24, label: 'Viability milestone', fallbackDone: false },
+    { week: 26, label: '4th ANC visit', fallbackDone: false },
+    { week: 28, label: 'Third trimester begins', fallbackDone: false },
   ],
   third_trimester: [
-    { week: 28, label: 'Third trimester begins', done: true },
-    { week: 32, label: '5th ANC visit', done: true },
-    { week: 36, label: 'Pack hospital bag', done: false },
-    { week: 37, label: 'Baby considered full term', done: false },
-    { week: 38, label: 'Final ANC visits', done: false },
-    { week: 40, label: 'Expected due date', done: false },
+    { week: 28, label: 'Third trimester begins', fallbackDone: true },
+    { week: 32, label: '5th ANC visit', fallbackDone: true },
+    { week: 36, label: 'Pack hospital bag', fallbackDone: false },
+    { week: 37, label: 'Baby considered full term', fallbackDone: false },
+    { week: 38, label: 'Final ANC visits', fallbackDone: false },
+    { week: 40, label: 'Expected due date', fallbackDone: false },
   ],
   postpartum: [
-    { week: 0, label: 'Baby born!', done: true },
-    { week: 0, label: 'First breastfeed within 1 hour', done: true },
-    { week: 1, label: 'Day 3 postnatal visit', done: true },
-    { week: 2, label: 'Day 7–10 postnatal visit', done: false },
-    { week: 6, label: '6-week postnatal check', done: false },
-    { week: 6, label: 'Begin family planning discussion', done: false },
+    { week: 0, label: 'Baby born!', fallbackDone: true },
+    { week: 0, label: 'First breastfeed within 1 hour', fallbackDone: true },
+    { week: 1, label: 'Day 3 postnatal visit', fallbackDone: true },
+    { week: 2, label: 'Day 7–10 postnatal visit', fallbackDone: false },
+    { week: 6, label: '6-week postnatal check', fallbackDone: false },
+    { week: 6, label: 'Begin family planning discussion', fallbackDone: false },
   ],
 }
 
@@ -65,20 +69,28 @@ export default function PregnancyProfilePage() {
 
   const currentStage = stage || 'first_trimester'
   const info = stageInfo[currentStage]
-  const stageMilestones = milestones[currentStage] || []
+  const currentWeek = currentStage !== 'postpartum' && Number(weeks) > 0 ? Number(weeks) : null
+  const stageMilestones = (milestones[currentStage] || []).map(m => ({
+    ...m,
+    done: currentWeek != null ? m.week <= currentWeek : m.fallbackDone,
+  }))
 
   async function handleSave() {
     setSaving(true)
-    // Backend's PATCH /profile expects snake_case; pregnancyWeeks has no
-    // backing column (not in user_profiles) so it stays local/optimistic only,
-    // same as the onboarding wizard's handling of this same field.
-    await updateUser({
-      pregnancy_stage: stage,
-      due_date: dueDate || null,
+    // useAuth.updateUser maps these to the backend's snake_case DTO;
+    // pregnancyWeeks has no backing column so it stays local only.
+    const result = await updateUser({
+      pregnancyStage: stage,
+      dueDate: dueDate || null,
       pregnancyWeeks: weeks,
     })
     setSaving(false)
-    setEditing(false)
+    if (result.success) {
+      toast.success('Pregnancy details saved.')
+      setEditing(false)
+    } else {
+      toast.error(result.error)
+    }
   }
 
   return (

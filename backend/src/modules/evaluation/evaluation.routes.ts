@@ -56,6 +56,21 @@ router.get('/consent', evaluationController.getConsent as any);
  */
 router.post('/consent', validate(ConsentDto), evaluationController.submitConsent as any);
 
+/**
+ * @openapi
+ * /evaluation/consent:
+ *   delete:
+ *     tags: [Evaluation]
+ *     summary: Withdraw research participation consent
+ *     description: Sets consented=false on the existing record (kept as an audit trail). No-op if never consented.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Consent withdrawn
+ */
+router.delete('/consent', evaluationController.withdrawConsent as any);
+
 // ── SUS ────────────────────────────────────────────────────────────────────
 
 /**

@@ -1,0 +1,4 @@
+{
+  "baseModel": "universal-sentence-encoder",
+  "embeddingDim": 512
+}

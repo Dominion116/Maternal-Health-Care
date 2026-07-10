@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   Plus,
   Wifi,
   WifiOff,
   Trash2,
-  ChevronLeft,
   AlertTriangle,
 } from "lucide-react";
 import {
@@ -19,37 +19,81 @@ import { Button } from "@/components/atoms/Button";
 import { Alert } from "@/components/atoms/Alert";
 import { useChat } from "@/hooks/useChat";
 import { useAuth } from "@/hooks/useAuth";
-import { SUGGESTED_PROMPTS, ROUTES, DISCLAIMER_TEXT } from "@/utils/constants";
+import { historyService } from "@/services/historyService";
+import { SUGGESTED_PROMPTS, DISCLAIMER_TEXT } from "@/utils/constants";
 import { cn } from "@/utils/cn";
+
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export default function ChatPage() {
   const { user } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
   const {
     messages,
-    activeConversation,
     isTyping,
     isConnected,
     sendMessage,
     startNewConversation,
-    clearCurrentConversation,
+    deleteConversation,
     activeConversationId,
   } = useChat();
 
   const bottomRef = useRef(null);
-  const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  // A suggested prompt passed from the dashboard — sent once the fresh
+  // conversation from the mount effect below becomes active.
+  const [pendingMessage, setPendingMessage] = useState(
+    location.state?.initialMessage || null,
+  );
 
   const stage = user?.pregnancyStage;
   const prompts = SUGGESTED_PROMPTS[stage] || SUGGESTED_PROMPTS.default;
 
-  // Auto-start conversation on first load
+  // Auto-start conversation on first load; a dashboard prompt always gets
+  // its own fresh conversation. Clear router state so a refresh/back
+  // navigation doesn't re-send the prompt.
   useEffect(() => {
-    if (!activeConversationId) startNewConversation();
+    if (pendingMessage) {
+      startNewConversation();
+      navigate(location.pathname, { replace: true, state: null });
+    } else if (!activeConversationId) {
+      startNewConversation();
+    }
   }, []);
+
+  // Send the dashboard prompt once the new conversation is active — waiting
+  // a render ensures sendMessage targets the fresh conversation id.
+  useEffect(() => {
+    if (pendingMessage && activeConversationId && messages.length === 0) {
+      const msg = pendingMessage;
+      setPendingMessage(null);
+      sendMessage(msg);
+    }
+  }, [pendingMessage, activeConversationId, messages.length, sendMessage]);
 
   // Scroll to bottom on new messages
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
+
+  async function handleDeleteConversation() {
+    const id = activeConversationId;
+    setShowDeleteConfirm(false);
+    try {
+      // Only conversations that reached the server have a UUID; local-only
+      // drafts (`conv_...`) just get dropped from the store.
+      if (UUID_RE.test(id)) {
+        await historyService.deleteConversation(id);
+      }
+      deleteConversation(id);
+      startNewConversation();
+      toast.success("Conversation deleted.");
+    } catch {
+      toast.error("Could not delete the conversation. Please try again.");
+    }
+  }
 
   const showWelcome = messages.length === 0;
 
@@ -86,9 +130,9 @@ export default function ChatPage() {
         <div className="flex items-center gap-1">
           {messages.length > 0 && (
             <button
-              onClick={() => setShowClearConfirm(true)}
+              onClick={() => setShowDeleteConfirm(true)}
               className="p-2 rounded-lg text-text-muted hover:text-error hover:bg-error-light transition-all"
-              aria-label="Clear conversation"
+              aria-label="Delete conversation"
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -111,29 +155,23 @@ export default function ChatPage() {
         </Alert>
       )}
 
-      {/* Clear confirm */}
-      {showClearConfirm && (
+      {/* Delete confirm */}
+      {showDeleteConfirm && (
         <div className="mx-4 mt-3 shrink-0">
           <Alert
             variant="warning"
-            title="Clear conversation?"
-            onDismiss={() => setShowClearConfirm(false)}
+            title="Delete this conversation?"
+            onDismiss={() => setShowDeleteConfirm(false)}
           >
+            It will be removed from your chat history permanently.
             <div className="mt-2 flex gap-2">
-              <Button
-                size="xs"
-                variant="danger"
-                onClick={() => {
-                  clearCurrentConversation();
-                  setShowClearConfirm(false);
-                }}
-              >
-                Yes, clear
+              <Button size="xs" variant="danger" onClick={handleDeleteConversation}>
+                Yes, delete
               </Button>
               <Button
                 size="xs"
                 variant="ghost"
-                onClick={() => setShowClearConfirm(false)}
+                onClick={() => setShowDeleteConfirm(false)}
               >
                 Cancel
               </Button>

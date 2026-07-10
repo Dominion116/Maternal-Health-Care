@@ -74,12 +74,33 @@ export function useAuth() {
   const isAdmin = user?.role === "admin" || user?.role === "researcher" || isSuperAdmin;
   const isPregnantWoman = user?.role === "pregnant_woman";
 
-  async function updateUser(user) {
+  // Maps the app's camelCase user fields to the backend's snake_case
+  // UpdateProfileDto. Fields without a backing column (pregnancyWeeks)
+  // update local state only.
+  const PROFILE_FIELD_MAP = {
+    name: "full_name",
+    phone: "phone_number",
+    pregnancyStage: "pregnancy_stage",
+    dueDate: "due_date",
+    language: "language",
+  };
+
+  async function updateUser(updates) {
+    const payload = {};
+    for (const [localKey, backendKey] of Object.entries(PROFILE_FIELD_MAP)) {
+      if (updates[localKey] !== undefined) payload[backendKey] = updates[localKey];
+    }
     try {
-      await authService.updateProfile(user);
-      handleLocalUserUpdate(user);
-    } catch {
-      console.warn("Not able to update user");
+      if (Object.keys(payload).length > 0) {
+        await authService.updateProfile(payload);
+      }
+      handleLocalUserUpdate(updates);
+      return { success: true };
+    } catch (err) {
+      return {
+        success: false,
+        error: err.response?.data?.error || "Failed to update profile",
+      };
     }
   }
 

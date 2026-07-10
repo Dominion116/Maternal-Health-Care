@@ -9,6 +9,20 @@ export const UpdateProfileDto = z.object({
     .optional(),
   due_date: z.string().date().nullable().optional(),
   phone_number: z.string().max(20).nullable().optional(),
+  // UI preferences (notification toggles etc). Replaced wholesale on update —
+  // clients send the full object, not a partial patch.
+  settings: z
+    .object({
+      notifications: z
+        .object({
+          healthReminders: z.boolean().optional(),
+          ancReminders: z.boolean().optional(),
+          weeklyTips: z.boolean().optional(),
+          researchUpdates: z.boolean().optional(),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 export type UpdateProfileDtoType = z.infer<typeof UpdateProfileDto>;

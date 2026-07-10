@@ -16,8 +16,8 @@
     "train-model": "tsx src/ml/train.ts"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.32.1",
     "@supabase/supabase-js": "^2.45.0",
+    "@tensorflow-models/universal-sentence-encoder": "^1.3.3",
     "@tensorflow/tfjs": "^4.22.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -27,7 +27,6 @@
     "morgan": "^1.10.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "wink-lemmatizer": "^3.0.4",
     "zod": "^3.23.8"
   },
   "devDependencies": {

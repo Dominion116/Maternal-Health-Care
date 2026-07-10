@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { Button } from "@/components/atoms/Button";
 import { Badge } from "@/components/atoms/Badge";
 import { useAuth } from "@/hooks/useAuth";
+import { useAuthStore } from "@/store/useAuthStore";
+import { authService } from "@/services/authService";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import {
   ROUTES,
-  PREGNANCY_STAGES,
   PREGNANCY_STAGE_LABELS,
-  LANGUAGES,
   LANGUAGE_LABELS,
   LOCAL_STORAGE_KEYS,
 } from "@/utils/constants";
@@ -18,8 +19,10 @@ import { cn } from "@/utils/cn";
 const STEPS = ["Welcome", "Pregnancy Stage", "Language", "Ready"];
 
 export default function OnboardingPage() {
-  const { user, updateUser } = useAuth();
+  const { user } = useAuth();
+  const updateLocalUser = useAuthStore((s) => s.updateUser);
   const navigate = useNavigate();
+  const [finishing, setFinishing] = useState(false);
   const [, setOnboardingDone] = useLocalStorage(
     LOCAL_STORAGE_KEYS.ONBOARDING_DONE,
     false,
@@ -40,9 +43,27 @@ export default function OnboardingPage() {
   }
 
   async function finish() {
-    updateUser({ ...data });
-    setOnboardingDone(true);
-    navigate(ROUTES.CHAT);
+    setFinishing(true);
+    try {
+      // POST /onboarding persists stage + language and flips
+      // onboarding_completed server-side, so future logins skip this flow.
+      await authService.completeOnboarding({
+        pregnancy_stage: data.pregnancyStage || null,
+        language: data.language,
+      });
+      updateLocalUser({
+        pregnancyStage: data.pregnancyStage,
+        pregnancyWeeks: data.pregnancyWeeks,
+        language: data.language,
+        onboarding_completed: true,
+      });
+      setOnboardingDone(true);
+      navigate(ROUTES.CHAT);
+    } catch {
+      toast.error("Could not save your setup. Please try again.");
+    } finally {
+      setFinishing(false);
+    }
   }
 
   return (
@@ -135,9 +156,10 @@ export default function OnboardingPage() {
             <Button
               onClick={finish}
               size="md"
+              disabled={finishing}
               iconRight={<Check className="w-4 h-4" />}
             >
-              Let's Go!
+              {finishing ? "Saving…" : "Let's Go!"}
             </Button>
           )}
         </div>
@@ -145,7 +167,8 @@ export default function OnboardingPage() {
 
       <button
         onClick={finish}
-        className="mt-4 text-sm text-text-muted hover:text-text-secondary transition-colors"
+        disabled={finishing}
+        className="mt-4 text-sm text-text-muted hover:text-text-secondary transition-colors disabled:opacity-50"
       >
         Skip setup for now
       </button>
