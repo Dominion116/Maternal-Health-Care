@@ -4,16 +4,16 @@
   "description": "MamaGuide – Maternal Health Education Chatbot Backend",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "build": "npm run train-model && tsc && node scripts/copy-artifacts.js",
+    "dev": "npx tsx watch src/index.ts",
+    "build": "npm run train-model && npx tsc && node scripts/copy-artifacts.js",
     "start": "node dist/index.js",
     "lint": "eslint 'src/**/*.ts'",
     "lint:fix": "eslint 'src/**/*.ts' --fix",
     "test": "jest --runInBand",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "create-admin": "tsx scripts/create-admin.ts",
-    "train-model": "tsx src/ml/train.ts"
+    "create-admin": "npx tsx scripts/create-admin.ts",
+    "train-model": "npx tsx src/ml/train.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
