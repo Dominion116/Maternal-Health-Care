@@ -12,7 +12,7 @@ const articles: EducationArticle[] = [
       en: {
         title: 'Danger Signs During Pregnancy',
         summary:
-          'Know these warning signs. If you experience any of them, go to a hospital immediately — do not wait.',
+          'Know these warning signs. If you experience any of them, go to a hospital immediately; do not wait.',
         content: `## Go to Hospital IMMEDIATELY for Any of These
 
 ### Heavy Vaginal Bleeding
@@ -22,7 +22,7 @@ Any bleeding heavier than a period, with or without pain. Can signal placenta pr
 Constant, severe pain that does not ease. Different from normal stretching or Braxton Hicks.
 
 ### Severe Headache
-A sudden, very severe headache — especially with visual disturbances — can be a sign of pre-eclampsia or stroke.
+A sudden, very severe headache, especially with visual disturbances, can be a sign of pre-eclampsia or stroke.
 
 ### Swelling of Face or Hands
 Some ankle swelling is normal late in pregnancy. But sudden swelling of the face or hands, especially with headache or blurred vision, is a danger sign of pre-eclampsia.
@@ -43,11 +43,11 @@ Can indicate severe anaemia, pulmonary embolism, or heart problems.
 From 28 weeks, if you count fewer than 10 movements in 2 hours after a meal, go to hospital. Do not wait until the next day.
 
 ### Leaking Fluid From the Vagina Before 37 Weeks
-May indicate premature rupture of membranes — risk of cord prolapse and infection.
+May indicate premature rupture of membranes, with risk of cord prolapse and infection.
 
 ## What to Do
 
-1. **Do not wait** — these signs can worsen rapidly.
+1. **Do not wait**; these signs can worsen rapidly.
 2. Go to the nearest hospital with maternity services.
 3. Bring your **ANC card**.
 4. If you cannot get to hospital, call **112** (Nigeria national emergency line).`,
@@ -78,10 +78,10 @@ In the first week after birth, fever often indicates uterine infection (endometr
 Normal lochia (postnatal bleeding) is red for a few days then becomes pink and then yellowish-white. If it smells foul, infection is likely.
 
 ### Swollen, Red, or Painful Legs
-Deep vein thrombosis (DVT) — a blood clot — can occur after delivery. One leg more swollen or painful than the other is a warning sign.
+Deep vein thrombosis (DVT), a blood clot, can occur after delivery. One leg more swollen or painful than the other is a warning sign.
 
 ### Difficulty Urinating or Burning When Urinating
-Urinary tract infections are common after birth. Treat promptly — untreated UTIs can reach the kidneys.
+Urinary tract infections are common after birth. Treat promptly; untreated UTIs can reach the kidneys.
 
 ### Signs of Pre-eclampsia Continuing After Birth
 Headache, blurred vision, or high blood pressure can persist up to 6 weeks postpartum. Attend your postnatal visits.

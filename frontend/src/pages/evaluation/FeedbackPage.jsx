@@ -155,7 +155,7 @@ export default function FeedbackPage() {
         {/* Category ratings */}
         <div className="bg-white rounded-2xl border border-gray-200 p-5">
           <p className="font-semibold text-gray-900 text-sm mb-1">Rate specific aspects</p>
-          <p className="text-xs text-gray-500 mb-4">Optional — tap a star for each area</p>
+          <p className="text-xs text-gray-500 mb-4">Optional: tap a star for each area</p>
           <div className="space-y-3">
             {categories.map(cat => (
               <div key={cat.id} className="flex items-center justify-between">
@@ -207,7 +207,7 @@ export default function FeedbackPage() {
           <label htmlFor="feedback-comment" className="block font-semibold text-gray-900 text-sm mb-1">
             Any comments or suggestions?
           </label>
-          <p className="text-xs text-gray-500 mb-3">Optional — tell us what worked well or what we can improve</p>
+          <p className="text-xs text-gray-500 mb-3">Optional: tell us what worked well or what we can improve</p>
           <textarea
             id="feedback-comment"
             value={comment}

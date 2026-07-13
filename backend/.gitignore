@@ -17,6 +17,10 @@ npm-debug.log*
 # Coverage
 coverage/
 
+# Regeneratable intermediate artifacts from one-off data-migration scripts
+# (scripts/ghana-match.ts etc.) — large, and reproducible by re-running them.
+scripts/output/
+
 # Source maps
 *.js.map
 

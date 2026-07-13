@@ -14,7 +14,7 @@ const steps = [
     icon: UserPlus,
     color: 'bg-rose-100 text-rose-700',
     title: 'Create Your Free Account',
-    desc: 'Sign up in under 2 minutes with just your name and email. Choose your role — pregnant woman, nurse, or researcher. Your data is private and secure.',
+    desc: 'Sign up in under 2 minutes with just your name and email. MamaGuide is built for pregnant and postpartum women. Your data is private and secure.',
     detail: 'No credit card. No doctor referral. Just sign up and start.',
   },
   {
@@ -22,7 +22,7 @@ const steps = [
     icon: ClipboardList,
     color: 'bg-sage-100 text-sage-700',
     title: 'Complete Quick Onboarding',
-    desc: "Tell MamaGuide your pregnancy stage — first trimester, second trimester, third trimester, or postpartum. Select your preferred language. Read and agree to the medical disclaimer.",
+    desc: "Tell MamaGuide your pregnancy stage: first trimester, second trimester, third trimester, or postpartum. Select your preferred language. Read and agree to the medical disclaimer.",
     detail: 'Takes about 1 minute. Personalises your whole experience.',
   },
   {
@@ -30,7 +30,7 @@ const steps = [
     icon: MessageCircle,
     color: 'bg-amber-100 text-amber-700',
     title: 'Ask Your Question',
-    desc: "Type any pregnancy question in plain language — in English or your local language. MamaGuide's AI reads your message, understands your intent, and prepares a response.",
+    desc: "Type any pregnancy question in plain language, in English or your local language. MamaGuide's AI reads your message, understands your intent, and prepares a response.",
     detail: 'Try: "What should I eat in my second trimester?" or "What are the danger signs I should watch for?"',
   },
   {
@@ -38,7 +38,7 @@ const steps = [
     icon: Shield,
     color: 'bg-blue-100 text-blue-700',
     title: 'Get a Trusted Answer',
-    desc: "MamaGuide searches its knowledge base — built from WHO guidelines, FMOH Nigeria protocols, and the MOTHER dataset — and returns a clear, reliable answer with its confidence level.",
+    desc: "MamaGuide searches its knowledge base, built from WHO guidelines, FMOH Nigeria protocols, and the MOTHER dataset, and returns a clear, reliable answer with its confidence level.",
     detail: "Emergency phrases are automatically detected. You'll be directed to call 112 if needed.",
   },
   {
@@ -46,7 +46,7 @@ const steps = [
     icon: BookOpen,
     color: 'bg-purple-100 text-purple-700',
     title: 'Explore Health Topics',
-    desc: 'Browse the Health Education library for in-depth guides — trimester by trimester, nutrition, danger signs, ANC schedule, vaccines, mental health, birth prep, postpartum care, and breastfeeding.',
+    desc: 'Browse the Health Education library for in-depth guides: trimester by trimester, nutrition, danger signs, ANC schedule, vaccines, mental health, birth prep, postpartum care, and breastfeeding.',
     detail: 'All content is sourced from verified medical guidelines and written in plain language.',
   },
   {
@@ -54,7 +54,7 @@ const steps = [
     icon: Heart,
     color: 'bg-pink-100 text-pink-700',
     title: 'Continue Your Journey',
-    desc: "Your conversation history is saved. Come back any time — day or night. MamaGuide is always available to answer your next question, no matter how small.",
+    desc: "Your conversation history is saved. Come back any time, day or night. MamaGuide is always available to answer your next question, no matter how small.",
     detail: "After using MamaGuide, you'll be invited to complete a 10-question evaluation survey to help improve the system.",
   },
 ]
@@ -94,7 +94,7 @@ export default function HowItWorksPage() {
           </FadeUp>
           <FadeUp delay={0.14}>
             <p className="text-text-secondary text-lg leading-relaxed max-w-2xl mx-auto">
-              From signing up to getting your first answer — here's everything you need to know
+              From signing up to getting your first answer, here's everything you need to know
               about using MamaGuide safely and confidently.
             </p>
           </FadeUp>

@@ -39,7 +39,7 @@ const articles: EducationArticle[] = [
 ## Rest and Support
 
 - Accept help from family with household tasks and older children.
-- Sleep when the baby sleeps — recovery requires rest.
+- Sleep when the baby sleeps; recovery requires rest.
 - Do not resume heavy physical work for at least 6 weeks.`,
       },
     },
@@ -53,7 +53,7 @@ const articles: EducationArticle[] = [
     updated_at: '2025-01-01',
     translations: {
       en: {
-        title: 'Postnatal Care Visits — Why They Matter',
+        title: 'Postnatal Care Visits: Why They Matter',
         summary:
           'Most maternal and newborn deaths happen in the first 48 hours after birth. Postnatal visits catch complications early.',
         content: `## The Recommended Postnatal Visit Schedule
@@ -69,7 +69,7 @@ const articles: EducationArticle[] = [
 
 ## What Postnatal Visits Include for the Mother
 
-- Blood pressure measurement — hypertension can continue or start after birth
+- Blood pressure measurement; hypertension can continue or start after birth
 - Checking bleeding and uterus size
 - Wound check (perineum or C-section)
 - Breastfeeding support
@@ -78,15 +78,15 @@ const articles: EducationArticle[] = [
 
 ## What Postnatal Visits Include for the Baby
 
-- Weight measurement — babies lose up to 10% of birth weight in the first few days; they should regain it by 2 weeks
-- Checking the umbilical cord stump — should be kept dry and will fall off in 7–14 days
+- Weight measurement; babies lose up to 10% of birth weight in the first few days; they should regain it by 2 weeks
+- Checking the umbilical cord stump, which should be kept dry and will fall off in 7–14 days
 - Checking for jaundice (yellow skin)
 - Newborn hearing screen (available at some facilities)
 - First immunisations if not given at birth
 
 ## Family Planning at 6 Weeks
 
-Your provider will discuss contraception options. You can become pregnant again as early as 3 weeks after birth — even before your period returns and while breastfeeding. Discuss your preferred method at your 6-week visit.`,
+Your provider will discuss contraception options. You can become pregnant again as early as 3 weeks after birth, even before your period returns and while breastfeeding. Discuss your preferred method at your 6-week visit.`,
       },
     },
   },

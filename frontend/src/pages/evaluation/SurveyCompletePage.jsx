@@ -46,7 +46,7 @@ export default function SurveyCompletePage() {
       <div className="bg-white border border-gray-200 rounded-2xl p-5 mb-8 text-left">
         <h2 className="font-semibold text-gray-900 text-sm mb-1">Would you like to add written feedback?</h2>
         <p className="text-xs text-gray-500 mb-4 leading-relaxed">
-          You can share comments about your experience — what worked well, what could be better. This is optional but very helpful.
+          You can share comments about your experience: what worked well, what could be better. This is optional but very helpful.
         </p>
         <Link
           to={ROUTES.FEEDBACK}

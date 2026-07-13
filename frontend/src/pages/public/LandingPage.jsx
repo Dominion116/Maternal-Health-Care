@@ -245,7 +245,7 @@ export default function LandingPage() {
               </p>
               <ul className="space-y-3 mb-8">
                 {[
-                  'Plain English answers — no medical jargon',
+                  'Plain English answers, no medical jargon',
                   'Emergency detection and escalation',
                   'Backed by WHO & FMOH guidelines',
                   'Works on any Android phone',

@@ -15,7 +15,7 @@ const articles: EducationArticle[] = [
           'A birth preparedness plan helps you and your family know what to do when labour starts. Make yours before 36 weeks.',
         content: `## What Is a Birth Preparedness Plan?
 
-A birth preparedness plan (also called a complication readiness plan) is a set of decisions you make in advance so that when labour begins — or if an emergency occurs — everyone knows what to do. **Discuss it with your family and your ANC provider by 36 weeks.**
+A birth preparedness plan (also called a complication readiness plan) is a set of decisions you make in advance so that when labour begins, or if an emergency occurs, everyone knows what to do. **Discuss it with your family and your ANC provider by 36 weeks.**
 
 ## Your Plan Should Answer These Questions
 
@@ -26,7 +26,7 @@ A birth preparedness plan (also called a complication readiness plan) is a set o
 
 ### Who will go with you?
 - A birth companion (partner, mother, trusted person) reduces complications and improves experience.
-- Tell them in advance — they should be reachable any time of day or night.
+- Tell them in advance; they should be reachable any time of day or night.
 
 ### How will you get there?
 - Arrange transport in advance. Identify two options (e.g., a neighbour with a car + a motorcycle taxi).
@@ -37,7 +37,7 @@ A birth preparedness plan (also called a complication readiness plan) is a set o
 
 ### Do you have money set aside?
 - Even at free government facilities, you may need money for medications, transport, or unexpected items.
-- Many states have a Basic Health Care Provision Fund — ask your ANC provider what is covered.
+- Many states have a Basic Health Care Provision Fund; ask your ANC provider what is covered.
 
 ### Do you have blood donors identified?
 - Blood transfusion can save lives in postpartum haemorrhage.
@@ -64,7 +64,7 @@ Pack your hospital bag by **36 weeks**. See the 'What to Pack in Your Hospital B
         content: `## For You (the Mother)
 
 **Documents**
-- ANC card (most important — do not forget this)
+- ANC card (most important; do not forget this)
 - National ID or voter's card
 - Health insurance card (if you have one)
 
@@ -75,7 +75,7 @@ Pack your hospital bag by **36 weeks**. See the 'What to Pack in Your Hospital B
 - Warm shawl or light cardigan
 
 **Hygiene**
-- Sanitary pads (maternity/heavy flow) — you will need many
+- Sanitary pads (maternity/heavy flow); you will need many
 - Toiletries: soap, sponge, toothbrush, toothpaste
 - Small towel
 
@@ -99,7 +99,7 @@ Pack your hospital bag by **36 weeks**. See the 'What to Pack in Your Hospital B
 ## Tips
 
 - Pack the bag and tell your birth companion where it is stored.
-- The ANC card must be in the bag immediately — do not add it at the last minute.
+- The ANC card must be in the bag immediately; do not add it at the last minute.
 - Review the bag at 36 weeks and again at 38 weeks.`,
       },
     },
@@ -113,19 +113,19 @@ Pack your hospital bag by **36 weeks**. See the 'What to Pack in Your Hospital B
     updated_at: '2025-01-01',
     translations: {
       en: {
-        title: 'Signs of Labour — When to Go to Hospital',
+        title: 'Signs of Labour: When to Go to Hospital',
         summary:
           'Knowing the difference between true labour and false alarms helps you act at the right time.',
         content: `## Early Signs That Labour May Be Near
 
-These signs mean labour could start in hours or days — not necessarily that you need to go to hospital right now:
+These signs mean labour could start in hours or days, not necessarily that you need to go to hospital right now:
 
-- **Lightening** — the baby drops lower in your pelvis. You may breathe more easily but need to urinate more.
-- **Bloody show** — a pink or blood-tinged mucus discharge as the cervical plug loosens. Normal.
-- **Loose stools** — the body sometimes clears itself before labour.
-- **Nesting urge** — a sudden burst of energy and desire to prepare the home.
+- **Lightening**: the baby drops lower in your pelvis. You may breathe more easily but need to urinate more.
+- **Bloody show**: a pink or blood-tinged mucus discharge as the cervical plug loosens. Normal.
+- **Loose stools**: the body sometimes clears itself before labour.
+- **Nesting urge**: a sudden burst of energy and desire to prepare the home.
 
-## Signs That Labour Has Started — Go to Hospital
+## Signs That Labour Has Started: Go to Hospital
 
 ### Regular Contractions
 Contractions that:
@@ -136,9 +136,9 @@ Contractions that:
 
 ### Waters Breaking (Rupture of Membranes)
 A gush or trickle of clear or pale yellow fluid from the vagina. This is the amniotic sac breaking.
-- **Go to hospital immediately** — even if you have no contractions yet.
+- **Go to hospital immediately**, even if you have no contractions yet.
 - Note the time, colour (should be clear or pale, not green or brown), and smell.
-- Green or brown fluid means the baby has passed meconium — tell the hospital staff immediately on arrival.
+- Green or brown fluid means the baby has passed meconium; tell the hospital staff immediately on arrival.
 
 ### Bloody Show With Contractions
 Blood-tinged mucus with regular contractions means active labour is starting.

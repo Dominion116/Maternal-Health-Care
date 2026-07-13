@@ -123,16 +123,16 @@ export default function PrivacyPage() {
                 <Ul items={[
                   'Account information: your name, email address, and optional phone number provided at registration',
                   'Profile information: your pregnancy stage (1st/2nd/3rd trimester or postpartum) and language preference',
-                  'Chat messages: the questions you send to MamaGuide and the responses you receive — stored to enable chat history',
+                  'Chat messages: the questions you send to MamaGuide and the responses you receive, stored to enable chat history',
                   'Survey responses: SUS questionnaire answers if you voluntarily participate in the research evaluation',
                   'Feedback: written comments or ratings you submit through the feedback form',
                 ]} />
                 <SubHeading>Information collected automatically:</SubHeading>
                 <Ul items={[
                   'Usage data: which pages you visit and features you use, to improve MamaGuide\'s content and navigation',
-                  'Device information: browser type and operating system — we do not collect your device\'s unique identity',
+                  'Device information: browser type and operating system; we do not collect your device\'s unique identity',
                   'Session data: login timestamps, stored securely on our servers using JWT tokens',
-                  'Interaction patterns: how long you engage with education modules — used to improve content quality',
+                  'Interaction patterns: how long you engage with education modules, used to improve content quality',
                 ]} />
               </Section>
 
@@ -158,7 +158,7 @@ export default function PrivacyPage() {
                 <Ul items={[
                   'Health information is stored server-side, encrypted at rest, and never transmitted in plain text',
                   'Chat conversations containing health details are only accessible to you and authorised administrators',
-                  'Administrators can view conversations only for safety monitoring — not for commercial analysis',
+                  'Administrators can view conversations only for safety monitoring, not for commercial analysis',
                   'Emergency-flagged conversations are reviewed to ensure the AI response was appropriate and safe',
                   'Health data is not used to train external AI models or sold to pharmaceutical or insurance companies',
                 ]} />
@@ -186,12 +186,12 @@ export default function PrivacyPage() {
               <Section id="data-security" number="6" icon={Lock} title="Data Security">
                 <p>We implement multiple layers of security to protect your data:</p>
                 <Ul items={[
-                  'JWT (JSON Web Token) authentication — your session is cryptographically signed and verified on every request',
-                  'bcrypt password hashing — your password is hashed with a salt factor of 12; we never store plain-text passwords',
-                  'HTTPS/TLS encryption — all data between your browser and our servers is encrypted in transit',
-                  'Role-based access control — only administrators can view conversation data; regular users see only their own data',
-                  'Input sanitisation — all user inputs are validated to prevent injection attacks',
-                  'Regular code reviews — security is reviewed throughout the development process as part of academic practice',
+                  'JWT (JSON Web Token) authentication: your session is cryptographically signed and verified on every request',
+                  'bcrypt password hashing: your password is hashed with a salt factor of 12; we never store plain-text passwords',
+                  'HTTPS/TLS encryption: all data between your browser and our servers is encrypted in transit',
+                  'Role-based access control: only administrators can view conversation data; regular users see only their own data',
+                  'Input sanitisation: all user inputs are validated to prevent injection attacks',
+                  'Regular code reviews: security is reviewed throughout the development process as part of academic practice',
                 ]} />
                 <InfoBanner variant="info" title="Reporting a security issue">
                   If you discover a security vulnerability, please contact us immediately via the Contact page. We take all security reports seriously and will respond within 24 hours.
@@ -202,9 +202,9 @@ export default function PrivacyPage() {
                 <p>MamaGuide uses minimal local storage and no third-party tracking:</p>
                 <SubHeading>What we store locally (in your browser):</SubHeading>
                 <Ul items={[
-                  'Your authentication token (JWT) — so you remain logged in across sessions',
-                  'Your UI preferences — such as sidebar state — stored in localStorage',
-                  'Your language preference — saved locally and on our server',
+                  'Your authentication token (JWT), so you remain logged in across sessions',
+                  'Your UI preferences, such as sidebar state, stored in localStorage',
+                  'Your language preference, saved locally and on our server',
                 ]} />
                 <SubHeading>What we do NOT use:</SubHeading>
                 <Ul items={[
@@ -219,10 +219,10 @@ export default function PrivacyPage() {
               <Section id="third-party" number="8" icon={Globe} title="Third-Party Services">
                 <p>MamaGuide is a self-contained academic system. We use minimal external services:</p>
                 <Ul items={[
-                  'Hosting infrastructure: the application is hosted on academic/personal infrastructure — no major cloud providers store your data',
-                  'No third-party AI APIs: our AI model runs locally on our server — your chat data does not pass through OpenAI, Google, or similar services',
-                  'No payment processors: MamaGuide is free — we collect no payment information',
-                  'No social logins: we do not use "Sign in with Google/Facebook" — we build and manage our own authentication',
+                  'Hosting infrastructure: the application is hosted on academic/personal infrastructure; no major cloud providers store your data',
+                  'No third-party AI APIs: our AI model runs locally on our server; your chat data does not pass through OpenAI, Google, or similar services',
+                  'No payment processors: MamaGuide is free; we collect no payment information',
+                  'No social logins: we do not use "Sign in with Google/Facebook"; we build and manage our own authentication',
                 ]} />
               </Section>
 
@@ -242,7 +242,7 @@ export default function PrivacyPage() {
                 <Ul items={[
                   'Your account and all associated data are retained while your account is active',
                   'If you delete your account, all personal data is permanently and irreversibly removed within 30 days',
-                  'Anonymised, aggregated research statistics (e.g., average SUS scores) may be retained for academic publication — no individual data is identifiable in these summaries',
+                  'Anonymised, aggregated research statistics (e.g., average SUS scores) may be retained for academic publication; no individual data is identifiable in these summaries',
                   'Accounts inactive for 12 or more consecutive months may be deleted after 30 days\' prior email notice',
                   'Emergency escalation logs are retained for 12 months for safety audit purposes, then deleted',
                 ]} />
@@ -263,7 +263,7 @@ export default function PrivacyPage() {
                 <Ul items={[
                   'Nigeria Data Protection Regulation (NDPR) 2019: we align our data practices with NDPR principles of lawfulness, fairness, and transparency',
                   'Federal Ministry of Health (FMOH) guidelines: our health content is based on FMOH maternal health protocols',
-                  'NDPR requires that personal data collected must be for specific, legitimate purposes — we comply with this requirement',
+                  'NDPR requires that personal data collected must be for specific, legitimate purposes, and we comply with this requirement',
                   'We do not transfer your data outside Nigeria without adequate safeguards and your explicit consent',
                   'As an academic project, we are registered under university ethics approval which sets additional data protection standards',
                 ]} />

@@ -167,7 +167,7 @@ export default function AdminReportsPage() {
   const findings = [];
   if (sus.avg_sus_score != null) {
     findings.push({
-      text: `Average SUS score is ${sus.avg_sus_score} — ${sus.avg_sus_score >= 70 ? 'above the "Good" threshold (70+)' : 'below the "Good" threshold (70)'}`,
+      text: `Average SUS score is ${sus.avg_sus_score}, which is ${sus.avg_sus_score >= 70 ? 'above the "Good" threshold (70+)' : 'below the "Good" threshold (70)'}`,
       positive: sus.avg_sus_score >= 70,
     });
   }
@@ -186,7 +186,7 @@ export default function AdminReportsPage() {
     .sort((a, b) => a.f1 - b.f1)[0];
   if (worstIntent) {
     findings.push({
-      text: `Weakest classified intent: "${worstIntent.intent.replace(/_/g, " ")}" (F1 ${Math.round(worstIntent.f1 * 100)}%) — a candidate for more training patterns`,
+      text: `Weakest classified intent: "${worstIntent.intent.replace(/_/g, " ")}" (F1 ${Math.round(worstIntent.f1 * 100)}%), a candidate for more training patterns`,
       positive: false,
     });
   }
@@ -219,11 +219,11 @@ export default function AdminReportsPage() {
               label: "Conversations",
               value: analytics.totals.conversations.toLocaleString(),
             },
-            { label: "Avg SUS Score", value: sus.avg_sus_score ?? "—" },
+            { label: "Avg SUS Score", value: sus.avg_sus_score ?? "N/A" },
             {
               label: "Positive Feedback",
               value:
-                positiveFeedbackPct != null ? `${positiveFeedbackPct}%` : "—",
+                positiveFeedbackPct != null ? `${positiveFeedbackPct}%` : "N/A",
             },
           ].map((item) => (
             <div key={item.label}>

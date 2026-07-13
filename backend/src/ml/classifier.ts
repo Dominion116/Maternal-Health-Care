@@ -28,7 +28,7 @@ let cached: {
   centroids: number[][] | null;
 } | null = null;
 
-function getHead() {
+async function getHead() {
   if (cached) return cached;
 
   if (!artifactsExist()) {
@@ -36,6 +36,13 @@ function getHead() {
       'No trained intent-classification model found. Run "npm run train-model" in backend/ before starting the server.',
     );
   }
+
+  // buildModel() below creates tensors (Dense layer weight init), which
+  // needs an active tf backend. loadBaseModel() selects and initialises one
+  // (WASM, falling back to CPU) as a side effect — await it first, since
+  // WASM needs async setup unlike the old CPU-only default, which was
+  // synchronously available and masked this ordering requirement.
+  await loadBaseModel();
 
   const { config, classes } = loadConfigAndClasses();
   const model = buildModel(config.embeddingDim, classes.length);
@@ -59,7 +66,7 @@ function cosineSimilarity(a: number[], b: number[]): number {
 }
 
 export async function classifyIntent(message: string): Promise<Classification> {
-  const { model, classes, centroids } = getHead();
+  const { model, classes, centroids } = await getHead();
 
   if (!message.trim()) {
     return { intent: 'unknown', confidence: 0 };
@@ -91,7 +98,6 @@ export async function classifyIntent(message: string): Promise<Classification> {
 // Loads the head and the USE base model ahead of the first chat request so
 // users don't pay the base model's download/initialisation cost mid-chat.
 export async function warmupClassifier(): Promise<void> {
-  getHead();
-  await loadBaseModel();
+  await getHead();
   await embedTexts(['warmup']);
 }

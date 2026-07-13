@@ -25,7 +25,7 @@ const faqs = [
   },
   {
     q: "Is this a replacement for my doctor?",
-    a: "No. MamaGuide provides educational information only — always see your doctor for medical decisions.",
+    a: "No. MamaGuide provides educational information only; always see your doctor for medical decisions.",
   },
   {
     q: "Can I delete my account and data?",
@@ -196,7 +196,7 @@ export default function ContactPage() {
               About This Project
             </h3>
             <p className="text-xs text-text-secondary leading-relaxed mb-3">
-              MamaGuide is a Final Year Project — a deep learning-based maternal
+              MamaGuide is a Final Year Project: a deep learning-based maternal
               health chatbot for Nigerian pregnant women and healthcare workers.
             </p>
             <p className="text-xs text-text-secondary leading-relaxed">
@@ -237,7 +237,7 @@ export default function ContactPage() {
               Have a health question?
             </p>
             <p className="text-xs text-text-secondary mb-3">
-              Ask MamaGuide directly — faster than email.
+              Ask MamaGuide directly; it is faster than email.
             </p>
             <Link
               to={ROUTES.REGISTER}

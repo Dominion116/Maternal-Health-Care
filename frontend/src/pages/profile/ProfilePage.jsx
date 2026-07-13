@@ -85,7 +85,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 space-y-5">
+    <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
       {/* Profile card */}
       <Card>
         <div className="flex items-start gap-4">
@@ -159,7 +159,10 @@ export default function ProfilePage() {
                   )}
                   {memberSince && (
                     <p className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-text-muted" aria-hidden />
+                      <Calendar
+                        className="w-4 h-4 text-text-muted"
+                        aria-hidden
+                      />
                       Member since {memberSince}
                     </p>
                   )}

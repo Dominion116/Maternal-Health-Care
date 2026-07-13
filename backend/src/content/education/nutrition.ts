@@ -85,7 +85,7 @@ const articles: EducationArticle[] = [
 - Eat small meals every 3–4 hours if nausea is a problem.
 - Do not skip breakfast.
 - Wash all fruits and vegetables thoroughly.
-- Cook meat and fish fully — no raw or undercooked protein.`,
+- Cook meat and fish fully; no raw or undercooked protein.`,
       },
     },
   },

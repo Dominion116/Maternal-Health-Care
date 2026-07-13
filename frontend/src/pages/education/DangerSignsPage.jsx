@@ -87,19 +87,19 @@ const severityConfig = {
     label: "Emergency",
     className: "border-emergency/30 bg-emergency-light",
     badgeVariant: "emergency",
-    badgeText: "Emergency — Act Now",
+    badgeText: "Emergency: Act Now",
   },
   urgent: {
     label: "Urgent",
     className: "border-warning/30 bg-warning-light",
     badgeVariant: "warning",
-    badgeText: "Urgent — See Doctor Today",
+    badgeText: "Urgent: See Doctor Today",
   },
 };
 
 export default function DangerSignsPage() {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="max-w-6xl mx-auto px-4 py-6">
       {/* Back */}
       <Link
         to={ROUTES.EDUCATION}

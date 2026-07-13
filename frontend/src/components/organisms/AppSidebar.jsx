@@ -124,7 +124,7 @@ export function AppSidebar() {
             "flex items-center h-16 border-b border-border shrink-0 transition-all duration-300",
             sidebarCollapsed
               ? "px-4 md:justify-center md:px-0"
-              : "justify-between px-5",
+              : "justify-between pl-5 pr-2",
           )}
         >
           {/* Full logo — shown when expanded, hidden on desktop when collapsed */}

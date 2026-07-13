@@ -46,7 +46,7 @@ export async function resetPassword(req: Request, res: Response, next: NextFunct
 export async function acceptInvite(req: Request, res: Response, next: NextFunction) {
   try {
     await authService.acceptInvite(req.body);
-    return sendSuccess(res, null, 'Account activated — you can now log in');
+    return sendSuccess(res, null, 'Account activated. You can now log in');
   } catch (err) {
     if (err instanceof Error && err.message === 'Invalid or expired invite link') {
       return sendError(res, err.message, 401);

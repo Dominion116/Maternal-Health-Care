@@ -89,7 +89,7 @@ export async function verifyOtp(dto: VerifyOtpDtoType) {
   });
 
   if (error) throw new Error(error.message);
-  if (!data.session || !data.user) throw new Error('Verification failed — no session returned');
+  if (!data.session || !data.user) throw new Error('Verification failed: no session returned');
 
   // Create profile if it doesn't exist yet (signup flow with confirm email ON)
   if (dto.type === 'signup') {

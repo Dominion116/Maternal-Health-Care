@@ -9,7 +9,7 @@ import { Alert } from '@/components/atoms/Alert'
 const sections = [
   {
     title: 'What is this study about?',
-    content: `This study evaluates MamaGuide — a maternal health chatbot designed to provide information and support to pregnant women and healthcare workers in Nigeria. The aim is to understand how useful, safe, and easy to use the system is, so we can improve it.`,
+    content: `This study evaluates MamaGuide, a maternal health chatbot designed to provide information and support to pregnant women and healthcare workers in Nigeria. The aim is to understand how useful, safe, and easy to use the system is, so we can improve it.`,
   },
   {
     title: 'Who is running this study?',
@@ -17,15 +17,15 @@ const sections = [
   },
   {
     title: 'What will I be asked to do?',
-    content: `If you agree to participate, you will:\n• Use MamaGuide as you normally would for pregnancy-related questions\n• Complete a short usability questionnaire (SUS — 10 questions, about 5 minutes)\n• Optionally submit written feedback about your experience\n\nParticipation is entirely voluntary. You can stop at any time.`,
+    content: `If you agree to participate, you will:\n• Use MamaGuide as you normally would for pregnancy-related questions\n• Complete a short usability questionnaire (SUS: 10 questions, about 5 minutes)\n• Optionally submit written feedback about your experience\n\nParticipation is entirely voluntary. You can stop at any time.`,
   },
   {
     title: 'What data will be collected?',
-    content: `We will collect:\n• Your conversations with MamaGuide (anonymous — no names stored)\n• Your responses to the usability questionnaire\n• Optional feedback you choose to provide\n\nWe will NOT collect your full name, phone number, or any information that identifies you personally.`,
+    content: `We will collect:\n• Your conversations with MamaGuide (anonymous; no names stored)\n• Your responses to the usability questionnaire\n• Optional feedback you choose to provide\n\nWe will NOT collect your full name, phone number, or any information that identifies you personally.`,
   },
   {
     title: 'How will my data be used?',
-    content: `Your data will be used only for this academic study. It will be anonymised before any analysis. Results will be reported in aggregate — meaning no individual responses will be highlighted. Data will not be sold or shared with third parties.`,
+    content: `Your data will be used only for this academic study. It will be anonymised before any analysis. Results will be reported in aggregate, meaning no individual responses will be highlighted. Data will not be sold or shared with third parties.`,
   },
   {
     title: 'Is participation voluntary?',
@@ -33,7 +33,7 @@ const sections = [
   },
   {
     title: 'Are there any risks?',
-    content: `There are no significant risks to participating. MamaGuide is an information tool — it does not replace your doctor, midwife, or nurse. In emergencies, please contact a healthcare professional or call 112 directly.`,
+    content: `There are no significant risks to participating. MamaGuide is an information tool; it does not replace your doctor, midwife, or nurse. In emergencies, please contact a healthcare professional or call 112 directly.`,
   },
   {
     title: 'Who can I contact with questions?',
@@ -180,7 +180,7 @@ export default function ResearchConsentPage() {
           ) : (
             <>
               <CheckCircle className="w-4 h-4" />
-              I Agree — Proceed to MamaGuide
+              I Agree and Proceed to MamaGuide
             </>
           )}
         </button>

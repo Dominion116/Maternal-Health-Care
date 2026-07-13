@@ -206,7 +206,7 @@ export default function VerifyEmailPage() {
               role="status"
               className="mt-3 text-center text-sm text-green-700 font-medium"
             >
-              New code sent — check your inbox.
+              New code sent. Check your inbox.
             </p>
           )}
 

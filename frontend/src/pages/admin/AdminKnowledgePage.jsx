@@ -153,7 +153,7 @@ export default function AdminKnowledgePage() {
                       <p className="text-xs font-semibold text-amber-800">Train/test gap detected</p>
                       <p className="text-xs text-amber-700 mt-0.5">
                         Training accuracy ({Math.round(metrics.finalTrainAccuracy * 100)}%) is much higher than test accuracy
-                        ({Math.round(metrics.testEvaluation.accuracy * 100)}%) — expected on this small dataset, and the
+                        ({Math.round(metrics.testEvaluation.accuracy * 100)}%). This is expected on this small dataset and is the
                         reason dropout is used. More patterns per intent would narrow this gap further.
                       </p>
                     </div>

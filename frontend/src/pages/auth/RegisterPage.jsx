@@ -62,7 +62,7 @@ export default function RegisterPage() {
           Create your account
         </h1>
         <p className="text-sm text-text-secondary">
-          For pregnant and postpartum women. Free to use — your data stays
+          For pregnant and postpartum women. Free to use, and your data stays
           private and secure.
         </p>
       </div>
@@ -210,7 +210,7 @@ export default function RegisterPage() {
           <span className="font-semibold text-text-primary">
             Health worker, researcher or administrator?
           </span>{" "}
-          Staff accounts are created by invitation only — ask a MamaGuide super
+          Staff accounts are created by invitation only. Ask a MamaGuide super
           admin to send you an email invite.
         </p>
       </div>

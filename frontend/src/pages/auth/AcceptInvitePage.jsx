@@ -94,7 +94,7 @@ export default function AcceptInvitePage() {
         </h1>
         <p className="text-sm text-text-secondary leading-relaxed">
           You've been invited to the MamaGuide team. Set a password to finish
-          setting up your account — you'll then sign in straight to the admin
+          setting up your account. You'll then sign in straight to the admin
           dashboard.
         </p>
       </div>

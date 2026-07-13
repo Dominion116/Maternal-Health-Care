@@ -115,7 +115,7 @@ export default function SUSQuestionnairePage() {
           <ClipboardCheck className="w-10 h-10 text-rose-700" aria-hidden />
         </div>
         <Badge variant={grade.variant} size="lg" className="mb-4">
-          SUS Score: {score} / 100 — {grade.label}
+          SUS Score: {score} / 100, {grade.label}
         </Badge>
         <h1 className="font-display font-bold text-2xl text-text-primary mb-2">
           Thank you for your feedback!

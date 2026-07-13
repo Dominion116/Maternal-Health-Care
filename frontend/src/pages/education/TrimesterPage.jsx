@@ -8,7 +8,18 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { ROUTES } from "@/utils/constants";
+import { useAuth } from "@/hooks/useAuth";
+import { Badge } from "@/components/atoms/Badge";
 import { cn } from "@/utils/cn";
+
+// Maps the profile's pregnancy_stage to a tab; postpartum mothers see the
+// third trimester (closest to their recent experience) by default.
+const STAGE_TO_TAB = {
+  first_trimester: "first",
+  second_trimester: "second",
+  third_trimester: "third",
+  postpartum: "third",
+};
 
 const trimesters = [
   {
@@ -17,7 +28,7 @@ const trimesters = [
     weeks: "Weeks 1–12",
     color: "rose",
     summary:
-      "The first 12 weeks are when your baby's major organs form. You may feel tired, nauseous, and emotional — this is all completely normal.",
+      "The first 12 weeks are when your baby's major organs form. You may feel tired, nauseous, and emotional. This is all completely normal.",
     babyDev: [
       "Heart starts beating around week 6",
       "Brain and spinal cord begin forming",
@@ -26,7 +37,7 @@ const trimesters = [
       "All major internal organs are taking shape",
     ],
     bodyChanges: [
-      "Morning sickness — nausea and sometimes vomiting",
+      "Morning sickness (nausea and sometimes vomiting)",
       "Breast tenderness and swelling",
       "Fatigue and need for more sleep",
       "Frequent urination",
@@ -44,7 +55,7 @@ const trimesters = [
       "Register for antenatal care (ANC) as early as possible",
       "Avoid alcohol, tobacco, and unprescribed drugs",
       "Eat small, frequent meals to manage nausea",
-      "Rest when you feel tired — your body is working very hard",
+      "Rest when you feel tired; your body is working very hard",
     ],
   },
   {
@@ -56,7 +67,7 @@ const trimesters = [
       "Many women feel much better in the second trimester. Nausea often eases and your baby grows rapidly. You will start to feel movements.",
     babyDev: [
       "Baby can hear sounds from outside the womb",
-      "Movements (kicks) begin — felt between weeks 18–22",
+      "Movements (kicks) begin, usually felt between weeks 18 and 22",
       "Baby can suck its thumb and swallow",
       "Skin is forming, covered in fine hair called lanugo",
       "Baby weighs about 900g by week 26",
@@ -65,7 +76,7 @@ const trimesters = [
       "Baby bump becomes clearly visible",
       "Energy levels usually improve significantly",
       "Back pain may begin as belly grows",
-      'Skin changes — some notice a "pregnancy glow"',
+      'Skin changes; some notice a "pregnancy glow"',
       "Stretch marks may appear on belly, breasts, or thighs",
       "Braxton Hicks practice contractions begin",
     ],
@@ -80,8 +91,8 @@ const trimesters = [
       "Attend your 20-week anomaly ultrasound scan",
       "Start sleeping on your left side for better circulation",
       "Do light exercise like walking or swimming",
-      "Eat iron-rich foods — meat, leafy greens, beans, eggs",
-      "Talk to your baby — they can hear you from the womb",
+      "Eat iron-rich foods: meat, leafy greens, beans, eggs",
+      "Talk to your baby; they can hear you from the womb",
       "Begin planning for your hospital bag",
     ],
   },
@@ -91,9 +102,9 @@ const trimesters = [
     weeks: "Weeks 27–40",
     color: "amber",
     summary:
-      "Your baby is getting ready to be born. The final weeks involve important preparation — for both you and your baby. Stay alert to your body.",
+      "Your baby is getting ready to be born. The final weeks involve important preparation for both you and your baby. Stay alert to your body.",
     babyDev: [
-      "Baby gains weight rapidly — about 200g per week",
+      "Baby gains weight rapidly, about 200g per week",
       "Lungs mature and prepare for breathing",
       "Baby usually settles head-down for birth by week 36",
       "Brain development continues at a rapid pace",
@@ -101,25 +112,25 @@ const trimesters = [
     ],
     bodyChanges: [
       "Shortness of breath as baby pushes up on your lungs",
-      "Difficulty sleeping — try sleeping with extra pillows",
+      "Difficulty sleeping; try sleeping with extra pillows",
       "Pelvic pressure and discomfort as baby drops",
       "Frequent urination returns",
       "Braxton Hicks contractions become more frequent",
       "Colostrum (early breast milk) may begin leaking",
     ],
     warningSigns: [
-      "Sudden gush of fluid — waters breaking early (before 37 weeks)",
+      "Sudden gush of fluid, meaning waters breaking early (before 37 weeks)",
       "Regular painful contractions before 37 weeks",
       "Severe headache, vision changes, or severe swelling (preeclampsia)",
       "Baby moving less than 10 times in 2 hours",
       "Any heavy vaginal bleeding",
     ],
     tips: [
-      "Count baby movements daily — expect 10 in 2 hours",
+      "Count baby movements daily; expect 10 in 2 hours",
       "Pack your hospital bag by week 36",
       "Attend all remaining ANC appointments without fail",
       "Discuss your birth preferences with your nurse or doctor",
-      "Rest as much as possible — labour is hard work",
+      "Rest as much as possible; labour is hard work",
       "Know the signs of labour: contractions, water breaking, show",
     ],
   },
@@ -141,12 +152,14 @@ const colorMap = {
 };
 
 export default function TrimesterPage() {
-  const [active, setActive] = useState("first");
+  const { user } = useAuth();
+  const userTab = STAGE_TO_TAB[user?.pregnancyStage] || null;
+  const [active, setActive] = useState(userTab || "first");
   const current = trimesters.find((t) => t.id === active);
   const colors = colorMap[current.color];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="max-w-6xl mx-auto px-4 py-6">
       <Link
         to={ROUTES.EDUCATION}
         className="inline-flex items-center gap-1.5 text-sm text-text-secondary hover:text-rose-700 mb-5 transition-colors"
@@ -173,6 +186,16 @@ export default function TrimesterPage() {
         know what to expect and when to seek care.
       </p>
 
+      {userTab && (
+        <div className="mb-4">
+          <Badge variant="rose" size="sm">
+            {user?.pregnancyStage === "postpartum"
+              ? "You recently gave birth. Showing the 3rd trimester for reference."
+              : "Opened at your current stage, based on your profile"}
+          </Badge>
+        </div>
+      )}
+
       {/* Tabs */}
       <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
         {trimesters.map((t) => (
@@ -180,13 +203,20 @@ export default function TrimesterPage() {
             key={t.id}
             onClick={() => setActive(t.id)}
             className={cn(
-              "flex-1 min-w-25 px-3 py-2.5 rounded-xl border text-xs font-semibold text-center transition-all",
+              "flex-1 min-w-25 px-3 py-2.5 rounded-xl border text-xs font-semibold text-center transition-all relative",
               active === t.id
                 ? colorMap[t.color].tab + " border-current"
                 : "border-border bg-white text-text-secondary hover:border-rose-200",
             )}
           >
-            <span className="block">{t.label}</span>
+            <span className="block">
+              {t.label}
+              {userTab === t.id && user?.pregnancyStage !== "postpartum" && (
+                <span className="ml-1" aria-label="Your current stage">
+                  📍
+                </span>
+              )}
+            </span>
             <span className="block font-normal opacity-70">{t.weeks}</span>
           </button>
         ))}
@@ -249,7 +279,7 @@ export default function TrimesterPage() {
               className="w-4 h-4 text-red-600 shrink-0"
               aria-hidden
             />
-            Warning Signs — Go to Hospital Immediately
+            Warning Signs: Go to Hospital Immediately
           </h2>
           <ul className="space-y-2">
             {current.warningSigns.map((item) => (

@@ -10,26 +10,26 @@ const articles: EducationArticle[] = [
     updated_at: '2025-01-01',
     translations: {
       en: {
-        title: 'First Trimester — Weeks 1 to 12',
+        title: 'First Trimester: Weeks 1 to 12',
         summary:
           'The first 12 weeks of pregnancy bring rapid changes. Learn what to expect, what to take, and your first ANC visit.',
         content: `## What Is Happening
 
-Your baby grows from a single cell to the size of a lime. The heart begins beating around week 6. Major organs — brain, spine, heart, and limbs — form during this period, making it the most critical time for fetal development.
+Your baby grows from a single cell to the size of a lime. The heart begins beating around week 6. Major organs (brain, spine, heart, and limbs) form during this period, making it the most critical time for fetal development.
 
 ## Common Symptoms
 
-- **Nausea and vomiting** — most common in the morning but can happen any time. Eat small, frequent meals. Ginger tea or plain crackers may help.
-- **Fatigue** — your body is working hard. Rest when you can.
-- **Breast tenderness** — normal due to hormonal changes.
-- **Frequent urination** — your kidneys are working harder.
-- **Mood changes** — hormones affect emotions. This is normal.
+- **Nausea and vomiting**: most common in the morning but can happen any time. Eat small, frequent meals. Ginger tea or plain crackers may help.
+- **Fatigue**: your body is working hard. Rest when you can.
+- **Breast tenderness**: normal due to hormonal changes.
+- **Frequent urination**: your kidneys are working harder.
+- **Mood changes**: hormones affect emotions. This is normal.
 
 ## What to Start Taking Immediately
 
-- **Folic acid** — 400 mcg daily, reduces risk of neural tube defects. Start before pregnancy if possible.
-- **Iron supplements** — as prescribed at your first ANC visit.
-- **Avoid alcohol, tobacco, and unprescribed drugs** — these cause serious harm to the baby.
+- **Folic acid**: 400 mcg daily, reduces risk of neural tube defects. Start before pregnancy if possible.
+- **Iron supplements**: as prescribed at your first ANC visit.
+- **Avoid alcohol, tobacco, and unprescribed drugs**; these cause serious harm to the baby.
 
 ## Your First ANC Visit
 
@@ -37,7 +37,7 @@ Book your first antenatal care (ANC) visit **before 12 weeks**. At this visit, t
 - Confirm your pregnancy and estimate your due date
 - Check your blood pressure, weight, and urine
 - Screen for anaemia, HIV, syphilis, and malaria
-- Give you your ANC card — **keep it safe and bring it to every visit**
+- Give you your ANC card; **keep it safe and bring it to every visit**
 
 ## When to Seek Help Immediately
 
@@ -54,12 +54,12 @@ Go to hospital if you experience heavy bleeding, severe abdominal pain, or high 
     updated_at: '2025-01-01',
     translations: {
       en: {
-        title: 'Second Trimester — Weeks 13 to 26',
+        title: 'Second Trimester: Weeks 13 to 26',
         summary:
           'Many women feel better in the second trimester. You will start to feel your baby move and have an important anatomy scan.',
         content: `## What Is Happening
 
-The second trimester is often called the "golden period" — nausea usually eases, energy returns, and your bump becomes visible. Your baby can now hear sounds, and all major organs are formed and growing.
+The second trimester is often called the "golden period"; nausea usually eases, energy returns, and your bump becomes visible. Your baby can now hear sounds, and all major organs are formed and growing.
 
 ## Feeling Your Baby Move
 
@@ -77,10 +77,10 @@ This ultrasound checks:
 
 ## Common Changes
 
-- Backache — wear flat shoes, avoid heavy lifting, sleep on your left side with a pillow between your knees.
-- Leg cramps — stretch your calf muscles and stay hydrated.
-- Heartburn — eat small meals, avoid lying down immediately after eating.
-- Skin changes — darkening of the skin (linea nigra, melasma) are normal and fade after birth.
+- Backache: wear flat shoes, avoid heavy lifting, sleep on your left side with a pillow between your knees.
+- Leg cramps: stretch your calf muscles and stay hydrated.
+- Heartburn: eat small meals, avoid lying down immediately after eating.
+- Skin changes: darkening of the skin (linea nigra, melasma) are normal and fade after birth.
 
 ## ANC Visits This Trimester
 
@@ -97,12 +97,12 @@ Attend ANC at **20 weeks and 26 weeks**. At these visits your provider will meas
     updated_at: '2025-01-01',
     translations: {
       en: {
-        title: 'Third Trimester — Weeks 27 to 40',
+        title: 'Third Trimester: Weeks 27 to 40',
         summary:
           'The final stretch. Learn to count kicks, recognise true labour, and prepare your birth plan.',
         content: `## What Is Happening
 
-Your baby gains most of its weight in these weeks and moves into a head-down position ready for birth. You may feel Braxton Hicks contractions (practice contractions) — these are irregular and go away when you change position.
+Your baby gains most of its weight in these weeks and moves into a head-down position ready for birth. You may feel Braxton Hicks contractions (practice contractions); these are irregular and go away when you change position.
 
 ## Kick Counting
 
@@ -132,7 +132,7 @@ Go **immediately** if:
 
 ## ANC Visits This Trimester
 
-Attend at **30, 34, 36, 38, and 40 weeks**. Do not miss these — your provider monitors blood pressure closely as pre-eclampsia risk rises in late pregnancy.`,
+Attend at **30, 34, 36, 38, and 40 weeks**. Do not miss these; your provider monitors blood pressure closely as pre-eclampsia risk rises in late pregnancy.`,
       },
     },
   },

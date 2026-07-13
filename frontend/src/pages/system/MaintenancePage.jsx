@@ -82,7 +82,7 @@ export default function MaintenancePage() {
       </div>
 
       <p className="text-xs text-gray-400 mt-8">
-        MamaGuide — Supporting mothers across Nigeria
+        MamaGuide: Supporting mothers across Nigeria
       </p>
     </div>
   );

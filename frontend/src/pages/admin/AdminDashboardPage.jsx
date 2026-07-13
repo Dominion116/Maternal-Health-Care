@@ -68,7 +68,7 @@ export default function AdminDashboardPage() {
   const stats = [
     { label: "Total Users", value: analytics.totals.users, icon: Users, color: "text-rose-600 bg-rose-100" },
     { label: "Conversations", value: analytics.totals.conversations, icon: MessageSquare, color: "text-sage-600 bg-sage-100" },
-    { label: "Avg SUS Score", value: susData.avg_sus_score ?? "—", icon: BarChart3, color: "text-amber-600 bg-amber-100" },
+    { label: "Avg SUS Score", value: susData.avg_sus_score ?? "N/A", icon: BarChart3, color: "text-amber-600 bg-amber-100" },
     { label: "Emergency Flags", value: analytics.totals.emergency_messages, icon: Siren, color: "text-red-600 bg-red-100" },
   ];
 

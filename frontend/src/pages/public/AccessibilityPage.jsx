@@ -114,20 +114,20 @@ export default function AccessibilityPage() {
 
               <Section id="commitment" number="1" icon={Shield} title="Accessibility Commitment">
                 <p>
-                  MamaGuide is built on the belief that maternal health information must reach <strong>every mother</strong> — including those with visual impairments, motor disabilities, hearing difficulties, or cognitive differences. Accessibility is a core requirement, not an afterthought.
+                  MamaGuide is built on the belief that maternal health information must reach <strong>every mother</strong>, including those with visual impairments, motor disabilities, hearing difficulties, or cognitive differences. Accessibility is a core requirement, not an afterthought.
                 </p>
                 <p>Our commitment includes:</p>
                 <Ul items={[
                   'Targeting WCAG 2.1 Level AA compliance across all public-facing pages',
                   'Designing for low-bandwidth environments common in Nigerian communities',
-                  'Testing with assistive technology during development — not just after deployment',
+                  'Testing with assistive technology during development, not just after deployment',
                   'Responding to accessibility feedback within 5 business days',
                   'Publishing regular accessibility updates and known limitation disclosures',
                   'Providing emergency information in accessible formats at all times',
                 ]} />
                 <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mt-2">
                   <p className="text-sm text-blue-800">
-                    <strong>Why this matters for maternal health:</strong> A mother experiencing a pregnancy complication must be able to access danger sign information quickly — regardless of the device she uses, her literacy level, or any disability she may have.
+                    <strong>Why this matters for maternal health:</strong> A mother experiencing a pregnancy complication must be able to access danger sign information quickly, regardless of the device she uses, her literacy level, or any disability she may have.
                   </p>
                 </div>
               </Section>
@@ -139,11 +139,11 @@ export default function AccessibilityPage() {
                     { label: 'Skip to Content Link', desc: 'A hidden link at the top of every page allows screen reader users to skip repeated navigation.' },
                     { label: 'Semantic HTML Structure', desc: 'Proper heading hierarchy (h1–h6), landmark regions, lists, and form labels throughout.' },
                     { label: 'ARIA Labels and Roles', desc: 'All interactive components include descriptive aria-label, aria-expanded, and aria-live attributes.' },
-                    { label: 'Visible Focus Indicators', desc: 'Every focusable element shows a clear visible focus ring — not overridden with outline: none.' },
+                    { label: 'Visible Focus Indicators', desc: 'Every focusable element shows a clear visible focus ring, never overridden with outline: none.' },
                     { label: 'Responsive Text Sizing', desc: 'Text scales correctly with browser zoom up to 200% without horizontal scrolling.' },
                     { label: 'No Motion Autoplay', desc: 'Animations respect the prefers-reduced-motion media query for users sensitive to movement.' },
-                    { label: 'Colour-Independent Meaning', desc: 'No information is conveyed by colour alone — icons, labels, and patterns supplement all colour coding.' },
-                    { label: 'Touch Target Sizing', desc: 'All interactive elements are at least 44×44px — meeting WCAG touch target recommendations.' },
+                    { label: 'Colour-Independent Meaning', desc: 'No information is conveyed by colour alone; icons, labels, and patterns supplement all colour coding.' },
+                    { label: 'Touch Target Sizing', desc: 'All interactive elements are at least 44×44px, meeting WCAG touch target recommendations.' },
                   ].map(({ label, desc }) => (
                     <div key={label} className="bg-white rounded-xl border border-border p-3.5">
                       <p className="font-semibold text-sm text-text-primary mb-1">{label}</p>
@@ -166,7 +166,7 @@ export default function AccessibilityPage() {
                   <KeyboardShortcut keys={['Home', 'End']} description="Jump to the beginning or end of a text input" />
                 </div>
                 <InfoBanner variant="tip" title="Focus management">
-                  When a modal or dialog opens, focus moves to it automatically. When it closes, focus returns to the element that opened it — so you never lose your place.
+                  When a modal or dialog opens, focus moves to it automatically. When it closes, focus returns to the element that opened it, so you never lose your place.
                 </InfoBanner>
               </Section>
 
@@ -191,7 +191,7 @@ export default function AccessibilityPage() {
                 <p className="mt-3">Tips for screen reader users:</p>
                 <Ul items={[
                   'Use heading navigation (H key in NVDA/JAWS) to jump between sections quickly',
-                  'The chat message list is an aria-live region — new messages are announced automatically',
+                  'The chat message list is an aria-live region, so new messages are announced automatically',
                   'Form validation errors are announced immediately when you submit a form with errors',
                   'The emergency banner uses role="alert" and will be announced immediately by screen readers',
                   'Use the Send button rather than Enter key for the most reliable chat submission experience',
@@ -231,13 +231,13 @@ export default function AccessibilityPage() {
               <Section id="language" number="6" icon={Globe} title="Language Accessibility">
                 <p>MamaGuide is currently available in English, with the following language accessibility features:</p>
                 <Ul items={[
-                  'The HTML lang attribute is set correctly to "en" — screen readers use the correct pronunciation',
-                  'Plain language is used throughout — medical jargon is explained in simple terms',
+                  'The HTML lang attribute is set correctly to "en", so screen readers use the correct pronunciation',
+                  'Plain language is used throughout; medical jargon is explained in simple terms',
                   'Reading level targets Grade 8 or below for patient-facing content',
-                  'Abbreviations are expanded on first use (e.g., ANC — Antenatal Care)',
+                  'Abbreviations are expanded on first use (e.g., ANC, meaning Antenatal Care)',
                   'Numbers and units are written clearly (e.g., "4.5 kilograms" not "4.5kg")',
                 ]} />
-                <InfoBanner variant="warning" title="Multilingual support — in development">
+                <InfoBanner variant="warning" title="Multilingual support (in development)">
                   Yoruba, Hausa, and Igbo language support are currently in development. These languages are spoken by the majority of Nigerian mothers who would benefit most from MamaGuide. We expect to launch Yoruba as the first additional language in a future update.
                 </InfoBanner>
                 <p>Until multilingual support is available, we recommend:</p>
@@ -254,10 +254,10 @@ export default function AccessibilityPage() {
                   <p className="text-xs font-semibold text-amber-800 uppercase tracking-wide mb-3">Known limitations</p>
                   <ul className="space-y-2.5">
                     {[
-                      'TalkBack on Android has partial support — some aria-live announcements may be delayed',
+                      'TalkBack on Android has partial support; some aria-live announcements may be delayed',
                       'Education library images do not yet include extended text descriptions (alt text covers brief descriptions only)',
                       'Some admin data visualisations (charts) lack full screen reader alternatives',
-                      'Multilingual support is English-only — Yoruba, Hausa, and Igbo are in development',
+                      'Multilingual support is English-only; Yoruba, Hausa, and Igbo are in development',
                       'PDF documents linked from the education library are not yet fully tagged for screen reader access',
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2 text-xs text-amber-700">
@@ -299,7 +299,7 @@ export default function AccessibilityPage() {
                     Report an Accessibility Issue
                   </Link>
                   <p className="text-xs text-blue-700 mt-3">
-                    We welcome feedback from users with disabilities — your experiences directly inform our accessibility roadmap.
+                    We welcome feedback from users with disabilities; your experiences directly inform our accessibility roadmap.
                   </p>
                 </div>
               </Section>

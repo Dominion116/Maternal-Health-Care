@@ -15,11 +15,11 @@ const articles: EducationArticle[] = [
           'ANC visits during pregnancy protect both you and your baby. Learn why they matter and how to access them.',
         content: `## What Is ANC?
 
-Antenatal care (ANC) is healthcare you receive during pregnancy from a trained provider — midwife, nurse, or doctor. It is not only for when something is wrong. It is routine monitoring to **keep both you and your baby safe**.
+Antenatal care (ANC) is healthcare you receive during pregnancy from a trained provider (midwife, nurse, or doctor). It is not only for when something is wrong. It is routine monitoring to **keep both you and your baby safe**.
 
 ## Why ANC Matters
 
-- Catches problems early — before they become dangerous
+- Catches problems early, before they become dangerous
 - Screens for HIV, syphilis, malaria, anaemia, and pre-eclampsia
 - Provides iron and folic acid supplements
 - Gives you tetanus toxoid protection
@@ -32,7 +32,7 @@ Antenatal care (ANC) is healthcare you receive during pregnancy from a trained p
 
 - Register at your nearest Primary Health Centre (PHC), General Hospital, or private clinic as soon as you know you are pregnant.
 - Bring a valid ID. ANC is provided **free at government facilities** for pregnant women under Nigeria's free maternal health policy in many states.
-- You will receive an **ANC card** — carry it to every visit and every health facility visit.
+- You will receive an **ANC card**; carry it to every visit and every health facility visit.
 
 ## What Happens at Your First Visit
 
@@ -75,10 +75,10 @@ WHO recommends a minimum of **8 ANC contacts** during pregnancy. In Nigeria, the
 ## Do Not Miss Visits
 
 Missing visits means missing:
-- Intermittent preventive treatment for malaria (IPTp) — given at specific intervals
-- Tetanus toxoid doses — must be given on schedule
-- Blood pressure monitoring — hypertensive disorders can develop silently
-- Anaemia treatment — anaemia is a leading contributor to maternal death in Nigeria
+- Intermittent preventive treatment for malaria (IPTp), given at specific intervals
+- Tetanus toxoid doses, which must be given on schedule
+- Blood pressure monitoring; hypertensive disorders can develop silently
+- Anaemia treatment; anaemia is a leading contributor to maternal death in Nigeria
 
 ## If You Miss a Visit
 

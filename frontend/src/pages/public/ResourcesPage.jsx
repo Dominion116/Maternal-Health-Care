@@ -4,16 +4,16 @@ import { Badge } from '@/components/atoms/Badge'
 import { ROUTES } from '@/utils/constants'
 
 const emergencyContacts = [
-  { name: 'National Emergency Services', number: '112', desc: 'Call for any medical emergency — available 24/7 across Nigeria' },
+  { name: 'National Emergency Services', number: '112', desc: 'Call for any medical emergency, available 24/7 across Nigeria' },
   { name: 'NPHCDA Helpline', number: '0800-NPHCDA', desc: 'National Primary Health Care Development Agency helpline' },
-  { name: 'WHO Nigeria Office', number: '+234-9-461-7200', desc: 'World Health Organization Nigeria — health queries' },
+  { name: 'WHO Nigeria Office', number: '+234-9-461-7200', desc: 'World Health Organization Nigeria, for health queries' },
 ]
 
 const healthFacilities = [
   { name: 'General Hospital (Federal)', desc: 'Federal government hospitals provide free or subsidised maternal care' },
   { name: 'Primary Health Care Centres (PHC)', desc: 'Local community facilities for ANC, immunisation, and delivery' },
   { name: 'Teaching Hospitals', desc: 'Major referral hospitals with specialist maternal-foetal care' },
-  { name: 'State Hospitals', desc: 'State government facilities — check your local state health board' },
+  { name: 'State Hospitals', desc: 'State government facilities; check your local state health board' },
 ]
 
 const externalResources = [
@@ -65,7 +65,7 @@ export default function ResourcesPage() {
         <Badge variant="sage" size="lg" dot className="mb-4">Helpful Resources</Badge>
         <h1 className="font-display font-extrabold text-4xl text-text-primary mb-4">Resources</h1>
         <p className="text-text-secondary leading-relaxed max-w-2xl mx-auto">
-          Emergency contacts, health facilities, official guidelines, and MamaGuide's education library — everything in one place.
+          Emergency contacts, health facilities, official guidelines, and MamaGuide's education library, everything in one place.
         </p>
       </div>
 
@@ -175,7 +175,7 @@ export default function ResourcesPage() {
       {/* CTA */}
       <div className="bg-brand-gradient rounded-3xl p-6 text-center text-white">
         <h2 className="font-display font-bold text-xl mb-2">Still have questions?</h2>
-        <p className="text-white/80 text-sm mb-5">Ask MamaGuide directly — it's free and available 24/7.</p>
+        <p className="text-white/80 text-sm mb-5">Ask MamaGuide directly; it's free and available 24/7.</p>
         <Link
           to={ROUTES.REGISTER}
           className="inline-flex items-center gap-2 bg-white text-rose-700 font-semibold px-6 py-3 rounded-xl hover:bg-white/90 transition-colors text-sm shadow-sm"

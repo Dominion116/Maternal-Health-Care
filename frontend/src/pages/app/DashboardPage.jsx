@@ -32,15 +32,51 @@ import { cn } from "@/utils/cn";
 // Maps the backend's education categories to routes/icons for the
 // personalized "Recommended for You" section.
 const CATEGORY_META = {
-  trimester: { icon: Baby, route: ROUTES.EDUCATION_TRIMESTER, color: "bg-rose-100 text-rose-700" },
-  nutrition: { icon: Leaf, route: ROUTES.EDUCATION_NUTRITION, color: "bg-green-100 text-green-700" },
-  "danger-signs": { icon: AlertTriangle, route: ROUTES.EDUCATION_DANGER_SIGNS, color: "bg-red-100 text-red-700" },
-  anc: { icon: Calendar, route: ROUTES.EDUCATION_ANC, color: "bg-sage-100 text-sage-700" },
-  vaccines: { icon: Shield, route: ROUTES.EDUCATION_VACCINES, color: "bg-blue-100 text-blue-700" },
-  "mental-health": { icon: Heart, route: ROUTES.EDUCATION_MENTAL_HEALTH, color: "bg-purple-100 text-purple-700" },
-  "birth-prep": { icon: Package, route: ROUTES.EDUCATION_BIRTH_PREP, color: "bg-amber-100 text-amber-700" },
-  postpartum: { icon: Moon, route: ROUTES.EDUCATION_POSTPARTUM, color: "bg-indigo-100 text-indigo-700" },
-  breastfeeding: { icon: Droplets, route: ROUTES.EDUCATION_BREASTFEEDING, color: "bg-cyan-100 text-cyan-700" },
+  trimester: {
+    icon: Baby,
+    route: ROUTES.EDUCATION_TRIMESTER,
+    color: "bg-rose-100 text-rose-700",
+  },
+  nutrition: {
+    icon: Leaf,
+    route: ROUTES.EDUCATION_NUTRITION,
+    color: "bg-green-100 text-green-700",
+  },
+  "danger-signs": {
+    icon: AlertTriangle,
+    route: ROUTES.EDUCATION_DANGER_SIGNS,
+    color: "bg-red-100 text-red-700",
+  },
+  anc: {
+    icon: Calendar,
+    route: ROUTES.EDUCATION_ANC,
+    color: "bg-sage-100 text-sage-700",
+  },
+  vaccines: {
+    icon: Shield,
+    route: ROUTES.EDUCATION_VACCINES,
+    color: "bg-blue-100 text-blue-700",
+  },
+  "mental-health": {
+    icon: Heart,
+    route: ROUTES.EDUCATION_MENTAL_HEALTH,
+    color: "bg-purple-100 text-purple-700",
+  },
+  "birth-prep": {
+    icon: Package,
+    route: ROUTES.EDUCATION_BIRTH_PREP,
+    color: "bg-amber-100 text-amber-700",
+  },
+  postpartum: {
+    icon: Moon,
+    route: ROUTES.EDUCATION_POSTPARTUM,
+    color: "bg-indigo-100 text-indigo-700",
+  },
+  breastfeeding: {
+    icon: Droplets,
+    route: ROUTES.EDUCATION_BREASTFEEDING,
+    color: "bg-cyan-100 text-cyan-700",
+  },
 };
 
 const educationCards = [
@@ -84,7 +120,7 @@ const trimesterTips = {
       "Start folic acid if you have not already",
       "Book your first ANC visit before 12 weeks",
       "Avoid alcohol, raw meat, and unpasteurised dairy",
-      "Nausea is common — eat small, frequent meals",
+      "Nausea is common; eat small, frequent meals",
     ],
   },
   second: {
@@ -105,9 +141,9 @@ const trimesterTips = {
     color: "bg-amber-50 border-amber-200",
     labelColor: "text-amber-700",
     tips: [
-      "Track fetal movements daily — 10 kicks in 2 hours is reassuring",
+      "Track fetal movements daily; 10 kicks in 2 hours is reassuring",
       "Prepare your birth plan and hospital bag",
-      "Attend all remaining ANC visits — they are critical now",
+      "Attend all remaining ANC visits; they are critical now",
       "Learn the danger signs that mean labour has started",
     ],
   },
@@ -119,7 +155,7 @@ const trimesterTips = {
     tips: [
       "Breastfeed within the first hour if possible",
       "Postnatal check at 6 weeks is important for your recovery",
-      "Postpartum depression is real — tell your midwife if you feel low",
+      "Postpartum depression is real; tell your midwife if you feel low",
       "Rest and accept help from family and friends",
     ],
   },
@@ -265,7 +301,7 @@ export default function DashboardPage() {
   );
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+    <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
       {/* Greeting hero */}
       <div className="bg-brand-gradient rounded-3xl p-6 text-white relative overflow-hidden">
         <div
@@ -486,7 +522,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <p className="font-display font-bold text-2xl text-sage-700">
-              {weeks ? `${Math.max(0, 40 - weeks)}` : "—"}
+              {weeks ? `${Math.max(0, 40 - weeks)}` : "N/A"}
             </p>
             <p className="text-xs text-sage-600">Weeks remaining</p>
           </div>
@@ -508,7 +544,7 @@ export default function DashboardPage() {
             <a href="tel:112" className="font-bold underline">
               112
             </a>{" "}
-            immediately for any pregnancy emergency. Do not wait — go to the
+            immediately for any pregnancy emergency. Do not wait; go to the
             nearest hospital.
           </p>
         </div>

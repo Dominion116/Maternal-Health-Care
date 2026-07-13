@@ -114,7 +114,7 @@ export default function AdminSUSPage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-white rounded-2xl border border-gray-200 p-5 col-span-2 lg:col-span-1">
               <p className="text-xs text-gray-500 mb-1">Average SUS Score</p>
-              <p className="font-display font-extrabold text-4xl text-gray-900">{avgScore ?? "—"}</p>
+              <p className="font-display font-extrabold text-4xl text-gray-900">{avgScore ?? "N/A"}</p>
               <p className="text-xs text-gray-500 mt-0.5">/ 100</p>
               {avgScore != null && (
                 <Badge variant={avgScore >= 85 ? "success" : avgScore >= 70 ? "info" : "warning"} size="sm" className="mt-2">

@@ -92,7 +92,7 @@ function InviteAdminModal({ onClose, onInvited }) {
             </select>
             <p className="text-xs text-gray-400 mt-1.5">
               They'll receive an email link to set their password and go
-              straight to the admin dashboard — no patient onboarding.
+              straight to the admin dashboard, with no patient onboarding.
             </p>
           </div>
           <Button type="submit" fullWidth loading={submitting} className="mt-2">
@@ -259,10 +259,10 @@ export default function AdminUsersPage() {
                         )}
                       </td>
                       <td className="px-4 py-3.5 hidden md:table-cell">
-                        <span className="text-xs text-gray-500">{user.pregnancy_stage ? stageLabels[user.pregnancy_stage] : '—'}</span>
+                        <span className="text-xs text-gray-500">{user.pregnancy_stage ? stageLabels[user.pregnancy_stage] : 'N/A'}</span>
                       </td>
                       <td className="px-4 py-3.5 hidden lg:table-cell">
-                        <span className="text-xs text-gray-500">{user.created_at ? new Date(user.created_at).toLocaleDateString() : '—'}</span>
+                        <span className="text-xs text-gray-500">{user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}</span>
                       </td>
                       <td className="px-4 py-3.5 hidden md:table-cell">
                         <span className="text-xs text-gray-500">{user.last_sign_in ? new Date(user.last_sign_in).toLocaleDateString() : 'Never'}</span>

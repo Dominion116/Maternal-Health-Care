@@ -89,7 +89,7 @@ export default function AdminFeedbackPage() {
             <div className="bg-white rounded-2xl border border-gray-200 p-5">
               <p className="text-xs text-gray-500 mb-1">Average Rating</p>
               <div className="flex items-end gap-1.5">
-                <p className="font-display font-extrabold text-4xl text-gray-900">{avgRating ?? '—'}</p>
+                <p className="font-display font-extrabold text-4xl text-gray-900">{avgRating ?? 'N/A'}</p>
                 <p className="text-sm text-gray-400 mb-1">/ 5</p>
               </div>
               <div className="flex gap-0.5 mt-1.5">

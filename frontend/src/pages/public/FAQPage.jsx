@@ -20,15 +20,15 @@ const categories = [
     faqs: [
       {
         q: "What is MamaGuide?",
-        a: "MamaGuide is an AI-powered maternal health education chatbot. It answers questions about pregnancy, antenatal care (ANC), nutrition, danger signs, labour preparation, and postpartum care — all based on WHO guidelines and Nigerian FMOH ANC protocols. It was developed as a Final Year Project to help bridge the maternal health information gap in Nigeria.",
+        a: "MamaGuide is an AI-powered maternal health education chatbot. It answers questions about pregnancy, antenatal care (ANC), nutrition, danger signs, labour preparation, and postpartum care, all based on WHO guidelines and Nigerian FMOH ANC protocols. It was developed as a Final Year Project to help bridge the maternal health information gap in Nigeria.",
       },
       {
         q: "Is MamaGuide a replacement for my doctor or midwife?",
-        a: "No. MamaGuide is an educational tool only. It provides general health information but cannot examine you, run tests, or diagnose conditions. Always consult a qualified healthcare professional — a doctor, midwife, or nurse — for personal medical advice, especially if you have symptoms or concerns.",
+        a: "No. MamaGuide is an educational tool only. It provides general health information but cannot examine you, run tests, or diagnose conditions. Always consult a qualified healthcare professional (a doctor, midwife, or nurse) for personal medical advice, especially if you have symptoms or concerns.",
       },
       {
         q: "How accurate is MamaGuide?",
-        a: "MamaGuide's AI model is trained on the MOTHER dataset and verified WHO/FMOH guidelines. Each response includes a confidence score — shown as a percentage. When confidence is low (below 70%), MamaGuide will say so and recommend consulting your healthcare provider. The model is periodically reviewed by the development team.",
+        a: "MamaGuide's AI model is trained on the MOTHER dataset and verified WHO/FMOH guidelines. Each response includes a confidence score, shown as a percentage. When confidence is low (below 70%), MamaGuide will say so and recommend consulting your healthcare provider. The model is periodically reviewed by the development team.",
       },
       {
         q: "What topics can MamaGuide answer?",
@@ -82,7 +82,7 @@ const categories = [
       },
       {
         q: "Who can see my chat messages?",
-        a: "Your chat messages are private by default. The development team may access anonymised, aggregated chat data for academic research and AI model improvement — but individual conversations are not reviewed without your consent. Chat data used in the research study is anonymised before analysis.",
+        a: "Your chat messages are private by default. The development team may access anonymised, aggregated chat data for academic research and AI model improvement, but individual conversations are not reviewed without your consent. Chat data used in the research study is anonymised before analysis.",
       },
       {
         q: "Can I delete my account and data?",
@@ -105,7 +105,7 @@ const categories = [
       },
       {
         q: "Why was my account suspended?",
-        a: "Accounts may be suspended for violating the Terms of Service — including attempting to manipulate the AI, creating multiple accounts, impersonating healthcare professionals, or posting harmful content. If you believe your account was suspended in error, contact us via the Contact page with your registered email address and we will review the decision.",
+        a: "Accounts may be suspended for violating the Terms of Service, including attempting to manipulate the AI, creating multiple accounts, impersonating healthcare professionals, or posting harmful content. If you believe your account was suspended in error, contact us via the Contact page with your registered email address and we will review the decision.",
       },
       {
         q: "How do I change my pregnancy information or due date?",
@@ -124,7 +124,7 @@ const categories = [
     faqs: [
       {
         q: "What should I do in a pregnancy emergency?",
-        a: "If you or someone else is experiencing a pregnancy emergency — such as heavy bleeding, loss of consciousness, severe headache with vision changes, or no fetal movement — STOP using the app and call 112 immediately or go to the nearest hospital emergency unit. Do not wait for MamaGuide to respond. Every minute matters in a maternal emergency.",
+        a: "If you or someone else is experiencing a pregnancy emergency (such as heavy bleeding, loss of consciousness, severe headache with vision changes, or no fetal movement), STOP using the app and call 112 immediately or go to the nearest hospital emergency unit. Do not wait for MamaGuide to respond. Every minute matters in a maternal emergency.",
       },
       {
         q: "What are the emergency phone numbers in Nigeria?",
@@ -132,7 +132,7 @@ const categories = [
       },
       {
         q: "Does MamaGuide detect emergencies automatically?",
-        a: "MamaGuide includes an emergency detection system that recognises danger sign keywords (such as 'heavy bleeding', 'no movement', 'severe headache'). When detected, MamaGuide immediately displays emergency contact information and advises you to seek help. However, this system is not infallible — if you are unsure, always call 112 rather than waiting for the chatbot to confirm.",
+        a: "MamaGuide includes an emergency detection system that recognises danger sign keywords (such as 'heavy bleeding', 'no movement', 'severe headache'). When detected, MamaGuide immediately displays emergency contact information and advises you to seek help. However, this system is not infallible; if you are unsure, always call 112 rather than waiting for the chatbot to confirm.",
       },
     ],
   },
@@ -151,7 +151,7 @@ const categories = [
       },
       {
         q: "How can I use MamaGuide if my English is limited?",
-        a: "You can use your browser's built-in translation feature — Google Chrome will offer to translate pages automatically. You can also use Google Translate to write your question in your language and translate MamaGuide's response. If you need urgent help, ask a healthcare worker, family member, or neighbour to assist with translation.",
+        a: "You can use your browser's built-in translation feature; Google Chrome will offer to translate pages automatically. You can also use Google Translate to write your question in your language and translate MamaGuide's response. If you need urgent help, ask a healthcare worker, family member, or neighbour to assist with translation.",
       },
     ],
   },
@@ -331,7 +331,7 @@ export default function FAQPage() {
                 aria-hidden
               />
               <p className="text-sm text-red-800">
-                <strong>Pregnancy emergency?</strong> Do not use MamaGuide —
+                <strong>Pregnancy emergency?</strong> Do not use MamaGuide;
                 call{" "}
                 <a href="tel:112" className="font-bold underline">
                   112
@@ -402,7 +402,7 @@ export default function FAQPage() {
             Still have questions?
           </h2>
           <p className="text-text-secondary text-sm mb-5 max-w-sm mx-auto">
-            Ask MamaGuide directly in the chat — or contact us if you have
+            Ask MamaGuide directly in the chat, or contact us if you have
             feedback, accessibility needs, or a concern to report.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">

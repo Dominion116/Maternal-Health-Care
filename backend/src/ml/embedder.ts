@@ -14,6 +14,7 @@
  * then kept in memory.
  */
 import * as tf from '@tensorflow/tfjs';
+import '@tensorflow/tfjs-backend-wasm';
 import * as use from '@tensorflow-models/universal-sentence-encoder';
 
 export const BASE_MODEL_NAME = 'universal-sentence-encoder';
@@ -27,10 +28,21 @@ const RETRY_DELAY_MS = 5000;
 export function loadBaseModel(): Promise<use.UniversalSentenceEncoder> {
   if (!loading) {
     loading = (async () => {
-      // Pure @tensorflow/tfjs in Node registers the CPU backend but doesn't
-      // activate one until first use — USE's internals need it active.
-      await tf.setBackend('cpu');
-      await tf.ready();
+      // WASM is ~30x faster than the pure-JS CPU backend for USE's forward
+      // pass (benchmarked: ~25ms/item vs ~730ms/item) and, unlike
+      // @tensorflow/tfjs-node, needs no native compiler toolchain — just an
+      // npm install. Falls back to the CPU backend if the WASM binary can't
+      // be located at runtime (e.g. a serverless bundler drops non-JS
+      // assets), so a bad deploy environment degrades gracefully instead of
+      // crashing the classifier.
+      try {
+        await tf.setBackend('wasm');
+        await tf.ready();
+      } catch (err) {
+        console.warn('[embedder] WASM backend unavailable, falling back to CPU:', (err as Error).message);
+        await tf.setBackend('cpu');
+        await tf.ready();
+      }
 
       // The weights download from TF-Hub can hit transient connect timeouts
       // on flaky connections — retry before giving up.

@@ -15,7 +15,7 @@ const articles: EducationArticle[] = [
           'Tetanus vaccination during pregnancy protects both you and your newborn from neonatal tetanus, a leading cause of newborn deaths.',
         content: `## Why Tetanus Vaccination Matters
 
-Tetanus is caused by a bacterium that enters through wounds — including the umbilical cord stump after delivery. **Neonatal tetanus kills thousands of Nigerian newborns every year.** Vaccinating the mother during pregnancy passes antibodies to the baby before birth.
+Tetanus is caused by a bacterium that enters through wounds, including the umbilical cord stump after delivery. **Neonatal tetanus kills thousands of Nigerian newborns every year.** Vaccinating the mother during pregnancy passes antibodies to the baby before birth.
 
 ## The Tetanus Toxoid (TT) Schedule
 
@@ -33,7 +33,7 @@ Tetanus is caused by a bacterium that enters through wounds — including the um
 
 - Tell your ANC provider if you have received tetanus vaccines before (childhood or previous pregnancy).
 - Carry your vaccination card.
-- Complete the full schedule across pregnancies — protection builds with each dose.
+- Complete the full schedule across pregnancies; protection builds with each dose.
 
 ## Is It Safe?
 
@@ -75,7 +75,7 @@ Vaccines prevent diseases that killed millions of children before immunisation p
 ## Vaccination Card
 
 Your baby will receive a **Child Health Card (CHC)** at birth. This records all vaccines given.
-- Keep it safe — schools and future health visits will ask for it.
+- Keep it safe; schools and future health visits will ask for it.
 - Bring it to every clinic visit.
 - If lost, go to the health centre to get a replacement.
 
