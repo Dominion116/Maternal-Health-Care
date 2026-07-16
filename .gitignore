@@ -1,3 +1,4 @@
 *.docx
 /docs
 /backend/scripts
+AGENTS.md
