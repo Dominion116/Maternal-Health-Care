@@ -1,67 +1,74 @@
 # MamaGuide: Maternal Health Education Chatbot
 
-A comprehensive AI-powered chatbot application designed to provide maternal health education, support, and emergency awareness to pregnant women in resource-limited settings. Built with a React frontend and Express.js backend, featuring an in-house neural-network intent classifier that drives conversational responses grounded in a validated knowledge base, and an administrative dashboard for monitoring and analytics.
+A deep learning–based chatbot application that provides maternal health education, support, and emergency awareness for pregnant women in resource-limited settings. Built with a React frontend and Express.js backend, it uses transfer learning (Universal Sentence Encoder + trained neural classification head) to classify user intents and return responses grounded in a validated knowledge base, plus an administrative dashboard for monitoring and analytics.
 
 ## Overview
 
-MamaGuide combines natural language processing and machine learning to deliver personalized maternal health guidance. The system classifies user messages by intent, grounds responses in evidence-based WHO and FMOH guidelines, and tracks emergency indicators to support clinical decision-making.
+MamaGuide combines natural language processing and deep learning to deliver maternal health guidance. The system embeds each user message with a pretrained deep neural sentence encoder, classifies the intent with a trained Softmax head, grounds the reply in evidence-based WHO and FMOH-aligned content, and can flag emergency-related intents.
 
 ### Key Features
 
-- **AI-Powered Chat Interface**: Neural-network intent classification with responses drawn from an evidence-based knowledge base
+- **Deep Learning Chat Interface**: USE sentence embeddings + neural intent classification, with responses drawn from an evidence-based knowledge base
 - **Pregnancy Profile Management**: Users can track pregnancy stage, due date, and health information
-- **Emergency Detection**: Automated flagging of urgent maternal health conditions
+- **Emergency Detection**: Intent-based flagging of urgent maternal health conditions
 - **Chat History and Saving**: Users can save and revisit conversations
 - **Admin Dashboard**: Analytics, user management, feedback review, SUS scoring, and model performance metrics
 - **Research Consent System**: Structured data collection with proper consent workflows
-- **Educational Content Library**: Comprehensive articles organized by medical category
+- **Educational Content Library**: Articles organized by medical category (in-code content modules)
 - **User Role Management**: Support for pregnant women, nurses, researchers, admins, and super-admins
 
 ## Project Structure
 
 ```
 Maternal Health Care/
-├── backend/                      # Express.js server
+├── backend/                         # Express.js + TypeScript server
 │   ├── src/
-│   │   ├── modules/             # Feature modules (auth, chat, admin, etc.)
-│   │   ├── services/            # Business logic (chat, model prediction)
-│   │   ├── ml/                  # Machine learning pipeline
-│   │   │   ├── intents.json    # Intent definitions and training patterns
-│   │   │   ├── model.ts        # TensorFlow.js model architecture
-│   │   │   ├── classifier.ts   # Intent classification inference
-│   │   │   └── artifacts/      # Trained models and metrics
-│   │   ├── content/            # Educational articles by medical category
-│   │   ├── middlewares/        # Express middleware (auth, admin gates)
-│   │   ├── config/             # Configuration and environment setup
-│   │   ├── types/              # TypeScript type definitions
-│   │   ├── utils/              # Helper utilities
-│   │   ├── app.ts              # Express app setup
-│   │   └── index.ts            # Server entry point
+│   │   ├── modules/                 # Feature modules (auth, chat, admin, etc.)
+│   │   ├── services/                # Business logic (model prediction, emergency, recommendations)
+│   │   ├── ml/                      # Deep learning / intent pipeline
+│   │   │   ├── intents.json         # Intent definitions, patterns, validated responses
+│   │   │   ├── embedder.ts          # Universal Sentence Encoder (frozen base model)
+│   │   │   ├── model.ts             # FFN + logistic classification heads
+│   │   │   ├── classifier.ts        # Live inference (USE → head → intent)
+│   │   │   ├── train.ts             # Training script (npm run train-model)
+│   │   │   ├── knowledgeBase.ts     # Intent → response lookup
+│   │   │   ├── baselines.ts         # Baseline model comparison
+│   │   │   ├── io.ts                # Artifact load/save helpers
+│   │   │   └── artifacts/           # Trained weights, classes, centroids, metrics
+│   │   ├── content/education/       # Educational articles by category
+│   │   ├── middlewares/             # Auth, admin, validation, errors
+│   │   ├── config/                  # Env, Supabase, Swagger
+│   │   ├── types/
+│   │   ├── utils/
+│   │   ├── app.ts
+│   │   └── index.ts
 │   ├── supabase/
-│   │   ├── migrations/         # Database migration scripts
-│   │   └── schema.sql          # Complete database schema
+│   │   ├── migrations/              # 001–004 SQL migrations
+│   │   └── schema.sql               # Full schema (fresh install)
 │   ├── scripts/
-│   │   └── create-admin.ts     # CLI tool for creating admin users
+│   │   ├── create-admin.ts          # Promote existing user to admin/super_admin
+│   │   └── copy-artifacts.js        # Copy ML artifacts into dist/ on build
 │   ├── package.json
 │   ├── tsconfig.json
-│   └── jest.config.js
+│   └── jest.config.ts
 │
-├── frontend/                     # React + Vite application
+├── frontend/                        # React + Vite application
 │   ├── src/
-│   │   ├── pages/              # Page components
-│   │   ├── components/         # Reusable UI components
-│   │   ├── services/           # API client services
-│   │   ├── hooks/              # Custom React hooks
-│   │   ├── store/              # Zustand state management
-│   │   ├── routes/             # Route definitions and protection
-│   │   ├── utils/              # Utilities and constants
-│   │   ├── App.jsx             # Root component
-│   │   └── main.jsx            # Entry point
+│   │   ├── pages/
+│   │   ├── components/
+│   │   ├── services/                # API clients
+│   │   ├── hooks/
+│   │   ├── store/                   # Zustand
+│   │   ├── routes/
+│   │   ├── utils/
+│   │   ├── App.jsx
+│   │   └── main.jsx
 │   ├── package.json
-│   ├── vite.config.js
-│   └── tailwind.config.js
+│   ├── vite.config.js               # Port 3001, /api proxy, Tailwind v4 plugin
+│   └── vercel.json
 │
-└── documentation files          # Proposal, chapters, and implementation tracking
+├── docs/                            # Diagrams and project documentation
+└── README.md
 ```
 
 ## Technology Stack
@@ -71,20 +78,20 @@ Maternal Health Care/
 - **Framework**: Express.js
 - **Database**: Supabase (PostgreSQL)
 - **Authentication**: JWT tokens with Supabase Auth
-- **ML**: TensorFlow.js (CPU backend), Universal Sentence Encoder base model (transfer learning)
-- **Documentation**: Swagger/OpenAPI with swagger-ui-express
-- **Validation**: Zod for runtime type checking
+- **ML**: TensorFlow.js (WASM backend preferred, CPU fallback), Universal Sentence Encoder (transfer learning)
+- **Documentation**: Swagger/OpenAPI (CDN-hosted Swagger UI + local OpenAPI spec)
+- **Validation**: Zod
 - **Testing**: Jest
 
 ### Frontend
 - **Framework**: React 19
 - **Build Tool**: Vite
-- **Styling**: Tailwind CSS
+- **Styling**: Tailwind CSS v4 (`@tailwindcss/vite` — no separate `tailwind.config.js`)
 - **State Management**: Zustand
 - **HTTP Client**: Axios
 - **Routing**: React Router v7
 - **Animations**: Framer Motion
-- **UI Components**: lucide-react (icons), react-hot-toast (notifications)
+- **UI**: lucide-react (icons), react-hot-toast (notifications)
 
 ## Installation and Setup
 
@@ -100,33 +107,37 @@ cd backend
 npm install
 ```
 
-2. Configure environment variables. Create or update `.env`:
+2. Configure environment variables. Copy `.env.example` to `.env` and fill in values:
 ```bash
-# Supabase credentials
-SUPABASE_URL=your-project.supabase.co
+PORT=3000
+NODE_ENV=development
+
+# Supabase (full HTTPS URL required)
+SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# Authentication
+# JWT signing secret for API tokens
 JWT_SECRET=your-jwt-secret
-JWT_EXPIRATION=7d
 
-# Server
-PORT=3000
-NODE_ENV=development
+# Frontend origin (password-reset redirects, etc.)
+FRONTEND_URL=http://localhost:3001
 ```
 
 3. Set up the database:
    - Connect to your Supabase project
-   - Run the migrations in `backend/supabase/migrations/` in order (002, 003)
-   - Alternatively, execute `backend/supabase/schema.sql` for a fresh install
+   - Prefer a fresh install: run `backend/supabase/schema.sql`
+   - Or apply migrations in order: `001`, `002`, `003`, `004` under `backend/supabase/migrations/`
 
-4. Create a super admin user:
+4. Register a normal user in the app (or Supabase Auth), then promote them to super admin:
 ```bash
+# Email must already exist in Supabase Auth
 npm run create-admin -- admin@example.com
+# Optional role: admin | super_admin (default: super_admin)
+npm run create-admin -- admin@example.com super_admin
 ```
 
-5. Train the ML model:
+5. Train the intent classification model (required before chat works):
 ```bash
 npm run train-model
 ```
@@ -136,7 +147,7 @@ npm run train-model
 npm run dev
 ```
 
-The API will be available at `http://localhost:3000` with Swagger documentation at `/api-docs`.
+The API is available at `http://localhost:3000`. Swagger UI: `http://localhost:3000/api-docs`. OpenAPI JSON: `/api-docs/swagger.json`.
 
 ### Frontend Setup
 
@@ -146,199 +157,249 @@ cd frontend
 npm install
 ```
 
-2. Start the development server:
+2. (Optional) Set the API base URL. By default the Vite dev server proxies `/api` to `http://localhost:3000`, so no env file is required for local development.
+```bash
+# frontend/.env  (only if you need a non-default API base)
+VITE_API_URL=/api
+```
+
+3. Start the development server:
 ```bash
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173`.
+The application is available at **`http://localhost:3001`** (not the Vite default 5173).
 
 ## Development
 
 ### Backend Commands
 
 ```bash
-npm run dev          # Start development server with hot reload
-npm run build        # Compile TypeScript to JavaScript
-npm run start        # Run compiled production build
-npm run lint         # Check code style with ESLint
-npm run lint:fix     # Fix linting issues automatically
-npm run test         # Run unit tests
-npm run test:watch   # Run tests in watch mode
-npm run test:coverage # Run tests with coverage report
-npm run train-model  # Train the intent classification model
-npm run create-admin -- <email> [role] # Create admin or super-admin user
+npm run dev           # Start server with hot reload (tsx watch)
+npm run build         # train-model + tsc + copy ML artifacts to dist/
+npm run start         # Run compiled production build (node dist/index.js)
+npm run lint          # ESLint
+npm run lint:fix      # ESLint with auto-fix
+npm run test          # Jest (runInBand)
+npm run test:watch    # Jest watch mode
+npm run test:coverage # Jest coverage
+npm run train-model   # Train intent heads and write artifacts
+npm run create-admin -- <email> [admin|super_admin]
 ```
 
 ### Frontend Commands
 
 ```bash
-npm run dev      # Start development server
-npm run build    # Build for production
-npm run lint     # Check code style with ESLint
-npm run preview  # Preview production build locally
+npm run dev      # Vite dev server on port 3001
+npm run build    # Production build → dist/
+npm run lint     # ESLint
+npm run preview  # Preview production build
 ```
 
 ## API Documentation
 
-The backend provides a REST API documented with Swagger/OpenAPI. After starting the server, visit:
+After starting the backend, open:
 ```
 http://localhost:3000/api-docs
 ```
 
+All REST routes are mounted under the **`/api`** prefix (except `/health` and `/api-docs`).
+
 ### Main Endpoints
 
-- **Authentication**: `/auth/register`, `/auth/login`, `/auth/reset-password`, `/auth/accept-invite`
-- **Chat**: `/chat/send-message`, `/history/*`
-- **Admin**: `/admin/users`, `/admin/invite`, `/admin/conversations`, `/admin/analytics`
-- **Feedback**: `/evaluation/feedback`, `/evaluation/consent`
-- **Education**: `/education/categories`, `/education/articles`
-- **Health**: `/health`
+- **Authentication** (`/api/auth`): `register`, `login`, `forgot-password`, `reset-password`, `verify-otp`, `resend-otp`, `accept-invite`, `logout`
+- **Chat** (`/api/chat`): `POST /sessions`, `POST /message`, `GET /recommendations`
+- **History** (`/api/history`): conversations, messages, save/delete
+- **Profile** (`/api/profile`): get/update profile, export data, delete account
+- **Onboarding** (`/api/onboarding`): complete onboarding
+- **Education** (`/api/education`): categories, search, articles by category/slug
+- **Evaluation** (`/api/evaluation`): research consent, SUS questionnaire, feedback
+- **Contact** (`/api/contact`): contact form submission
+- **Admin** (`/api/admin`): users, invite, conversations, analytics, SUS, feedback, model-metrics
+- **Health**: `GET /health`
 
 ## Machine Learning Pipeline
 
-The intent classification system uses **transfer learning** with TensorFlow.js:
+The intent system uses **transfer learning** with TensorFlow.js:
+
+```
+User message
+  → Universal Sentence Encoder (frozen deep encoder) → 512-dim embedding
+  → Trained Softmax classification head → intent + confidence
+  → Confidence / centroid similarity gates
+  → Knowledge base (intents.json) → validated response
+```
 
 ### Architecture
-- **Base model (frozen, pretrained)**: Google's Universal Sentence Encoder — converts each
-  message into a 512-dimensional semantic sentence embedding. Its weights are never updated;
-  they are downloaded from TF-Hub on first load.
-- **Classification head (trained)**: Dense(128, relu) + Dropout(0.5), Dense(64, relu) +
-  Dropout(0.5), Softmax output over the intent classes.
+
+- **Base model (frozen, pretrained)**: Google’s **Universal Sentence Encoder** — maps each message to a **512-dimensional** semantic embedding. Weights are never fine-tuned; they load from TF-Hub on first use.
+- **Runtime backend**: TensorFlow.js **WASM** when available (~much faster embedding), otherwise **CPU**.
+- **Classification heads** (both trained during `npm run train-model`):
+  - **Multi-layer FFN** (evaluated for the project):  
+    `Dense(128, ReLU) → Dropout(0.2) → Dense(64, ReLU) → Dropout(0.2) → Dense(N, Softmax)`
+  - **Logistic / linear Softmax head** (used for **live** inference in `classifier.ts`):  
+    `Dense(N, Softmax)` on the USE embedding — selected after empirical comparison on this dataset.
+- **Safety gates**: Softmax confidence threshold and cosine similarity to the predicted intent’s training centroid (out-of-domain → `unknown` + safe fallback).
 
 ### Training (`npm run train-model` in `backend/`)
-- Dataset: `backend/src/ml/intents.json` (patterns + validated responses per intent)
-- Every pattern is embedded once by the base model; only the head is trained on the embeddings
-- Split: 80% training, 20% held-out test (stratified per intent)
-- Epochs: 200, Adam optimizer, categorical cross-entropy
+
+- **Dataset**: `backend/src/ml/intents.json` (patterns + validated responses per intent; hundreds of intents / thousands of patterns)
+- Every pattern is embedded once by the frozen base model; only the head(s) are trained on embeddings
+- **Split**: stratified ~80% train / 20% held-out test per intent
+- **Epochs**: 200, **Adam**, **categorical cross-entropy**
+- Baselines and FFN metrics are written for evaluation/reporting
 
 ### Artifacts (`backend/src/ml/artifacts/`)
-- Head weights: `weights.json`
-- Model config (base model name + embedding dims): `model-config.json`
-- Class definitions: `classes.json`
-- Metrics: `metrics.json` (accuracy, precision, recall, F1, confusion matrix on the test split)
+
+After a successful train, expect files such as:
+
+| File | Purpose |
+|------|---------|
+| `model-config.json` | Base model name + embedding dimension |
+| `classes.json` | Ordered intent class labels |
+| `weights.json` | Multi-layer FFN head weights |
+| `logistic-weights.json` | Live logistic Softmax head weights |
+| `centroids.json` | Per-intent training centroids (OOD gate) |
+| `metrics.json` | Accuracy / precision / recall / F1 / curves / comparisons |
+
+The live server requires at least the config, classes, **logistic** weights, and centroids (plus network access once to load USE).
 
 ### Intent Grounding
-Each classified intent is grounded in the knowledge base (`intents.json`), mapping to evidence-based guidance from:
+
+Each classified intent maps to curated responses in `intents.json`, aligned with guidance such as:
+
 - World Health Organization (WHO) maternal health guidelines
 - Federal Ministry of Health (FMOH) protocols
 - Clinical evidence and best practices
 
+Educational **articles** for the library live under `backend/src/content/education/` (TypeScript modules by category), not as a separate `education_articles` SQL table.
+
 ## User Roles and Permissions
 
-- **Pregnant Woman**: Default user role; access to chat, history, feedback
-- **Nurse**: Healthcare provider role; access to chat and user support features
-- **Researcher**: Research access role; view aggregated analytics and conversation data
-- **Admin**: Administrative role; user management, moderate conversations, review feedback
-- **Super Admin**: Highest privilege; invite new admins, manage admin accounts
+- **Pregnant Woman**: Default user role; chat, history, education, feedback
+- **Nurse**: Healthcare provider role; chat and support-oriented access
+- **Researcher**: Research-oriented access; evaluation and analytics contexts
+- **Admin**: User management, conversations, feedback, analytics
+- **Super Admin**: Invite admins, highest administrative privileges
+
+Self-registration is limited to non-admin roles. The first super admin must be promoted with `npm run create-admin` after the account exists in Supabase Auth.
 
 ## Database Schema
 
-The Supabase PostgreSQL database includes tables for:
-- `auth.users`: Supabase authentication user records
-- `user_profiles`: User metadata, role, onboarding status
-- `conversations`: Chat session records with save status
-- `messages`: Individual chat messages with intent classification and emergency flags
-- `feedback_submissions`: User feedback and ratings
-- `research_consent_records`: Consent workflow tracking
-- `education_articles`: Educational content
-- `admin_action_logs`: Audit trail of administrative actions
+The Supabase PostgreSQL database includes tables such as:
 
-See `backend/supabase/schema.sql` for the complete schema.
+- `auth.users` — Supabase authentication records
+- `user_profiles` — Role, onboarding, pregnancy/profile metadata, settings
+- `conversations` — Chat sessions (including save status / session tracking)
+- `messages` — Individual messages (intent, confidence, emergency flags as applicable)
+- `research_consent` — Research consent records
+- `sus_responses` — System Usability Scale submissions
+- `feedback` — User feedback
+- `contact_submissions` — Contact form entries
+
+See `backend/supabase/schema.sql` and `backend/supabase/migrations/` for the authoritative definitions.
 
 ## Deployment
 
-### Backend Deployment (Example: Node.js hosting)
+### Backend
 
-1. Build the project:
+1. Set production environment variables (same keys as `.env.example`).
+2. Build (trains model, compiles TypeScript, copies artifacts):
 ```bash
+cd backend
 npm run build
 ```
-
-2. Set production environment variables on your hosting platform
-
-3. Start the application:
+3. Start:
 ```bash
 npm start
 ```
 
-### Frontend Deployment (Example: Vercel, Netlify)
+Ensure the host can download the USE model from TF-Hub on first boot (or that the runtime can reach the cached weights path you configure).
 
-1. Build for production:
+### Frontend
+
+1. Build:
 ```bash
+cd frontend
 npm run build
 ```
-
-2. Deploy the `dist/` directory to your hosting platform
+2. Deploy the `dist/` directory (e.g. Vercel — see `frontend/vercel.json`).
+3. Point `VITE_API_URL` at your production API if the frontend is not proxying `/api` to the same origin.
 
 ## Testing
 
-### Backend Tests
+### Backend
 
 ```bash
-# Run all tests
+cd backend
 npm run test
-
-# Watch mode for development
 npm run test:watch
-
-# Coverage report
 npm run test:coverage
 ```
 
 ## Known Limitations
 
-- Intent classification uses a small dataset (182 patterns) and exhibits overfitting. Test accuracy is approximately 58%, indicating room for expansion with more training examples.
-- The system requires a live Supabase project to function; local development with placeholder credentials will not work for database-dependent features.
-- Emergency detection is intent-based and should not replace professional medical judgment or direct emergency services contact.
-- Currently English-language only; multilingual support requires additional prompt engineering.
+- **Classification, not free-form generation**: Replies are retrieved from a validated knowledge base after intent classification. This improves safety and grounding but means the bot cannot invent arbitrary answers outside known intents.
+- **Out-of-domain handling**: Low Softmax confidence or low similarity to intent centroids yields a clarification / fallback response rather than a forced answer.
+- **Dataset & metrics change when you retrain**: Intent/pattern counts and accuracy figures live in `intents.json` and the latest `metrics.json` after `npm run train-model`. Do not rely on outdated notebook-era numbers (e.g. small pattern counts from early prototypes).
+- **Supabase required**: Database and auth features need a live Supabase project with migrations/schema applied.
+- **Emergency support is assistive only**: Intent-based emergency flags must not replace professional care or emergency services.
+- **Language**: Content and training patterns are primarily English; other languages need expanded patterns and responses in the knowledge base.
+- **Live head vs FFN**: The multi-layer FFN is trained and evaluated; the production path currently uses the logistic Softmax head on USE embeddings because it performed better on this many-class dataset. Both are part of the deep learning / transfer-learning design.
 
 ## Environment Checklist
 
-Before running the application, ensure:
+Before running the full application:
 
-- [ ] Supabase project is created and credentials are in `.env`
-- [ ] Database migrations have been applied to your Supabase project
-- [ ] At least one super-admin user has been created via `npm run create-admin`
-- [ ] The intent-classification model has been trained via `npm run train-model`
-- [ ] Frontend can reach the backend API (CORS configured if needed)
+- [ ] Supabase project created; credentials in `backend/.env`
+- [ ] `schema.sql` or migrations **001–004** applied
+- [ ] At least one user registered, then promoted via `npm run create-admin`
+- [ ] Intent model trained: `npm run train-model` (artifacts present under `src/ml/artifacts/`)
+- [ ] Backend running on port **3000**
+- [ ] Frontend running on port **3001** (proxy `/api` → backend)
 
 ## Troubleshooting
 
 ### Backend won't start
-- Verify Node.js version is 18 or later
-- Ensure all dependencies installed: `npm install`
-- Check that `.env` file exists and contains required variables
-- Run `npx tsc --noEmit` to check for TypeScript errors
+- Use Node.js 18+
+- Run `npm install` in `backend/`
+- Confirm `.env` exists and passes validation (`SUPABASE_*`, `JWT_SECRET`, valid `SUPABASE_URL` / `FRONTEND_URL`)
+- Check TypeScript: `npx tsc --noEmit`
 
 ### Database connection fails
-- Confirm Supabase credentials in `.env` are correct
-- Check that migrations have been applied to your Supabase project
-- Verify network connectivity to `*.supabase.co`
+- Verify Supabase URL and keys
+- Confirm schema/migrations applied
+- Check network access to `*.supabase.co`
 
-### Frontend can't connect to backend
-- Ensure backend is running on the expected port (default 3000)
-- Check browser console for CORS errors
-- Verify API URL in frontend environment configuration
+### Frontend can't reach the API
+- Backend must be on port 3000; frontend on 3001
+- In dev, use relative `/api` (Vite proxy) unless you set `VITE_API_URL` to an absolute API URL
+- Check browser console for CORS or HTML-instead-of-JSON responses (usually wrong port/proxy)
 
-### Chat responses are generic
-- Confirm the model has been trained: run `npm run train-model` in `backend/`
-- Low-confidence classifications return a clarification prompt — check the `intent_confidence` values logged with each message
-- Check backend logs for any errors
+### Chat responses are generic / fallback only
+- Run `npm run train-model` and restart the server
+- Confirm `logistic-weights.json`, `classes.json`, `model-config.json`, and `centroids.json` exist under `backend/src/ml/artifacts/`
+- Low confidence or OOD messages intentionally return a clarification prompt
+- Check backend logs for classifier / USE load errors (first USE download needs network)
+
+### `create-admin` fails
+- The email must already exist in Supabase Auth (register in the app first)
+- Use service role key in `.env` so the admin list API works
 
 ## Contributing
 
 When making changes:
-1. Follow the existing code style and structure
-2. Run linting before committing: `npm run lint:fix`
-3. Ensure TypeScript compilation succeeds: `npx tsc --noEmit`
-4. Run tests: `npm run test`
-5. Update documentation if adding new features
+1. Follow existing structure and style
+2. Lint backend: `npm run lint:fix` (from `backend/`)
+3. Typecheck: `npx tsc --noEmit`
+4. Tests: `npm run test`
+5. Update this README if behaviour, env vars, or architecture change
 
 ## References
 
 - [Supabase Documentation](https://supabase.com/docs)
 - [TensorFlow.js Documentation](https://js.tensorflow.org/)
+- [Universal Sentence Encoder (TF Hub / TF.js)](https://github.com/tensorflow/tfjs-models/tree/master/universal-sentence-encoder)
 - [Express.js Guide](https://expressjs.com/)
 - [React Documentation](https://react.dev/)
 - [Vite Documentation](https://vitejs.dev/)
@@ -346,8 +407,8 @@ When making changes:
 
 ## License
 
-This project is part of a research initiative on maternal health education in resource-limited settings.
+This project is part of a research / final-year initiative on maternal health education in resource-limited settings.
 
 ## Support
 
-For issues, questions, or feedback, please refer to the IMPLEMENTATION_PROGRESS.md file for detailed setup notes and current status.
+For setup questions, start with this README, `backend/.env.example`, and Swagger at `/api-docs`. Architecture diagrams (intent pipeline and system overview) are under `docs/diagrams/` when present in your working copy.
