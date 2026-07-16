@@ -78,6 +78,7 @@ function getSUSGrade(score) {
 export default function SUSQuestionnairePage() {
   const navigate = useNavigate();
   const [responses, setResponses] = useState({});
+  const [consented, setConsented] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -93,9 +94,16 @@ export default function SUSQuestionnairePage() {
       setError("Please answer all 10 questions before submitting.");
       return;
     }
+    if (!consented) {
+      setError("Please confirm the consent checkbox before submitting.");
+      return;
+    }
     setLoading(true);
     setError("");
     try {
+      // Recorded together: consent must exist alongside the SUS response it
+      // covers, not as a separate step a participant could skip.
+      await evaluationService.submitConsent(true);
       await evaluationService.submitSUS(responses);
       const s = computeSUSScore(responses);
       setScore(s);
@@ -272,19 +280,45 @@ export default function SUSQuestionnairePage() {
           </ol>
         </fieldset>
 
-        <div className="mt-6 pb-6">
+        <div className="mt-6 bg-white rounded-2xl border border-border p-4">
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={consented}
+              onChange={(e) => setConsented(e.target.checked)}
+              className="mt-0.5 w-4 h-4 rounded border-border text-rose-700 accent-rose-700"
+            />
+            <span className="text-xs text-text-secondary leading-relaxed">
+              I agree that my anonymised responses to this questionnaire may
+              be used for research purposes as part of the MamaGuide
+              evaluation study. Participation is voluntary and I can withdraw
+              at any time from{" "}
+              <span className="font-medium text-text-primary">
+                Profile → Privacy
+              </span>
+              .
+            </span>
+          </label>
+        </div>
+
+        <div className="mt-4 pb-6">
           <Button
             type="submit"
             fullWidth
             size="lg"
             loading={loading}
-            disabled={!allAnswered}
+            disabled={!allAnswered || !consented}
           >
             Submit Evaluation
           </Button>
           {!allAnswered && (
             <p className="text-center text-xs text-text-muted mt-2">
               Please answer all questions to submit
+            </p>
+          )}
+          {allAnswered && !consented && (
+            <p className="text-center text-xs text-text-muted mt-2">
+              Please check the consent box above to submit
             </p>
           )}
         </div>

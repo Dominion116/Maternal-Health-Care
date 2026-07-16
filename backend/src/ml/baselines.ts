@@ -1,26 +1,38 @@
 /**
  * Classical-ML baseline models, trained and evaluated on exactly the same
  * embeddings and train/test split as the neural-network head so the
- * comparison in metrics.json is fair. These exist to justify the deep
- * learning approach in the evaluation chapter ("our model vs simpler
- * baselines"), not to serve traffic.
+ * comparison in metrics.json is fair. Originally added purely to justify
+ * the deep learning approach in the evaluation chapter ("our model vs
+ * simpler baselines"), not to serve traffic, but logistic regression
+ * ended up outscoring the trained head on this dataset, so its weights are
+ * now also persisted (see train.ts) and used live by classifier.ts.
  *
  * - logistic_regression: single softmax layer (linear model) on the USE
- *   embeddings — the standard text-classification baseline.
+ *   embeddings, the standard text-classification baseline.
  * - nearest_centroid: cosine similarity to each class's mean training
- *   embedding — no learned weights at all.
+ *   embedding, no learned weights at all.
  *
  * (Tree boosters like XGBoost/LightGBM aren't available as maintained pure
  * JS packages; their native Node bindings don't build on this machine.)
  */
 import * as tf from '@tensorflow/tfjs';
 import { computeMetrics } from './metrics';
+import { buildLogisticModel } from './model';
 
 export interface BaselineResult {
   name: string;
   accuracy: number;
   macroF1: number;
+  macroF1Evaluated: number;
   weightedF1: number;
+}
+
+export interface BaselineEvaluation {
+  results: BaselineResult[];
+  // The trained logistic regression model, so train.ts can persist the
+  // exact weights that produced these metrics rather than retraining a
+  // second copy that could differ slightly (different random init).
+  logisticModel: tf.LayersModel;
 }
 
 function cosine(a: number[], b: number[]): number {
@@ -42,16 +54,8 @@ async function evaluateLogisticRegression(
   xTest: number[][],
   yTest: number[],
   classes: string[],
-): Promise<BaselineResult> {
-  const model = tf.sequential();
-  model.add(
-    tf.layers.dense({
-      inputShape: [xTrain[0].length],
-      units: classes.length,
-      activation: 'softmax',
-    }),
-  );
-  model.compile({ optimizer: 'adam', loss: 'categoricalCrossentropy', metrics: ['accuracy'] });
+): Promise<{ result: BaselineResult; model: tf.LayersModel }> {
+  const model = buildLogisticModel(xTrain[0].length, classes.length);
 
   const xs = tf.tensor2d(xTrain);
   const ys = tf.oneHot(tf.tensor1d(yTrain, 'int32'), classes.length);
@@ -67,10 +71,14 @@ async function evaluateLogisticRegression(
 
   const m = computeMetrics(yTest, predictedIdx, classes);
   return {
-    name: 'logistic_regression',
-    accuracy: m.accuracy,
-    macroF1: m.macroAvg.f1,
-    weightedF1: m.weightedAvg.f1,
+    result: {
+      name: 'logistic_regression',
+      accuracy: m.accuracy,
+      macroF1: m.macroAvg.f1,
+      macroF1Evaluated: m.macroAvgEvaluated.f1,
+      weightedF1: m.weightedAvg.f1,
+    },
+    model,
   };
 }
 
@@ -113,6 +121,7 @@ function evaluateNearestCentroid(
     name: 'nearest_centroid',
     accuracy: m.accuracy,
     macroF1: m.macroAvg.f1,
+    macroF1Evaluated: m.macroAvgEvaluated.f1,
     weightedF1: m.weightedAvg.f1,
   };
 }
@@ -123,8 +132,8 @@ export async function evaluateBaselines(
   xTest: number[][],
   yTest: number[],
   classes: string[],
-): Promise<BaselineResult[]> {
+): Promise<BaselineEvaluation> {
   const logistic = await evaluateLogisticRegression(xTrain, yTrain, xTest, yTest, classes);
   const centroid = evaluateNearestCentroid(xTrain, yTrain, xTest, yTest, classes);
-  return [logistic, centroid];
+  return { results: [logistic.result, centroid], logisticModel: logistic.model };
 }

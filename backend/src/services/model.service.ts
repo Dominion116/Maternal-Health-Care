@@ -8,8 +8,12 @@ export interface UserContext {
   language: Language;
 }
 
-// Minimum softmax probability before we trust the classified intent — the
-// same threshold used when the model was evaluated during training.
+// Minimum softmax probability (from the logistic regression model) before
+// trusting the classified intent. classifyIntent() separately gates
+// out-of-domain messages to 'unknown' with confidence 0 based on cosine
+// similarity to the nearest intent centroid (see MIN_CENTROID_SIMILARITY in
+// classifier.ts), so this threshold only matters for in-domain messages the
+// model itself is genuinely unsure about.
 const CONFIDENCE_THRESHOLD = 0.25;
 
 const FALLBACK_RESPONSE =

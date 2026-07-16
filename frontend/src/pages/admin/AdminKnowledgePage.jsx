@@ -1,89 +1,160 @@
-import { useState, useEffect } from 'react'
-import { Database, BookOpen, CheckCircle, AlertCircle, Search, Layers, Target } from 'lucide-react'
-import { Badge } from '@/components/atoms/Badge'
-import { Input } from '@/components/atoms/Input'
-import { Spinner } from '@/components/atoms/Spinner'
-import { Alert } from '@/components/atoms/Alert'
-import { adminService } from '@/services/adminService'
-import { cn } from '@/utils/cn'
+import { useState, useEffect } from "react";
+import {
+  Database,
+  BookOpen,
+  CheckCircle,
+  AlertCircle,
+  HelpCircle,
+  Search,
+  Layers,
+  Target,
+} from "lucide-react";
+import { Badge } from "@/components/atoms/Badge";
+import { Input } from "@/components/atoms/Input";
+import { Spinner } from "@/components/atoms/Spinner";
+import { Alert } from "@/components/atoms/Alert";
+import { adminService } from "@/services/adminService";
+import { cn } from "@/utils/cn";
 
 function scoreColor(v) {
-  if (v >= 0.85) return 'text-green-600'
-  if (v >= 0.6) return 'text-amber-600'
-  return 'text-red-600'
+  if (v >= 0.85) return "text-green-600";
+  if (v >= 0.6) return "text-amber-600";
+  return "text-red-600";
 }
 function scoreBar(v) {
-  if (v >= 0.85) return 'bg-green-500'
-  if (v >= 0.6) return 'bg-amber-400'
-  return 'bg-red-400'
+  if (v >= 0.85) return "bg-green-500";
+  if (v >= 0.6) return "bg-amber-400";
+  return "bg-red-400";
 }
 
 export default function AdminKnowledgePage() {
-  const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [search, setSearch] = useState('')
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     async function load() {
-      setLoading(true)
-      setError('')
+      setLoading(true);
+      setError("");
       try {
-        const res = await adminService.getModelMetrics()
-        setData(res.data.data)
+        const res = await adminService.getModelMetrics();
+        setData(res.data.data);
       } catch (err) {
-        setError(err.response?.data?.error || 'Failed to load model metrics')
+        setError(err.response?.data?.error || "Failed to load model metrics");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
-    load()
-  }, [])
+    load();
+  }, []);
 
-  if (loading) return <div className="py-24 flex justify-center"><Spinner size="lg" /></div>
-  if (error) return <Alert variant="error">{error}</Alert>
+  if (loading)
+    return (
+      <div className="py-24 flex justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
+  if (error) return <Alert variant="error">{error}</Alert>;
 
-  const { metrics, intents } = data
-  const filtered = intents.filter((i) =>
-    !search || i.tag.toLowerCase().includes(search.toLowerCase()) || i.source.toLowerCase().includes(search.toLowerCase())
-  )
+  const { metrics, intents } = data;
+  const filtered = intents.filter((i) => {
+    return (
+      !search ||
+      i.tag.toLowerCase().includes(search.toLowerCase()) ||
+      i?.source?.toLowerCase().includes(search.toLowerCase())
+    );
+  });
 
-  const sourceGroups = new Map()
+  const sourceGroups = new Map();
   for (const i of intents) {
-    sourceGroups.set(i.source, (sourceGroups.get(i.source) || 0) + 1)
+    sourceGroups.set(i.source, (sourceGroups.get(i.source) || 0) + 1);
   }
 
-  const perClass = metrics?.testEvaluation?.perClass || []
-  const perClassByTag = new Map(perClass.map((c) => [c.intent, c]))
+  const rawPerClass = metrics?.testEvaluation?.perClass || [];
+  const perClassByTag = new Map(rawPerClass.map((c) => [c.intent, c]));
+  // Intents with support === 0 never received a test example under the
+  // stratified split (typically because they have too few patterns), so
+  // their F1 is forced to 0 by definition rather than measuring anything.
+  // Surface the intents that actually got evaluated first.
+  const perClass = [...rawPerClass].sort((a, b) => {
+    if (a.support === 0 && b.support === 0) return a.intent.localeCompare(b.intent);
+    if (a.support === 0) return 1;
+    if (b.support === 0) return -1;
+    return b.f1 - a.f1;
+  });
+  const evaluatedCount = rawPerClass.filter((c) => c.support > 0).length;
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display font-bold text-2xl text-gray-900">Knowledge Base &amp; Model Performance</h1>
-        <p className="text-sm text-gray-500 mt-1">Intent classifier training data and real held-out test results</p>
+        <h1 className="font-display font-bold text-2xl text-gray-900">
+          Knowledge Base &amp; Model Performance
+        </h1>
+        <p className="text-sm text-gray-500 mt-1">
+          Intent classifier training data and real held-out test results
+        </p>
       </div>
 
       {!metrics ? (
         <Alert variant="warning">
-          No trained model found. Run <code className="font-mono">npm run train-model</code> in the backend to generate metrics.
+          No trained model found. Run{" "}
+          <code className="font-mono">npm run train-model</code> in the backend
+          to generate metrics.
         </Alert>
       ) : (
         <>
           {/* KPI cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: 'Total Intents', value: intents.length, sub: `${metrics.trainExamples + metrics.testExamples} total patterns`, icon: Layers, color: 'text-rose-600 bg-rose-100' },
-              { label: 'Embedding Dims', value: metrics.embeddingDim ?? metrics.vocabularySize, sub: metrics.baseModel ? 'Universal Sentence Encoder' : 'Bag-of-Words features', icon: Database, color: 'text-sage-600 bg-sage-100' },
-              { label: 'Test Accuracy', value: `${Math.round(metrics.testEvaluation.accuracy * 100)}%`, sub: `On ${metrics.testExamples} held-out examples`, icon: Target, color: 'text-blue-600 bg-blue-100' },
-              { label: 'Macro F1', value: `${Math.round(metrics.testEvaluation.macroAvg.f1 * 100)}%`, sub: 'Held-out test split', icon: CheckCircle, color: 'text-green-600 bg-green-100' },
-            ].map(kpi => (
-              <div key={kpi.label} className="bg-white rounded-2xl border border-gray-200 p-4">
+              {
+                label: "Total Intents",
+                value: intents.length,
+                sub: `${metrics.trainExamples + metrics.testExamples} total patterns`,
+                icon: Layers,
+                color: "text-rose-600 bg-rose-100",
+              },
+              {
+                label: "Embedding Dims",
+                value: metrics.embeddingDim ?? metrics.vocabularySize,
+                sub: metrics.baseModel
+                  ? "Universal Sentence Encoder"
+                  : "Bag-of-Words features",
+                icon: Database,
+                color: "text-sage-600 bg-sage-100",
+              },
+              {
+                label: "Test Accuracy",
+                value: `${Math.round(metrics.testEvaluation.accuracy * 100)}%`,
+                sub: `On ${metrics.testExamples} held-out examples`,
+                icon: Target,
+                color: "text-blue-600 bg-blue-100",
+              },
+              {
+                label: "Macro F1 (evaluated)",
+                value: `${Math.round(metrics.testEvaluation.macroAvgEvaluated.f1 * 100)}%`,
+                sub: `${metrics.testEvaluation.macroAvgEvaluated.classesEvaluated}/${metrics.testEvaluation.macroAvgEvaluated.classesTotal} intents had test data · all-class: ${Math.round(metrics.testEvaluation.macroAvg.f1 * 100)}%`,
+                icon: CheckCircle,
+                color: "text-green-600 bg-green-100",
+              },
+            ].map((kpi) => (
+              <div
+                key={kpi.label}
+                className="bg-white rounded-2xl border border-gray-200 p-4"
+              >
                 <div className="flex items-center gap-2.5 mb-3">
-                  <span className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0', kpi.color)}>
+                  <span
+                    className={cn(
+                      "w-9 h-9 rounded-xl flex items-center justify-center shrink-0",
+                      kpi.color,
+                    )}
+                  >
                     <kpi.icon className="w-4.5 h-4.5" aria-hidden />
                   </span>
                 </div>
-                <p className="font-display font-extrabold text-2xl text-gray-900">{kpi.value}</p>
+                <p className="font-display font-extrabold text-2xl text-gray-900">
+                  {kpi.value}
+                </p>
                 <p className="text-xs text-gray-500 mt-0.5">{kpi.label}</p>
                 <p className="text-xs text-gray-400">{kpi.sub}</p>
               </div>
@@ -93,55 +164,100 @@ export default function AdminKnowledgePage() {
           <div className="grid lg:grid-cols-2 gap-5">
             {/* Per-intent test performance */}
             <div className="bg-white rounded-2xl border border-gray-200 p-5">
-              <h2 className="font-semibold text-gray-900 mb-4">Per-Intent Test F1 Score</h2>
+              <h2 className="font-semibold text-gray-900 mb-1">
+                Per-Intent Test F1 Score
+              </h2>
+              <p className="text-xs text-gray-400 mb-4">
+                {evaluatedCount} of {perClass.length} intents had at least one
+                test example; the rest show "not evaluated" rather than a
+                misleading 0%.
+              </p>
               <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
                 {perClass.length === 0 ? (
-                  <p className="text-sm text-gray-400">No test-split evaluation available.</p>
-                ) : perClass.map(item => (
-                  <div key={item.intent}>
-                    <div className="flex items-center justify-between text-xs mb-1">
-                      <div className="flex items-center gap-2">
-                        {item.f1 >= 0.6
-                          ? <CheckCircle className="w-3.5 h-3.5 text-green-500 shrink-0" />
-                          : <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                        }
-                        <span className="text-gray-700 font-medium">{item.intent.replace(/_/g, ' ')}</span>
+                  <p className="text-sm text-gray-400">
+                    No test-split evaluation available.
+                  </p>
+                ) : (
+                  perClass.map((item) => (
+                    <div key={item.intent}>
+                      <div className="flex items-center justify-between text-xs mb-1">
+                        <div className="flex items-center gap-2">
+                          {item.support === 0 ? (
+                            <HelpCircle className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+                          ) : item.f1 >= 0.6 ? (
+                            <CheckCircle className="w-3.5 h-3.5 text-green-500 shrink-0" />
+                          ) : (
+                            <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                          )}
+                          <span className={cn("font-medium", item.support === 0 ? "text-gray-400" : "text-gray-700")}>
+                            {item.intent.replace(/_/g, " ")}
+                          </span>
+                        </div>
+                        {item.support === 0 ? (
+                          <span className="text-gray-400 ml-2 shrink-0 italic">
+                            not evaluated
+                          </span>
+                        ) : (
+                          <span
+                            className={cn(
+                              "font-bold ml-2 shrink-0",
+                              scoreColor(item.f1),
+                            )}
+                          >
+                            {Math.round(item.f1 * 100)}%
+                          </span>
+                        )}
                       </div>
-                      <span className={cn('font-bold ml-2 shrink-0', scoreColor(item.f1))}>
-                        {Math.round(item.f1 * 100)}%
-                      </span>
+                      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div
+                          className={cn(
+                            "h-full rounded-full",
+                            item.support === 0 ? "bg-gray-200" : scoreBar(item.f1),
+                          )}
+                          style={{ width: `${item.f1 * 100}%` }}
+                        />
+                      </div>
                     </div>
-                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div className={cn('h-full rounded-full', scoreBar(item.f1))} style={{ width: `${item.f1 * 100}%` }} />
-                    </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
 
             {/* Training run summary */}
             <div className="bg-white rounded-2xl border border-gray-200 p-5">
-              <h2 className="font-semibold text-gray-900 mb-4">Training Run Summary</h2>
+              <h2 className="font-semibold text-gray-900 mb-4">
+                Training Run Summary
+              </h2>
               <div className="space-y-2.5 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-500">Trained at</span>
-                  <span className="text-gray-900 font-medium">{new Date(metrics.trainedAt).toLocaleString()}</span>
+                  <span className="text-gray-900 font-medium">
+                    {new Date(metrics.trainedAt).toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-500">Epochs</span>
-                  <span className="text-gray-900 font-medium">{metrics.epochs}</span>
+                  <span className="text-gray-900 font-medium">
+                    {metrics.epochs}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-500">Train / Test examples</span>
-                  <span className="text-gray-900 font-medium">{metrics.trainExamples} / {metrics.testExamples}</span>
+                  <span className="text-gray-900 font-medium">
+                    {metrics.trainExamples} / {metrics.testExamples}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-500">Final train accuracy</span>
-                  <span className="text-gray-900 font-medium">{Math.round(metrics.finalTrainAccuracy * 100)}%</span>
+                  <span className="text-gray-900 font-medium">
+                    {Math.round(metrics.finalTrainAccuracy * 100)}%
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-500">Weighted F1 (test)</span>
-                  <span className="text-gray-900 font-medium">{Math.round(metrics.testEvaluation.weightedAvg.f1 * 100)}%</span>
+                  <span className="text-gray-900 font-medium">
+                    {Math.round(metrics.testEvaluation.weightedAvg.f1 * 100)}%
+                  </span>
                 </div>
               </div>
 
@@ -150,11 +266,17 @@ export default function AdminKnowledgePage() {
                   <div className="flex items-start gap-2">
                     <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-xs font-semibold text-amber-800">Train/test gap detected</p>
+                      <p className="text-xs font-semibold text-amber-800">
+                        Train/test gap detected
+                      </p>
                       <p className="text-xs text-amber-700 mt-0.5">
-                        Training accuracy ({Math.round(metrics.finalTrainAccuracy * 100)}%) is much higher than test accuracy
-                        ({Math.round(metrics.testEvaluation.accuracy * 100)}%). This is expected on this small dataset and is the
-                        reason dropout is used. More patterns per intent would narrow this gap further.
+                        Training accuracy (
+                        {Math.round(metrics.finalTrainAccuracy * 100)}%) is much
+                        higher than test accuracy (
+                        {Math.round(metrics.testEvaluation.accuracy * 100)}%).
+                        This is expected on this small dataset and is the reason
+                        dropout is used. More patterns per intent would narrow
+                        this gap further.
                       </p>
                     </div>
                   </div>
@@ -163,26 +285,47 @@ export default function AdminKnowledgePage() {
 
               {(metrics.baselines || []).length > 0 && (
                 <div className="mt-4">
-                  <p className="text-xs font-semibold text-gray-700 mb-2">Model vs baselines (same test split)</p>
+                  <p className="text-xs font-semibold text-gray-700 mb-2">
+                    Model vs baselines (same test split)
+                  </p>
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="text-gray-400 text-left">
                         <th className="font-medium pb-1.5">Model</th>
-                        <th className="font-medium pb-1.5 text-right">Accuracy</th>
-                        <th className="font-medium pb-1.5 text-right">Weighted F1</th>
+                        <th className="font-medium pb-1.5 text-right">
+                          Accuracy
+                        </th>
+                        <th className="font-medium pb-1.5 text-right">
+                          Weighted F1
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr className="border-t border-gray-100">
-                        <td className="py-1.5 font-semibold text-gray-800">Neural network (USE base model)</td>
-                        <td className="py-1.5 text-right font-semibold text-gray-800">{Math.round(metrics.testEvaluation.accuracy * 100)}%</td>
-                        <td className="py-1.5 text-right font-semibold text-gray-800">{Math.round(metrics.testEvaluation.weightedAvg.f1 * 100)}%</td>
+                        <td className="py-1.5 font-semibold text-gray-800">
+                          Neural network (USE base model)
+                        </td>
+                        <td className="py-1.5 text-right font-semibold text-gray-800">
+                          {Math.round(metrics.testEvaluation.accuracy * 100)}%
+                        </td>
+                        <td className="py-1.5 text-right font-semibold text-gray-800">
+                          {Math.round(
+                            metrics.testEvaluation.weightedAvg.f1 * 100,
+                          )}
+                          %
+                        </td>
                       </tr>
                       {metrics.baselines.map((b) => (
                         <tr key={b.name} className="border-t border-gray-100">
-                          <td className="py-1.5 text-gray-600">{b.name.replace(/_/g, ' ')}</td>
-                          <td className="py-1.5 text-right text-gray-600">{Math.round(b.accuracy * 100)}%</td>
-                          <td className="py-1.5 text-right text-gray-600">{Math.round(b.weightedF1 * 100)}%</td>
+                          <td className="py-1.5 text-gray-600">
+                            {b.name.replace(/_/g, " ")}
+                          </td>
+                          <td className="py-1.5 text-right text-gray-600">
+                            {Math.round(b.accuracy * 100)}%
+                          </td>
+                          <td className="py-1.5 text-right text-gray-600">
+                            {Math.round(b.weightedF1 * 100)}%
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -191,10 +334,15 @@ export default function AdminKnowledgePage() {
               )}
 
               <div className="mt-4">
-                <p className="text-xs font-semibold text-gray-700 mb-2">Sources cited</p>
+                <p className="text-xs font-semibold text-gray-700 mb-2">
+                  Sources cited
+                </p>
                 <div className="flex flex-wrap gap-1.5">
                   {Array.from(sourceGroups.entries()).map(([source, count]) => (
-                    <span key={source} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+                    <span
+                      key={source}
+                      className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full"
+                    >
                       {source} ({count})
                     </span>
                   ))}
@@ -210,43 +358,65 @@ export default function AdminKnowledgePage() {
                 placeholder="Search intents or sources..."
                 icon={<Search className="w-4 h-4" />}
                 value={search}
-                onChange={e => setSearch(e.target.value)}
+                onChange={(e) => setSearch(e.target.value)}
               />
             </div>
           </div>
 
           {/* Intent list */}
           <div className="space-y-3">
-            {filtered.map(intent => {
-              const perf = perClassByTag.get(intent.tag)
+            {filtered.map((intent) => {
+              const perf = perClassByTag.get(intent.tag);
               return (
-                <div key={intent.tag} className="bg-white rounded-2xl border border-gray-200 p-5">
+                <div
+                  key={intent.tag}
+                  className="bg-white rounded-2xl border border-gray-200 p-5"
+                >
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center shrink-0">
                         <BookOpen className="w-5 h-5 text-rose-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">{intent.tag.replace(/_/g, ' ')}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">{intent.source}</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {intent.tag.replace(/_/g, " ")}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-0.5">
+                          {intent.source}
+                        </p>
                       </div>
                     </div>
-                    {perf && (
-                      <Badge variant={perf.f1 >= 0.6 ? 'success' : 'warning'} size="sm">
+                    {perf && perf.support > 0 ? (
+                      <Badge
+                        variant={perf.f1 >= 0.6 ? "success" : "warning"}
+                        size="sm"
+                      >
                         F1 {Math.round(perf.f1 * 100)}%
+                      </Badge>
+                    ) : (
+                      <Badge variant="neutral" size="sm">
+                        Not evaluated
                       </Badge>
                     )}
                   </div>
                   <div className="flex flex-wrap gap-4 text-xs text-gray-500">
-                    <span className="flex items-center gap-1"><Database className="w-3 h-3" />{intent.pattern_count} training patterns</span>
-                    {perf && <span className="flex items-center gap-1"><Target className="w-3 h-3" />{perf.support} test examples</span>}
+                    <span className="flex items-center gap-1">
+                      <Database className="w-3 h-3" />
+                      {intent.pattern_count} training patterns
+                    </span>
+                    {perf && (
+                      <span className="flex items-center gap-1">
+                        <Target className="w-3 h-3" />
+                        {perf.support} test examples
+                      </span>
+                    )}
                   </div>
                 </div>
-              )
+              );
             })}
           </div>
         </>
       )}
     </div>
-  )
+  );
 }

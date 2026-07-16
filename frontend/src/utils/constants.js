@@ -122,6 +122,7 @@ export const LOCAL_STORAGE_KEYS = {
   OTP_COOLDOWN_VERIFY: 'mamaguide_otp_cd_verify',
   OTP_COOLDOWN_RESET: 'mamaguide_otp_cd_reset',
   ACCESSIBILITY: 'mamaguide_accessibility',
+  SUS_PROMPT_DISMISSED: 'mamaguide_sus_prompt_dismissed',
 }
 
 export const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'

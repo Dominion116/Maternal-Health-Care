@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
   Plus,
@@ -7,6 +7,7 @@ import {
   WifiOff,
   Trash2,
   AlertTriangle,
+  ClipboardCheck,
 } from "lucide-react";
 import {
   ChatBubble,
@@ -20,8 +21,19 @@ import { Alert } from "@/components/atoms/Alert";
 import { useChat } from "@/hooks/useChat";
 import { useAuth } from "@/hooks/useAuth";
 import { historyService } from "@/services/historyService";
-import { SUGGESTED_PROMPTS, DISCLAIMER_TEXT } from "@/utils/constants";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import {
+  SUGGESTED_PROMPTS,
+  DISCLAIMER_TEXT,
+  ROUTES,
+  LOCAL_STORAGE_KEYS,
+} from "@/utils/constants";
 import { cn } from "@/utils/cn";
+
+// Real usage, not just a stray message, is what makes a SUS response
+// meaningful, so the prompt only appears once a conversation has gone back
+// and forth a few times (2 user turns + 2 replies).
+const SUS_PROMPT_MESSAGE_THRESHOLD = 4;
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -42,6 +54,10 @@ export default function ChatPage() {
 
   const bottomRef = useRef(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [susPromptDismissed, setSusPromptDismissed] = useLocalStorage(
+    LOCAL_STORAGE_KEYS.SUS_PROMPT_DISMISSED,
+    false,
+  );
   // A suggested prompt passed from the dashboard — sent once the fresh
   // conversation from the mount effect below becomes active.
   const [pendingMessage, setPendingMessage] = useState(
@@ -96,6 +112,8 @@ export default function ChatPage() {
   }
 
   const showWelcome = messages.length === 0;
+  const showSusPrompt =
+    !susPromptDismissed && messages.length >= SUS_PROMPT_MESSAGE_THRESHOLD;
 
   return (
     <div className="flex flex-col h-[calc(100dvh-3.5rem)] md:h-dvh bg-warm-white">
@@ -205,6 +223,44 @@ export default function ChatPage() {
       {/* Suggested prompts */}
       {showWelcome && (
         <SuggestedPrompts prompts={prompts} onSelect={sendMessage} />
+      )}
+
+      {/* Research participation prompt — appears after real usage, not on
+          first load, so it's asking people who actually have something to
+          evaluate. */}
+      {showSusPrompt && (
+        <div className="mx-4 mb-3 shrink-0 bg-sage-50 border border-sage-200 rounded-2xl p-3.5 flex items-start gap-3">
+          <span className="w-8 h-8 rounded-lg bg-sage-100 flex items-center justify-center shrink-0">
+            <ClipboardCheck className="w-4 h-4 text-sage-700" aria-hidden />
+          </span>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-sage-900">
+              Help improve MamaGuide
+            </p>
+            <p className="text-xs text-sage-700 mt-0.5 mb-2 leading-relaxed">
+              You've had a real conversation with MamaGuide. Could you spare 2
+              minutes to share your experience? It directly shapes this
+              research.
+            </p>
+            <div className="flex gap-2">
+              <Button
+                as={Link}
+                to={ROUTES.SUS_QUESTIONNAIRE}
+                size="xs"
+                variant="sage"
+              >
+                Share my experience
+              </Button>
+              <Button
+                size="xs"
+                variant="ghost"
+                onClick={() => setSusPromptDismissed(true)}
+              >
+                Not now
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Input */}
