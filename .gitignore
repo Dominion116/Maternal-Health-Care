@@ -1,3 +1,6 @@
 *.docx
 /docs
 /backend/scripts
+AGENTS.md
+config.bat
+node_modules
