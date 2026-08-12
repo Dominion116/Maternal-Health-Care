@@ -4,9 +4,9 @@
   "description": "MamaGuide - Maternal Health Education Chatbot Backend",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "npx tsx watch src/index.ts",
-    "build": "npm run train-model && npx tsc && node scripts/copy-artifacts.js",
-    "start": "node dist/index.js",
+    "dev": "node init && npx tsx watch src/index.ts",
+    "build": "node init && npm run train-model && npx tsc && node scripts/copy-artifacts.js",
+    "start": "node init && node dist/index.js",
     "lint": "eslint 'src/**/*.ts'",
     "lint:fix": "eslint 'src/**/*.ts' --fix",
     "test": "jest --runInBand",
